@@ -484,30 +484,68 @@
   }
 </style>
 
-<div id="iklan-popup">
-  <button onclick="tutupIklan()">✖</button>
-  <h4>Iklan Tempatan</h4>
-  <div class="iklan-row">
-    <div class="iklan-box">
-      <img src="https://i.imgur.com/ILKSa28.jpeg" alt="Iron Gamers">
-      <p>Iron Gamers</p>
-      <a href="https://www.facebook.com/profile.php?id=61566999705522" target="_blank">Lihat</a>
+<!-- IKLAN POPUP -->
+<div id="popup-iklan" style="
+  position: fixed;
+  bottom: 80px;
+  right: 15px;
+  width: 270px;
+  background-color: #111;
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+  z-index: 9999;
+">
+  <div style="text-align:right;">
+    <span id="tutup-iklan" style="cursor:pointer; font-weight:bold;">✖</span>
+  </div>
+  <div style="font-weight:bold; color:#ffcc00; text-align:center;">Iklan Tempatan</div>
+  <div style="display:flex; justify-content:space-around; align-items:center; margin-top:10px;">
+    <div style="text-align:center;">
+      <img src="https://i.imgur.com/ILKSa28.jpeg" alt="Iron Gamers" style="width:60px; height:auto; border-radius:5px;">
+      <div style="font-size:11px;">Iron Gamers</div>
+      <a href="https://www.facebook.com/profile.php?id=61566999705522" target="_blank" style="font-size:10px; color:#00ccff;">Repair Console</a>
     </div>
-    <div class="iklan-box">
-      <img src="https://i.imgur.com/jvmALJ0.jpeg" alt="Big John">
-      <p>Big John</p>
-      <a href="https://bigjohnhouseofrotijohn.orderla.my/" target="_blank">Order</a>
+    <div style="text-align:center;">
+      <img src="https://i.imgur.com/jvmALJ0.jpeg" alt="Big John" style="width:60px; height:auto; border-radius:5px;">
+      <div style="font-size:11px;">Big John</div>
+      <a href="https://bigjohnhouseofrotijohn.orderla.my/" target="_blank" style="font-size:10px; color:#00ccff;">Roti John Order</a>
     </div>
   </div>
 </div>
 
-<div id="iklan-icon" onclick="bukaSemula()">🔔</div>
+<!-- ICON KECIL AKTIFKAN POPUP -->
+<div id="popup-toggle" style="
+  position: fixed;
+  bottom: 80px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  background-color: #ff6600;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+">🔔</div>
 
+<!-- JS UNTUK KAWAL POPUP -->
 <script>
-  window.addEventListener('scroll', function () {
-    document.getElementById("tutup-iklan").addEventListener("click", function() {
-  document.getElementById("popup-iklan").style.display = "none";
-});
+  document.getElementById("tutup-iklan").addEventListener("click", function () {
+    document.getElementById("popup-iklan").style.display = "none";
+    document.getElementById("popup-toggle").style.display = "flex";
+  });
+
+  document.getElementById("popup-toggle").addEventListener("click", function () {
+    document.getElementById("popup-iklan").style.display = "block";
+    document.getElementById("popup-toggle").style.display = "none";
+  });
+</script>
   
 </body>
 </html>
