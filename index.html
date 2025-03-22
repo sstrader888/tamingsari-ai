@@ -76,6 +76,7 @@
       font-weight: bold;
       border-radius: 5px;
       font-size: 18px;
+      margin-top: 10px;
     }
     .cta-btn:hover {
       background-color: #cc5500;
@@ -104,6 +105,38 @@
       color: #ffcc00;
       margin-top: 10px;
     }
+    .faq-container {
+      max-width: 800px;
+      margin: auto;
+      text-align: left;
+    }
+    .faq-item {
+      background: #222;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      padding: 15px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .faq-item:hover {
+      background: #333;
+    }
+    .faq-question {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      font-size: 14px;
+      margin-top: 10px;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+      opacity: 1;
+    }
     footer {
       background: #000;
       color: white;
@@ -125,6 +158,13 @@
   <div>🔥 <span style="color:white;">TAMING SARI+AI – INDIKATOR FOREX POWER!</span> 🔥</div>
 </header>
 
+<!-- Fakta Ringkas -->
+<div style="background:#333; color:#eee; padding:10px 0; display:flex; justify-content:space-around; flex-wrap:wrap;">
+  <div style="margin:10px;">✅ 700+ Trader Dibimbing</div>
+  <div style="margin:10px;">✅ 4 Tahun Pengalaman</div>
+  <div style="margin:10px;">✅ Sistem AI Verified</div>
+</div>
+
 <div class="container">
   <div class="section">
     <h1>Indikator AI Canggih untuk Entry Power!</h1>
@@ -136,7 +176,7 @@
     <p class="countdown">Promosi Tamat Dalam: <span id="timer"></span></p>
     <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20untuk%20membeli%20indikator" class="cta-btn">🚀 Daftar Sekarang</a>
   </div>
-
+  <!-- Broker Pilihan -->
   <div class="broker-logos">
     <div class="broker-box">
       <div class="emoji">👇</div>
@@ -154,6 +194,7 @@
     </div>
   </div>
 
+  <!-- Coaching Packages -->
   <div class="section">
     <h2>📚 Pakej Personal Coaching</h2>
     <div class="grid-container">
@@ -173,14 +214,110 @@
       </div>
     </div>
   </div>
+
+  <!-- Galeri Coaching -->
+  <div class="section">
+    <h2>Galeri Sesi Coaching</h2>
+    <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+      <img src="https://i.imgur.com/yPllXC7.jpeg" alt="Coaching 1" style="width:45%; border-radius:10px;">
+      <img src="https://i.imgur.com/tP41zon.jpeg" alt="Coaching 2" style="width:45%; border-radius:10px;">
+      <img src="https://i.imgur.com/UqmHOtC.jpeg" alt="Coaching 3" style="width:45%; border-radius:10px;">
+      <img src="https://i.imgur.com/cj0F9ew.jpeg" alt="Coaching 4" style="width:45%; border-radius:10px;">
+    </div>
+  </div>
+
+  <!-- Pengenalan Team -->
+  <div class="section" style="background:#222; border:1px solid #444;">
+    <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader" style="height:70px; margin-bottom:15px;">
+    <h2>Kenali Team SStrader</h2>
+    <p>Team ini diketuai oleh <strong>Cikgu Heri</strong>, seorang Technical Chartist yang telah melatih ramai trader berjaya melalui pendekatan berdisiplin dan teknikal seperti Taming Sari, Dominan Candle, Candle Break dan banyak lagi.</p>
+  </div>
+
+  <!-- Buku Fizikal -->
+  <div class="section">
+    <h2>Buku Fizikal: Teknik Lengkap Taming Sari</h2>
+    <img src="https://i.imgur.com/233qLSp.png" alt="Buku Taming Sari" style="max-width:100%; width:220px; height:auto; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.5); margin-bottom:15px;">
+    <p>Dapatkan buku fizikal edisi khas Teknik Lengkap Taming Sari secara eksklusif!</p>
+    <p><strong>Harga Promosi: RM100 sahaja</strong></p>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20buku%20Teknik%20Lengkap%20Taming%20Sari" class="cta-btn">📚 Tempah Buku Sekarang</a>
+  </div>
+
+  <!-- Kelebihan Pembelian -->
+  <div class="section">
+    <h2>Apa Anda Akan Dapat?</h2>
+    <ul style="text-align:left; max-width: 800px; margin:auto;">
+      <li>✅ Akses Indikator AI Taming Sari (Lifetime)</li>
+      <li>✅ Tutorial Video & E-Book Lengkap</li>
+      <li>✅ Akses Group Analisa oleh Cg Heri</li>
+      <li>✅ Sokongan Group Support Harian</li>
+      <li>✅ Peluang duduk & belajar terus di HQ Trade House SStrader, Taiping</li>
+    </ul>
+  </div>
+
+  <!-- Langgan Alternatif -->
+  <div class="section">
+    <h2>Alternatif: Langgan Secara Bulanan</h2>
+    <p><strong>Langgan indikator secara PERCUMA</strong> dengan mendaftar melalui broker rasmi kami:</p>
+    <ul style="text-align:left; max-width: 800px; margin:auto;">
+      <li>1️⃣ Daftar dengan <strong>JustMarkets</strong> atau <strong>GMI</strong></li>
+      <li>2️⃣ Minimum deposit <strong>100 USD</strong></li>
+      <li>3️⃣ Dapat akses indikator + support group + bonus sama seperti pembelian RM1000</li>
+    </ul>
+  </div>
+
+  <!-- Copytrade -->
+  <div class="section">
+    <h2>Copytrade Bersama SStrader</h2>
+    <p>Pihak SStrader juga menyediakan pilihan <strong>Copytrade</strong> untuk anda yang ingin menjana keuntungan tanpa perlu trading sendiri.</p>
+    <ul style="text-align:left; max-width: 800px; margin:auto;">
+      <li>✅ Modal minimum serendah <strong>RM5000</strong></li>
+      <li>✅ Diurus oleh trader berpengalaman Team SStrader</li>
+      <li>✅ Sesuai untuk yang sibuk atau baru bermula</li>
+    </ul>
+    <a href="https://forms.gle/fpGYbEv3XZL7imwN9" target="_blank" class="cta-btn">📝 Daftar untuk Copytrade</a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section">
+    <h2>Soalan Lazim (FAQ)</h2>
+    <div class="faq-container">
+      <div class="faq-item" onclick="toggleFAQ(this)">
+        <div class="faq-question">1. Adakah indikator ini sesuai untuk pemula?</div>
+        <div class="faq-answer">Ya, indikator ini direka agar mudah difahami oleh pemula dan digunakan oleh trader berpengalaman.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFAQ(this)">
+        <div class="faq-question">2. Perlu langgan TradingView berbayar ke?</div>
+        <div class="faq-answer">Tidak wajib. Boleh digunakan dengan akaun percuma di TradingView.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFAQ(this)">
+        <div class="faq-question">3. Apa beza beli RM1000 dan daftar melalui broker?</div>
+        <div class="faq-answer">Jika beli RM1000 – dapat akses seumur hidup. Jika daftar melalui broker – langganan bulanan selagi aktif deposit & trade.</div>
+      </div>
+      <div class="faq-item" onclick="toggleFAQ(this)">
+        <div class="faq-question">4. Berapa cepat saya boleh mula guna selepas daftar?</div>
+        <div class="faq-answer">Dalam masa 24 jam selepas pengesahan bayaran atau akaun broker aktif.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Penafian Risiko -->
+  <div class="section" style="background:#111; color:#ccc;">
+    <h2>Penafian Risiko</h2>
+    <p style="max-width:800px; margin:auto; font-size:14px;">
+      Dagangan CFD membawa risiko tinggi dan mungkin tidak sesuai untuk semua pelabur. Sila pastikan anda memahami sepenuhnya risiko sebelum mula berdagang. Prestasi lalu bukan jaminan hasil masa depan. SStrader dan Cikgu Heri tidak bertanggungjawab atas sebarang kerugian yang mungkin berlaku.
+    </p>
+  </div>
+
 </div>
 
+<!-- WhatsApp Bubble -->
 <a href="https://api.whatsapp.com/send?phone=60194173200" 
    style="position:fixed; bottom:20px; right:20px; background:#25D366; color:white; padding:10px 15px; 
    font-size:16px; border-radius:50px; text-decoration:none;">
    💬 Chat dengan Kami!
 </a>
 
+<!-- Skrip FAQ dan Countdown -->
 <script>
   const countDownDate = new Date("Mar 31, 2025 23:59:59").getTime();
   const timerEl = document.getElementById("timer");
@@ -197,6 +334,10 @@
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
     timerEl.innerHTML = days + "h " + hours + "m " + minutes + "s";
   }, 1000);
+
+  function toggleFAQ(element) {
+    element.classList.toggle('active');
+  }
 </script>
 
 <footer>© 2025 Taming Sari+AI. Semua hak cipta terpelihara.</footer>
