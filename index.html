@@ -505,22 +505,9 @@
 
 <script>
   window.addEventListener('scroll', function () {
-    if (!localStorage.getItem('popupShown') && window.scrollY > 800) {
-      document.getElementById("iklan-popup").style.display = "block";
-      localStorage.setItem('popupShown', 'true');
-    }
-  });
-
-  function tutupIklan() {
-    document.getElementById("iklan-popup").style.display = "none";
-    document.getElementById("iklan-icon").style.display = "block";
-  }
-
-  function bukaSemula() {
-    document.getElementById("iklan-popup").style.display = "block";
-    document.getElementById("iklan-icon").style.display = "none";
-  }
-</script>
+    document.getElementById("tutup-iklan").addEventListener("click", function() {
+  document.getElementById("popup-iklan").style.display = "none";
+});
   
 </body>
 </html>
