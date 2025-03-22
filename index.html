@@ -401,33 +401,84 @@
 </div>
 
 <footer>© 2025 Taming Sari+AI. Semua hak cipta terpelihara.</footer>
-<!-- Popup Iklan Tempatan (Kecil + Tidak ganggu chat) -->
-<div id="popup-iklan" style="display:none; position:fixed; bottom:100px; right:20px; width:160px; background:#222; color:white; padding:10px; border-radius:10px; border:1px solid #444; box-shadow:0 0 10px rgba(0,0,0,0.5); font-size:11px; z-index:9999;">
-  <div style="text-align:right; margin-top:-5px;">
-    <button onclick="document.getElementById('popup-iklan').style.display='none'" style="background:none; border:none; color:white; font-size:14px; cursor:pointer;">×</button>
-  </div>
-  <h4 style="color:#ffcc00; font-size:12px; margin:4px 0;">Iklan Tempatan</h4>
-  <div style="margin-bottom:8px;">
-    <img src="https://i.imgur.com/ILKSa28.jpeg" alt="Iron Gamers" style="width:100%; border-radius:5px;">
-    <p style="margin:3px 0;">Repair Console MY</p>
-    <a href="https://www.facebook.com/profile.php?id=61566999705522" style="color:#00ccff;" target="_blank">Iron Gamers</a>
-  </div>
-  <div>
-    <img src="https://i.imgur.com/jvmALJ0.jpeg" alt="Big John" style="width:100%; border-radius:5px;">
-    <p style="margin:3px 0;">Roti John Kamunting</p>
-    <a href="https://bigjohnhouseofrotijohn.orderla.my" style="color:#00ccff;" target="_blank">Big John Order</a>
-  </div>
+
+  <style>
+  #iklan-popup {
+    display: none;
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    background: #111;
+    border-radius: 10px;
+    padding: 10px;
+    width: 240px;
+    z-index: 9999;
+    box-shadow: 0 0 10px rgba(255,255,255,0.2);
+  }
+
+  #iklan-popup img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+
+  #iklan-popup p {
+    font-size: 12px;
+    margin: 0;
+    color: #ccc;
+  }
+
+  #iklan-popup h4 {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #ffcc00;
+  }
+
+  #iklan-popup button {
+    float: right;
+    background: none;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    #iklan-popup {
+      width: 85%;
+      right: 7%;
+      bottom: 110px;
+    }
+  }
+</style>
+
+<div id="iklan-popup">
+  <button onclick="tutupIklan()">✖</button>
+  <h4>Iklan Tempatan</h4>
+  <img src="https://i.imgur.com/ILKSa28.jpeg" alt="Iron Gamers">
+  <p>Repair Console MY<br><a href="https://www.facebook.com/profile.php?id=61566999705522" style="color:#00ccff;">Iron Gamers</a></p>
+  <hr style="border-color:#444;">
+  <img src="https://i.imgur.com/jvmALJ0.jpeg" alt="Big John">
+  <p>Roti John Kamunting<br><a href="https://bigjohnhouseofrotijohn.orderla.my/" style="color:#00ccff;">Big John Order</a></p>
 </div>
 
 <script>
-  window.addEventListener('scroll', function() {
-    const scrolled = window.scrollY + window.innerHeight;
-    const docHeight = document.body.offsetHeight;
-    if (scrolled > docHeight * 0.6) {
-      document.getElementById('popup-iklan').style.display = 'block';
+  // Tunjuk popup sekali sahaja (guna localStorage)
+  window.addEventListener('scroll', function () {
+    if (!localStorage.getItem('popupShown') && window.scrollY > 800) {
+      const popup = document.getElementById("iklan-popup");
+      if (popup) {
+        popup.style.display = "block";
+        localStorage.setItem('popupShown', 'true');
+      }
     }
   });
-</script>
 
+  function tutupIklan() {
+    const popup = document.getElementById("iklan-popup");
+    if (popup) popup.style.display = "none";
+  }
+</script>
+  
 </body>
 </html>
