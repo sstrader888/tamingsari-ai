@@ -412,29 +412,14 @@
     border: 1px solid #444;
     border-radius: 10px;
     padding: 10px;
-    width: 180px;
+    width: 200px;
     max-width: 90%;
-    max-height: 300px;
-    overflow-y: auto;
     z-index: 9997;
     box-shadow: 0 0 15px rgba(0,0,0,0.5);
   }
 
-  #iklan-popup img {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-    margin-bottom: 5px;
-  }
-
-  #iklan-popup p {
-    font-size: 11px;
-    margin: 0;
-    color: #ccc;
-  }
-
   #iklan-popup h4 {
-    margin: 5px 0;
+    margin: 5px 0 10px 0;
     font-size: 13px;
     color: #ffcc00;
     text-align: center;
@@ -450,20 +435,51 @@
     font-size: 14px;
     cursor: pointer;
   }
+
+  .iklan-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .iklan-box {
+    width: 80px;
+    text-align: center;
+  }
+
+  .iklan-box img {
+    width: 100%;
+    border-radius: 5px;
+  }
+
+  .iklan-box p {
+    font-size: 10px;
+    color: #ccc;
+    margin: 5px 0 0 0;
+  }
+
+  .iklan-box a {
+    color: #00ccff;
+    font-size: 11px;
+    text-decoration: none;
+  }
 </style>
 
 <div id="iklan-popup">
   <button onclick="tutupIklan()">✖</button>
   <h4>Iklan Tempatan</h4>
-  <img src="https://i.imgur.com/ILKSa28.jpeg" alt="Iron Gamers">
-  <p>Repair Console MY<br>
-    <a href="https://www.facebook.com/profile.php?id=61566999705522" target="_blank" style="color:#00ccff;">Iron Gamers</a>
-  </p>
-  <hr style="border-color:#444; margin:10px 0;">
-  <img src="https://i.imgur.com/jvmALJ0.jpeg" alt="Big John">
-  <p>Roti John Kamunting<br>
-    <a href="https://bigjohnhouseofrotijohn.orderla.my/" target="_blank" style="color:#00ccff;">Big John Order</a>
-  </p>
+  <div class="iklan-row">
+    <div class="iklan-box">
+      <img src="https://i.imgur.com/ILKSa28.jpeg" alt="Iron Gamers">
+      <p>Iron Gamers</p>
+      <a href="https://www.facebook.com/profile.php?id=61566999705522" target="_blank">Lihat</a>
+    </div>
+    <div class="iklan-box">
+      <img src="https://i.imgur.com/jvmALJ0.jpeg" alt="Big John">
+      <p>Big John</p>
+      <a href="https://bigjohnhouseofrotijohn.orderla.my/" target="_blank">Order</a>
+    </div>
+  </div>
 </div>
 
 <script>
