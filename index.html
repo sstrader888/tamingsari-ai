@@ -402,7 +402,9 @@
 
 <footer>© 2025 Taming Sari+AI. Semua hak cipta terpelihara.</footer>
 
-  <style>
+<!-- Iklan Pop-up dengan Hide-to-Icon -->
+
+<style>
   #iklan-popup {
     display: none;
     position: fixed;
@@ -463,6 +465,24 @@
     font-size: 11px;
     text-decoration: none;
   }
+
+  #iklan-icon {
+    display: none;
+    position: fixed;
+    bottom: 100px;
+    right: 10px;
+    background: #ff6600;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+    z-index: 9998;
+  }
 </style>
 
 <div id="iklan-popup">
@@ -482,6 +502,8 @@
   </div>
 </div>
 
+<div id="iklan-icon" onclick="bukaSemula()">🔔</div>
+
 <script>
   window.addEventListener('scroll', function () {
     if (!localStorage.getItem('popupShown') && window.scrollY > 800) {
@@ -492,6 +514,12 @@
 
   function tutupIklan() {
     document.getElementById("iklan-popup").style.display = "none";
+    document.getElementById("iklan-icon").style.display = "block";
+  }
+
+  function bukaSemula() {
+    document.getElementById("iklan-popup").style.display = "block";
+    document.getElementById("iklan-icon").style.display = "none";
   }
 </script>
   
