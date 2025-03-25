@@ -209,7 +209,7 @@
     <p class="countdown">Promosi Tamat Dalam: <span id="timer"></span></p>
     <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20untuk%20membeli%20indikator" class="cta-btn">🚀 Daftar Sekarang</a>
   </div>
-  <!-- Kod broker baharu yang betul diletakkan di bawah butang Daftar Sekarang -->
+<!-- Kod broker baharu yang betul diletakkan di bawah butang Daftar Sekarang -->
 <div class="section">
   <h3 style="color:#ffcc00;">Daftar Broker Rasmi</h3>
   <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; margin-top: 20px;">
@@ -231,6 +231,32 @@
   </div>
 </div>
 <!-- Tamat bahagian broker -->
+
+<script>
+  // Dapatkan maklumat pengguna dan paparkan ref link
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const auth = getAuth();
+  const db = getFirestore();
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        if (data.refId) {
+          const refLink = "https://thesstrader.com/?ref=" + data.refId;
+          document.getElementById("refLink").textContent = refLink;
+        } else {
+          document.getElementById("refLink").textContent = "Tiada refId dijumpai";
+        }
+      }
+    }
+  });
+</script>
+
 
 
   <!-- Coaching Packages -->
