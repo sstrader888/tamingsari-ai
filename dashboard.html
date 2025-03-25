@@ -1,79 +1,105 @@
+<!-- Kod dashboard.html lengkap dan dikemaskini -->
 <!DOCTYPE html>
 <html lang="ms">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Agen | SStrader</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f4f7fc;
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
       margin: 0;
-      padding: 20px;
-      color: #333;
+      padding: 0;
     }
+
     .container {
       max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
+      margin: 60px auto;
+      background: white;
+      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
+
     h2 {
       text-align: center;
-      color: #2b2d42;
+      color: #333;
     }
-    .info {
-      background-color: #d8f3dc;
+
+    .info-box {
+      background-color: #d4edda;
       padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+      border-left: 5px solid #28a745;
+      margin: 20px 0;
+      border-radius: 5px;
     }
-    .info p {
+
+    .info-box p {
       margin: 5px 0;
     }
-    ul {
-      padding-left: 20px;
-    }
-    .logout {
+
+    .ref-list {
       margin-top: 20px;
-      background-color: #e63946;
+    }
+
+    #logoutBtn {
+      background-color: #dc3545;
       color: white;
-      padding: 10px;
       border: none;
+      padding: 10px 15px;
       border-radius: 5px;
       cursor: pointer;
     }
+
+    #logoutBtn:hover {
+      background-color: #c82333;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h2>Dashboard Agen</h2>
-    <div class="info">
+    <div class="info-box">
       <p><strong>Email:</strong> <span id="userEmail"></span></p>
       <p><strong>Link Referral:</strong> <span id="refLink"></span></p>
       <p><strong>Jumlah Komisen Terkumpul:</strong> RM <span id="totalKomisen">0.00</span></p>
     </div>
-    <h3>Senarai Pembelian Referral:</h3>
-    <ul id="orderList"></ul>
-    <button class="logout" id="logoutBtn">Logout</button>
+
+    <h4>Senarai Pembelian Referral:</h4>
+    <ul id="orderList" class="ref-list"></ul>
+
+    <button id="logoutBtn">Logout</button>
   </div>
 
+  <!-- Firebase dan App Init -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      apiKey: "AIzaSyBd-yRUKJq7mcFk8eWrChdc1zZDRokytmU",
       authDomain: "sstrader-affiliate.firebaseapp.com",
       projectId: "sstrader-affiliate",
       storageBucket: "sstrader-affiliate.appspot.com",
-      messagingSenderId: "859244663056",
-      appId: "1:859244663056:web:4fbad1a3655ff85f499595",
-      measurementId: "G-7DPN7Q8EQ0"
+      messagingSenderId: "321716367892",
+      appId: "1:321716367892:web:beea6632cb97c7e84b69f5",
+      measurementId: "G-7DN7PQ8EQ0"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -94,19 +120,21 @@
         if (userDoc.exists()) {
           const data = userDoc.data();
           userEmail.textContent = data.email;
-          const refCode = userDoc.refID;
+          const refCode = data.refID;
           refLink.textContent = `https://thesstrader.com/?ref=${refCode}`;
 
           const q = query(collection(db, "orders"), where("referral", "==", refCode));
           const querySnapshot = await getDocs(q);
+
           let total = 0;
           querySnapshot.forEach((doc) => {
             const order = doc.data();
-            total += 10; // Komisen tetap RM10 satu jualan
+            total += 10; // setiap jualan dapat RM10
             const li = document.createElement("li");
             li.textContent = `${order.nama} membeli ${order.produk} pada ${new Date(order.tarikh.seconds * 1000).toLocaleString()}`;
             orderList.appendChild(li);
           });
+
           totalKomisen.textContent = total.toFixed(2);
         }
       } else {
@@ -114,11 +142,12 @@
       }
     });
 
-    logoutBtn.addEventListener('click', () => {
+    logoutBtn.addEventListener("click", () => {
       signOut(auth).then(() => {
         window.location.href = "login.html";
       });
     });
   </script>
 </body>
+
 </html>
