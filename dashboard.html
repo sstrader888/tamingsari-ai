@@ -113,32 +113,48 @@
     const logoutBtn = document.getElementById("logoutBtn");
 
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const uid = user.uid;
-        const userDoc = await getDoc(doc(db, "users", uid));
-
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          userEmail.textContent = data.email;
-          const refCode = data.refID;
-          refLink.textContent = `https://thesstrader.com/?ref=${refCode}`;
-
-          const q = query(collection(db, "orders"), where("referral", "==", refCode));
-          const querySnapshot = await getDocs(q);
-
-          let total = 0;
-          querySnapshot.forEach((doc) => {
-            const order = doc.data();
-            total += 10; // setiap jualan dapat RM10
-            const li = document.createElement("li");
-            li.textContent = `${order.nama} membeli ${order.produk} pada ${new Date(order.tarikh.seconds * 1000).toLocaleString()}`;
-            orderList.appendChild(li);
-          });
-
-          totalKomisen.textContent = total.toFixed(2);
-        }
-      } else {
+      if (!user) {
         window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const uid = user.uid;
+        const userDocRef = doc(db, "users", uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (!userDocSnap.exists()) {
+          alert("Maklumat pengguna tidak dijumpai.");
+          return;
+        }
+
+        const data = userDocSnap.data();
+        userEmail.textContent = data.email;
+
+        if (!data.refID) {
+          refLink.textContent = "Kod referral tidak wujud.";
+          return;
+        }
+
+        const refCode = data.refID;
+        refLink.textContent = `https://thesstrader.com/?ref=${refCode}`;
+
+        const q = query(collection(db, "orders"), where("referral", "==", refCode));
+        const querySnapshot = await getDocs(q);
+
+        let total = 0;
+        querySnapshot.forEach((doc) => {
+          const order = doc.data();
+          total += 10;
+          const li = document.createElement("li");
+          li.textContent = `${order.nama} membeli ${order.produk} pada ${new Date(order.tarikh.seconds * 1000).toLocaleString()}`;
+          orderList.appendChild(li);
+        });
+
+        totalKomisen.textContent = total.toFixed(2);
+      } catch (error) {
+        console.error("Ralat:", error);
+        alert("Ralat semasa memuatkan dashboard.");
       }
     });
 
