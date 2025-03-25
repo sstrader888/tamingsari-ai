@@ -1,4 +1,4 @@
-<!-- Updated login.html with custom Referral ID -->
+<!-- Updated login.html with Referral ID linked to UID -->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -79,7 +79,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
@@ -105,16 +105,17 @@
       return;
     }
 
-    const refDoc = await getDoc(doc(db, "users", refID));
-    if (refDoc.exists()) {
+    // Check if refID is already used
+    const q = query(collection(db, "users"), where("refID", "==", refID));
+    const existing = await getDocs(q);
+    if (!existing.empty) {
       alert("Referral ID telah digunakan. Sila pilih ID lain.");
       return;
     }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, "users", refID), {
-        uid: userCredential.user.uid,
+      await setDoc(doc(db, "users", userCredential.user.uid), {
         email: email,
         refID: refID
       });
@@ -138,9 +139,6 @@
       const snapshot = await getDoc(doc(db, "users", user.uid));
       if (snapshot.exists()) {
         refID = snapshot.data().refID;
-      } else {
-        const allUsers = await getDoc(doc(db, "users", user.email.split("@")[0]));
-        if (allUsers.exists()) refID = allUsers.id;
       }
 
       document.getElementById("userInfo").innerHTML = "✅ Log masuk sebagai: " + user.email;
