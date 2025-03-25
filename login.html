@@ -1,4 +1,4 @@
-<!-- Updated login.html with Referral ID linked to UID and referral tracking in index.html + Dashboard for agents -->
+<!-- Updated login.html with Referral ID linked to UID and referral tracking in index.html + Dashboard for agents + Order Purchase Button -->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -83,6 +83,12 @@
   <p id="userInfo"></p>
   <p><strong>Link Referral Anda:</strong></p>
   <p id="refLink" style="word-break: break-word;"></p>
+  <div class="box">
+    <h3>Contoh Pembelian</h3>
+    <input type="text" id="buyerName" placeholder="Nama Pembeli">
+    <input type="text" id="productName" placeholder="Nama Produk">
+    <button id="buyBtn">Buat Pembelian</button>
+  </div>
   <div id="orderList">
     <h3>Senarai Pembeli Dari Referral Anda:</h3>
     <div id="orders"></div>
@@ -93,7 +99,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
@@ -154,6 +160,8 @@
       .catch((error) => alert("Ralat: " + error.message));
   };
 
+  document.getElementById("logoutBtn").onclick = () => signOut(auth);
+
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       let refID = "";
@@ -185,7 +193,26 @@
     }
   });
 
-  document.getElementById("logoutBtn").onclick = () => signOut(auth);
+  document.getElementById("buyBtn").onclick = async () => {
+    const namaPembeli = document.getElementById("buyerName").value;
+    const namaProduk = document.getElementById("productName").value;
+    const referralFrom = localStorage.getItem("referral_from") || "direct";
+
+    if (!namaPembeli || !namaProduk) {
+      alert("Sila isi nama pembeli dan produk.");
+      return;
+    }
+
+    await addDoc(collection(db, "orders"), {
+      nama: namaPembeli,
+      produk: namaProduk,
+      tarikh: serverTimestamp(),
+      referral: referralFrom
+    });
+
+    alert("Pembelian direkodkan.");
+    window.location.reload();
+  };
 </script>
 
 <script>
