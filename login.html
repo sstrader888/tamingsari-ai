@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Affiliate SStrader</title>
+  <script type="module">
+    // Firebase config dari Cikgu
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.firebasestorage.app",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:4fbad1a3655ff85f499595",
+      measurementId: "G-7DPN7Q8EQ0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Register
+    document.getElementById("registerBtn").onclick = function () {
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("Pendaftaran berjaya!");
+        })
+        .catch((error) => {
+          alert("Ralat: " + error.message);
+        });
+    };
+
+    // Login
+    document.getElementById("loginBtn").onclick = function () {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("Log masuk berjaya!");
+        })
+        .catch((error) => {
+          alert("Ralat: " + error.message);
+        });
+    };
+
+    // Semak login & paparkan link referral
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const username = user.email.split("@")[0]; // Kita jadikan email sebagai ID referral
+        document.getElementById("refLink").innerHTML = `Link Referral Anda: <br><strong>https://thesstrader.com/?ref=${username}</strong>`;
+        document.getElementById("refBox").style.display = "block";
+      } else {
+        document.getElementById("refBox").style.display = "none";
+      }
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").onclick = function () {
+      signOut(auth);
+    };
+  </script>
+</head>
+<body style="font-family:sans-serif; text-align:center; padding:30px;">
+  <h1>Sistem Affiliate SStrader</h1>
+
+  <h2>Daftar Akaun</h2>
+  <input type="email" id="regEmail" placeholder="Email"><br><br>
+  <input type="password" id="regPassword" placeholder="Kata Laluan"><br><br>
+  <button id="registerBtn">Daftar</button>
+
+  <hr style="margin:30px;">
+
+  <h2>Log Masuk</h2>
+  <input type="email" id="loginEmail" placeholder="Email"><br><br>
+  <input type="password" id="loginPassword" placeholder="Kata Laluan"><br><br>
+  <button id="loginBtn">Login</button>
+
+  <div id="refBox" style="margin-top:30px; display:none;">
+    <h3>✅ Anda telah login</h3>
+    <p id="refLink"></p>
+    <button id="logoutBtn">Logout</button>
+  </div>
+</body>
+</html>
