@@ -22,7 +22,7 @@
       color: #000;
       position: relative;
     }
-    header a {
+    .back-button {
       position: absolute;
       right: 20px;
       top: 20px;
@@ -32,6 +32,18 @@
       text-decoration: none;
       border-radius: 6px;
       font-size: 14px;
+    }
+    @media (max-width: 600px) {
+      header {
+        font-size: 18px;
+        padding: 15px;
+      }
+      .back-button {
+        position: static;
+        display: block;
+        margin: 10px auto 0;
+        text-align: center;
+      }
     }
     .container {
       max-width: 700px;
@@ -76,7 +88,7 @@
 <body>
   <header>
     Sistem Affiliate SStrader
-    <a href="/">⬅ Kembali ke Laman Utama</a>
+    <a class="back-button" href="index.html">⬅ Kembali ke Laman Utama</a>
   </header>
   <div class="container">
     <h2>Selamat Datang ke Sistem Affiliate</h2>
