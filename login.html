@@ -66,15 +66,16 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-    const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
   authDomain: "sstrader-affiliate.firebaseapp.com",
   projectId: "sstrader-affiliate",
-  storageBucket: "sstrader-affiliate.firebasestorage.app",
+  storageBucket: "sstrader-affiliate.appspot.com", // ✅ Diperbetulkan di sini
   messagingSenderId: "859244663056",
   appId: "1:859244663056:web:4fbad1a3655ff85f499595",
   measurementId: "G-7DPN7Q8EQ0"
 };
+
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
