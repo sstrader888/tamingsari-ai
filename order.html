@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Pembelian Produk</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.firebasestorage.app",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:4fbad1a3655ff85f499595",
+      measurementId: "G-7DPN7Q8EQ0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("submitOrder").onclick = async () => {
+        const nama = document.getElementById("nama").value;
+        const produk = document.getElementById("produk").value;
+        const referral = localStorage.getItem("referral_from") || "direct";
+
+        if (!nama || !produk) {
+          alert("Sila isi semua maklumat.");
+          return;
+        }
+
+        try {
+          await addDoc(collection(db, "orders"), {
+            nama: nama,
+            produk: produk,
+            referral: referral,
+            tarikh: Timestamp.now()
+          });
+          alert("Pembelian berjaya direkodkan!");
+        } catch (error) {
+          alert("Ralat semasa merekodkan pembelian: " + error.message);
+        }
+      };
+    });
+  </script>
+</head>
+<body>
+  <h2>Borang Pembelian</h2>
+  <input type="text" id="nama" placeholder="Nama Pembeli"><br><br>
+  <select id="produk">
+    <option value="">-- Pilih Produk --</option>
+    <option value="Buku Teknik Taming Sari">Buku Teknik Taming Sari</option>
+    <option value="Coaching VIP Gold">Coaching VIP Gold</option>
+    <option value="Indicator Lifetime Access">Indicator Lifetime Access</option>
+  </select><br><br>
+  <button id="submitOrder">Hantar</button>
+</body>
+</html>
