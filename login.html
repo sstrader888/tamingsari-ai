@@ -62,6 +62,10 @@
 
 <div class="box">
   <h3>Daftar Akaun</h3>
+  <input type="text" id="regNama" placeholder="Nama Penuh">
+  <input type="text" id="regTelefon" placeholder="No. Telefon">
+  <input type="text" id="regNamaBank" placeholder="Nama Bank">
+  <input type="text" id="regAkaunBank" placeholder="No. Akaun Bank">
   <input type="email" id="regEmail" placeholder="Email">
   <input type="password" id="regPassword" placeholder="Kata Laluan">
   <input type="text" id="refID" placeholder="Referral ID (Contoh: cgheri)">
@@ -109,6 +113,10 @@
     const email = document.getElementById("regEmail").value;
     const password = document.getElementById("regPassword").value;
     const refID = document.getElementById("refID").value.toLowerCase();
+    const nama = document.getElementById("regNama").value;
+    const telefon = document.getElementById("regTelefon").value;
+    const namaBank = document.getElementById("regNamaBank").value;
+    const akaunBank = document.getElementById("regAkaunBank").value;
 
     if (!refID || refID.includes(" ")) {
       alert("Sila masukkan Referral ID yang sah tanpa ruang.");
@@ -126,7 +134,11 @@
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await setDoc(doc(db, "users", userCredential.user.uid), {
         email: email,
-        refID: refID
+        refID: refID,
+        nama: nama,
+        telefon: telefon,
+        namaBank: namaBank,
+        akaunBank: akaunBank
       });
       alert("Pendaftaran berjaya!");
     } catch (error) {
@@ -154,7 +166,6 @@
       document.getElementById("refLink").innerHTML = "https://thesstrader.com/?ref=" + refID;
       document.getElementById("refBox").style.display = "block";
 
-      // Dapatkan senarai order referral
       const orderQuery = query(collection(db, "orders"), where("referral", "==", refID));
       const ordersSnap = await getDocs(orderQuery);
       const ordersDiv = document.getElementById("orders");
