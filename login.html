@@ -1,135 +1,30 @@
 <!DOCTYPE html>
-<html lang="ms">
-<head>
-  <meta charset="UTF-8">
-  <title>Login Affiliate | SStrader</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f5f5f5;
-      text-align: center;
-      padding: 30px;
-    }
-    .box {
-      max-width: 400px;
-      background: white;
-      margin: auto;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-    }
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #ff6600;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background-color: #cc5500;
-    }
-    #refBox {
-      margin-top: 30px;
-      background: #eee;
-      padding: 20px;
-      border-radius: 10px;
-      display: none;
-    }
-  </style>
-</head>
-<body>
+<html>
+  <body>
+    <h2>Test Firebase Connection</h2>
+    <div id="result"></div>
 
-<h1>Sistem Affiliate SStrader</h1>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-<div class="box">
-  <h2>Daftar Akaun</h2>
-  <input type="email" id="regEmail" placeholder="Email"><br>
-  <input type="password" id="regPassword" placeholder="Kata Laluan"><br>
-  <button id="registerBtn">Daftar</button>
-</div>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+        authDomain: "sstrader-affiliate.firebaseapp.com",
+        projectId: "sstrader-affiliate",
+        storageBucket: "sstrader-affiliate.firebasestorage.app",
+        messagingSenderId: "859244663056",
+        appId: "1:859244663056:web:4fbad1a3655ff85f499595",
+        measurementId: "G-7DPN7Q8EQ0"
+      };
 
-<div class="box">
-  <h2>Log Masuk</h2>
-  <input type="email" id="loginEmail" placeholder="Email"><br>
-  <input type="password" id="loginPassword" placeholder="Kata Laluan"><br>
-  <button id="loginBtn">Login</button>
-</div>
-
-<div id="refBox">
-  <p id="userInfo"></p>
-  <p><strong>Link Referral Anda:</strong></p>
-  <p id="refLink" style="word-break: break-all;"></p>
-  <button id="logoutBtn">Logout</button>
-</div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-    authDomain: "sstrader-affiliate.firebaseapp.com",
-    projectId: "sstrader-affiliate",
-    storageBucket: "sstrader-affiliate.firebasestorage.app",
-    messagingSenderId: "859244663056",
-    appId: "1:859244663056:web:4fbad1a3655ff85f499595",
-    measurementId: "G-7DPN7Q8EQ0"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  document.getElementById("registerBtn").onclick = function () {
-    const email = document.getElementById("regEmail").value;
-    const password = document.getElementById("regPassword").value;
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        alert("Pendaftaran berjaya!");
-      })
-      .catch((error) => {
-        alert("Ralat: " + error.message);
-      });
-  };
-
-  document.getElementById("loginBtn").onclick = function () {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        alert("Log masuk berjaya!");
-      })
-      .catch((error) => {
-        alert("Ralat: " + error.message);
-      });
-  };
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const username = user.email.split("@")[0];
-      document.getElementById("userInfo").innerHTML = "✅ Log masuk sebagai: " + user.email;
-      document.getElementById("refLink").innerHTML = "https://thesstrader.com/?ref=" + username;
-      document.getElementById("refBox").style.display = "block";
-    } else {
-      document.getElementById("refBox").style.display = "none";
-    }
-  });
-
-  document.getElementById("logoutBtn").onclick = function () {
-    signOut(auth);
-  };
-</script>
-
-</body>
+      try {
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        document.getElementById("result").innerText = "✅ Firebase berjaya dihubungkan!";
+      } catch (error) {
+        document.getElementById("result").innerText = "❌ Ralat Firebase: " + error.message;
+      }
+    </script>
+  </body>
 </html>
