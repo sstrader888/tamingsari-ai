@@ -1,4 +1,3 @@
-<!-- Updated login.html with professional layout and referral dashboard -->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -7,11 +6,6 @@
   <title>Login Affiliate | SStrader</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     body {
       font-family: 'Inter', sans-serif;
       background: #f4f7fc;
@@ -61,20 +55,6 @@
     button:hover {
       background-color: #e65c00;
     }
-    #referralSection {
-      background-color: #eafaf1;
-      border-left: 6px solid #38c172;
-      padding: 15px 20px;
-      margin-bottom: 20px;
-      display: none;
-    }
-    .order-item {
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
-    .logout-btn {
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
@@ -99,29 +79,62 @@
     <input type="password" id="loginPassword" placeholder="Kata Laluan" />
     <button id="loginBtn">Login</button>
   </div>
-
-  <div id="referralSection">
-    <p id="userInfo"></p>
-    <p><strong>Link Referral Anda:</strong> <span id="refLink"></span></p>
-
-    <div class="card">
-      <h3>Rekod Pembelian</h3>
-      <input type="text" id="buyerName" placeholder="Nama Pembeli" />
-      <input type="text" id="productName" placeholder="Nama Produk" />
-      <button id="buyBtn">Buat Pembelian</button>
-    </div>
-
-    <div class="card">
-      <h3>Senarai Pembelian Referral</h3>
-      <div id="orders"></div>
-    </div>
-
-    <button id="logoutBtn" class="logout-btn">Logout</button>
-  </div>
 </div>
 
 <script type="module">
-// Firebase codes here (same as before)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+    authDomain: "sstrader-affiliate.firebaseapp.com",
+    projectId: "sstrader-affiliate",
+    storageBucket: "sstrader-affiliate.appspot.com",
+    messagingSenderId: "859244663056",
+    appId: "1:859244663056:web:4fbad1a3655ff85f499595",
+    measurementId: "G-7DPN7Q8EQ0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const registerBtn = document.getElementById('registerBtn');
+  const loginBtn = document.getElementById('loginBtn');
+
+  registerBtn.addEventListener('click', async () => {
+    const nama = document.getElementById('regNama').value;
+    const telefon = document.getElementById('regTelefon').value;
+    const bank = document.getElementById('regNamaBank').value;
+    const akaun = document.getElementById('regAkaunBank').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const refID = document.getElementById('refID').value;
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        nama, telefon, bank, akaun, email, refID, uid: userCredential.user.uid
+      });
+      alert("Pendaftaran berjaya!");
+      window.location.href = 'dashboard.html';
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  loginBtn.addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = 'dashboard.html';
+    } catch (error) {
+      alert(error.message);
+    }
+  });
 </script>
 </body>
 </html>
