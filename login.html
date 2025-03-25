@@ -1,4 +1,4 @@
-<!-- Updated login.html with Referral ID linked to UID -->
+<!-- Updated login.html with Referral ID linked to UID and referral tracking in index.html + Dashboard for agents -->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -22,7 +22,7 @@
       max-width: 400px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    input {
+    input, select {
       width: 90%;
       padding: 10px;
       margin: 10px 0;
@@ -41,12 +41,18 @@
     button:hover {
       background-color: #cc5500;
     }
-    #refBox {
+    #refBox, #orderList {
       margin-top: 30px;
       background: #e6ffe6;
       padding: 20px;
       border-radius: 10px;
       display: none;
+    }
+    .order-item {
+      text-align: left;
+      margin: 10px 0;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
     }
   </style>
 </head>
@@ -73,6 +79,10 @@
   <p id="userInfo"></p>
   <p><strong>Link Referral Anda:</strong></p>
   <p id="refLink" style="word-break: break-word;"></p>
+  <div id="orderList">
+    <h3>Senarai Pembeli Dari Referral Anda:</h3>
+    <div id="orders"></div>
+  </div>
   <button id="logoutBtn">Logout</button>
 </div>
 
@@ -105,7 +115,6 @@
       return;
     }
 
-    // Check if refID is already used
     const q = query(collection(db, "users"), where("refID", "==", refID));
     const existing = await getDocs(q);
     if (!existing.empty) {
@@ -144,12 +153,36 @@
       document.getElementById("userInfo").innerHTML = "✅ Log masuk sebagai: " + user.email;
       document.getElementById("refLink").innerHTML = "https://thesstrader.com/?ref=" + refID;
       document.getElementById("refBox").style.display = "block";
+
+      // Dapatkan senarai order referral
+      const orderQuery = query(collection(db, "orders"), where("referral", "==", refID));
+      const ordersSnap = await getDocs(orderQuery);
+      const ordersDiv = document.getElementById("orders");
+      ordersDiv.innerHTML = "";
+
+      if (ordersSnap.empty) {
+        ordersDiv.innerHTML = "Tiada pembelian setakat ini.";
+      } else {
+        ordersSnap.forEach((doc) => {
+          const d = doc.data();
+          ordersDiv.innerHTML += `<div class='order-item'><strong>${d.nama}</strong> membeli <em>${d.produk}</em> pada ${new Date(d.tarikh.seconds * 1000).toLocaleString()}</div>`;
+        });
+        document.getElementById("orderList").style.display = "block";
+      }
     } else {
       document.getElementById("refBox").style.display = "none";
     }
   });
 
   document.getElementById("logoutBtn").onclick = () => signOut(auth);
+</script>
+
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get("ref");
+  if (ref) {
+    localStorage.setItem("referral_from", ref);
+  }
 </script>
 
 </body>
