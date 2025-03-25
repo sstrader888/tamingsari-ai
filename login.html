@@ -91,7 +91,6 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // Daftar Akaun
   document.getElementById("registerBtn").onclick = function () {
     const email = document.getElementById("regEmail").value;
     const password = document.getElementById("regPassword").value;
@@ -104,7 +103,6 @@
       });
   };
 
-  // Log Masuk
   document.getElementById("loginBtn").onclick = function () {
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
@@ -117,7 +115,6 @@
       });
   };
 
-  // Bila berjaya login, papar ref link
   onAuthStateChanged(auth, (user) => {
     if (user) {
       const username = user.email.split("@")[0];
@@ -129,7 +126,6 @@
     }
   });
 
-  // Logout
   document.getElementById("logoutBtn").onclick = function () {
     signOut(auth);
   };
