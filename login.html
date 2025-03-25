@@ -1,3 +1,4 @@
+<!-- Updated login.html with custom Referral ID -->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -57,6 +58,7 @@
   <h3>Daftar Akaun</h3>
   <input type="email" id="regEmail" placeholder="Email">
   <input type="password" id="regPassword" placeholder="Kata Laluan">
+  <input type="text" id="refID" placeholder="Referral ID (Contoh: cgheri)">
   <button id="registerBtn">Daftar</button>
 </div>
 
@@ -77,6 +79,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
@@ -90,13 +93,35 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  document.getElementById("registerBtn").onclick = function () {
+  document.getElementById("registerBtn").onclick = async function () {
     const email = document.getElementById("regEmail").value;
     const password = document.getElementById("regPassword").value;
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(() => alert("Pendaftaran berjaya!"))
-      .catch((error) => alert("Ralat: " + error.message));
+    const refID = document.getElementById("refID").value.toLowerCase();
+
+    if (!refID || refID.includes(" ")) {
+      alert("Sila masukkan Referral ID yang sah tanpa ruang.");
+      return;
+    }
+
+    const refDoc = await getDoc(doc(db, "users", refID));
+    if (refDoc.exists()) {
+      alert("Referral ID telah digunakan. Sila pilih ID lain.");
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, "users", refID), {
+        uid: userCredential.user.uid,
+        email: email,
+        refID: refID
+      });
+      alert("Pendaftaran berjaya!");
+    } catch (error) {
+      alert("Ralat: " + error.message);
+    }
   };
 
   document.getElementById("loginBtn").onclick = function () {
@@ -107,11 +132,19 @@
       .catch((error) => alert("Ralat: " + error.message));
   };
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
-      const username = user.email.split("@")[0];
+      let refID = "";
+      const snapshot = await getDoc(doc(db, "users", user.uid));
+      if (snapshot.exists()) {
+        refID = snapshot.data().refID;
+      } else {
+        const allUsers = await getDoc(doc(db, "users", user.email.split("@")[0]));
+        if (allUsers.exists()) refID = allUsers.id;
+      }
+
       document.getElementById("userInfo").innerHTML = "✅ Log masuk sebagai: " + user.email;
-      document.getElementById("refLink").innerHTML = "https://thesstrader.com/?ref=" + username;
+      document.getElementById("refLink").innerHTML = "https://thesstrader.com/?ref=" + refID;
       document.getElementById("refBox").style.display = "block";
     } else {
       document.getElementById("refBox").style.display = "none";
