@@ -2,68 +2,161 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard Affiliate</title>
+  <title>Dashboard Affiliate | SStrader</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #1a1a1a, #2c2c2c);
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(to right, #ffcc00, #ff6600);
+      color: black;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+    .card {
+      background: #333;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .card h2 {
+      font-size: 32px;
+      color: #ffcc00;
+    }
+    .card p {
+      font-size: 16px;
+      color: #ccc;
+    }
+    .ref-link {
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 16px;
+      margin: 20px 0;
+      word-break: break-all;
+    }
+    .ref-list {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .ref-list li {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+      color: #eee;
+    }
+    button {
+      background-color: #ff6600;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 30px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #cc5500;
+    }
+  </style>
 </head>
-<body style="font-family:sans-serif; text-align:center; padding:30px;">
-  <h1>Selamat Datang ke Dashboard</h1>
-  <div id="userInfo"></div>
-  <h3 id="refLink"></h3>
-  <h2>Jumlah Referral: <span id="refCount">0</span></h2>
-  <h2>Jumlah Komisen: RM <span id="komisen">0</span></h2>
+<body>
 
-  <ul id="refList" style="max-width:500px; margin:auto; text-align:left;"></ul>
+<header>
+  Dashboard Affiliate | SStrader
+</header>
+
+<div class="container">
+  <div id="userInfo"></div>
+
+  <div class="ref-link" id="refLink"></div>
+
+  <div class="card">
+    <h2><span id="refCount">0</span></h2>
+    <p>Referral Berjaya</p>
+  </div>
+
+  <div class="card">
+    <h2>RM <span id="komisen">0</span></h2>
+    <p>Jumlah Komisen Terkumpul</p>
+  </div>
+
+  <div class="ref-list">
+    <h3>📋 Senarai Referral</h3>
+    <ul id="refList" style="list-style: none; padding: 0;"></ul>
+  </div>
 
   <button onclick="logout()">Logout</button>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-      authDomain: "sstrader-affiliate.firebaseapp.com",
-      projectId: "sstrader-affiliate",
-      storageBucket: "sstrader-affiliate.firebasestorage.app",
-      messagingSenderId: "859244663056",
-      appId: "1:859244663056:web:4fbad1a3655ff85f499595",
-      measurementId: "G-7DPN7Q8EQ0"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+    authDomain: "sstrader-affiliate.firebaseapp.com",
+    projectId: "sstrader-affiliate",
+    storageBucket: "sstrader-affiliate.firebasestorage.app",
+    messagingSenderId: "859244663056",
+    appId: "1:859244663056:web:4fbad1a3655ff85f499595",
+    measurementId: "G-7DPN7Q8EQ0"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const username = user.email.split("@")[0];
-        document.getElementById("userInfo").innerHTML = "Login sebagai: <strong>" + user.email + "</strong>";
-        document.getElementById("refLink").innerHTML = "Link Referral Anda:<br><strong>https://thesstrader.com/?ref=" + username + "</strong>";
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const username = user.email.split("@")[0];
+      document.getElementById("userInfo").innerHTML = "<p>✅ Log masuk sebagai: <strong>" + user.email + "</strong></p>";
+      document.getElementById("refLink").innerHTML = "Link Referral Anda: <br><strong>https://thesstrader.com/?ref=" + username + "</strong>";
 
-        const q = query(collection(db, "referrals"), where("referrer", "==", username));
-        const querySnapshot = await getDocs(q);
+      const q = query(collection(db, "referrals"), where("referrer", "==", username));
+      const querySnapshot = await getDocs(q);
 
-        let count = 0;
-        let htmlList = "";
-        querySnapshot.forEach((doc) => {
-          count++;
-          const data = doc.data();
-          htmlList += `<li>${new Date(data.date).toLocaleString()} - halaman: ${data.page}</li>`;
-        });
+      let count = 0;
+      let htmlList = "";
+      querySnapshot.forEach((doc) => {
+        count++;
+        const data = doc.data();
+        htmlList += `<li>${new Date(data.date).toLocaleString()}<br><small>halaman: ${data.page}</small></li>`;
+      });
 
-        document.getElementById("refCount").textContent = count;
-        document.getElementById("komisen").textContent = count * 10; // RM10 setiap referral
-        document.getElementById("refList").innerHTML = htmlList;
+      document.getElementById("refCount").textContent = count;
+      document.getElementById("komisen").textContent = count * 10;
+      document.getElementById("refList").innerHTML = htmlList;
 
-      } else {
-        window.location.href = "login.html";
-      }
-    });
-
-    function logout() {
-      signOut(auth);
+    } else {
+      window.location.href = "login.html";
     }
-  </script>
+  });
+
+  function logout() {
+    signOut(auth);
+  }
+</script>
+
 </body>
 </html>
