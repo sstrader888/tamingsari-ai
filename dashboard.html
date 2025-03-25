@@ -94,7 +94,7 @@
         if (userDoc.exists()) {
           const data = userDoc.data();
           userEmail.textContent = data.email;
-          const refCode = data.referralCode;
+          const refCode = userDoc.refID;
           refLink.textContent = `https://thesstrader.com/?ref=${refCode}`;
 
           const q = query(collection(db, "orders"), where("referral", "==", refCode));
