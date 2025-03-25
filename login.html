@@ -63,17 +63,17 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      apiKey: "AIzaSyBd-yRUKJq7mcFk8eWrChdc1zZDRokytmU",
       authDomain: "sstrader-affiliate.firebaseapp.com",
       projectId: "sstrader-affiliate",
       storageBucket: "sstrader-affiliate.appspot.com",
-      messagingSenderId: "859244663056",
-      appId: "1:859244663056:web:4fbad1a3655ff85f499595",
-      measurementId: "G-7DPN7Q8EQ0"
+      messagingSenderId: "321716367892",
+      appId: "1:321716367892:web:beea6632cb97c7e84b69f5",
+      measurementId: "G-7DN7PQ8EQ0"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -93,6 +93,13 @@
         .catch((error) => {
           errorMsg.textContent = "Ralat: " + error.message;
         });
+    });
+
+    // Tambahan: pastikan user kekal login jika buka balik laman ini
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "dashboard.html";
+      }
     });
   </script>
 </body>
