@@ -5,11 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login / Daftar Affiliate</title>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-  <script>
-    // firebase.js
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
       authDomain: "sstrader-affiliate.firebaseapp.com",
@@ -19,9 +19,44 @@
       appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
       measurementId: "G-54ZR1GG7ML"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.register = async function () {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const refId = email.split('@')[0] + Math.floor(Math.random() * 1000);
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", cred.user.uid), {
+          name,
+          email,
+          refId,
+          createdAt: new Date()
+        });
+        document.getElementById('status').textContent = "Pendaftaran berjaya!";
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        document.getElementById('status').textContent = error.message;
+      }
+    }
+
+    window.login = async function () {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        document.getElementById('status').textContent = "Login berjaya!";
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        document.getElementById('status').textContent = error.message;
+      }
+    }
   </script>
   <style>
     body { font-family: Arial; background: #111; color: white; text-align: center; padding: 40px; }
@@ -40,41 +75,5 @@
     <button onclick="login()">Login</button>
   </div>
   <p id="status"></p>
-
-  <script>
-    async function register() {
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const refId = email.split('@')[0] + Math.floor(Math.random() * 1000);
-
-      try {
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection("users").doc(cred.user.uid).set({
-          name,
-          email,
-          refId,
-          createdAt: new Date()
-        });
-        document.getElementById('status').textContent = "Pendaftaran berjaya!";
-        window.location.href = "dashboard.html";
-      } catch (error) {
-        document.getElementById('status').textContent = error.message;
-      }
-    }
-
-    async function login() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        await auth.signInWithEmailAndPassword(email, password);
-        document.getElementById('status').textContent = "Login berjaya!";
-        window.location.href = "dashboard.html";
-      } catch (error) {
-        document.getElementById('status').textContent = error.message;
-      }
-    }
-  </script>
 </body>
 </html>
