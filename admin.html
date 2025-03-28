@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Admin - Tebus Point</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.appspot.com",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
+      measurementId: "G-54ZR1GG7ML"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    async function loadRedemptions() {
+      const snapshot = await getDocs(collection(db, "redemptions"));
+      const table = document.getElementById("redeemTableBody");
+      table.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${data.email}</td>
+          <td>${data.redeemPoints}</td>
+          <td>${data.bankName}</td>
+          <td>${data.accNumber}</td>
+          <td>${data.status}</td>
+          <td>
+            <button onclick="approveRequest('${docSnap.id}')">Luluskan</button>
+            <button onclick="rejectRequest('${docSnap.id}')">Tolak</button>
+          </td>`;
+        table.appendChild(tr);
+      });
+    }
+
+    window.approveRequest = async function (id) {
+      await updateDoc(doc(db, "redemptions", id), { status: "Diluluskan" });
+      loadRedemptions();
+    }
+
+    window.rejectRequest = async function (id) {
+      await updateDoc(doc(db, "redemptions", id), { status: "Ditolak" });
+      loadRedemptions();
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadRedemptions();
+      } else {
+        alert("Sila login untuk akses panel admin.");
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</head>
+<body style="background:#111; color:#fff; font-family:sans-serif; padding:20px;">
+  <h2>Panel Admin - Permintaan Tebus Point</h2>
+  <table border="1" style="width:100%; border-collapse:collapse; background:#222; color:#fff;">
+    <thead style="background:#444;">
+      <tr>
+        <th>Email</th>
+        <th>Jumlah Point</th>
+        <th>Nama Bank</th>
+        <th>No Akaun</th>
+        <th>Status</th>
+        <th>Tindakan</th>
+      </tr>
+    </thead>
+    <tbody id="redeemTableBody">
+      <tr><td colspan="6" style="text-align:center;">Memuatkan data...</td></tr>
+    </tbody>
+  </table>
+</body>
+</html>
