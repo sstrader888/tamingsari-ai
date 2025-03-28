@@ -161,5 +161,58 @@
       });
     }
   </script>
+  <!-- ... (dokumen sedia ada) ... -->
+
+    <div class="card">
+      <h3>Tebus Mata (Point)</h3>
+      <form id="redeemForm">
+        <label for="redeemPoints">Jumlah Mata Ingin Ditebus:</label>
+        <input type="number" id="redeemPoints" name="redeemPoints" min="100" required style="width:100%; padding:10px; margin:10px 0; border-radius:5px; border:none;">
+
+        <label for="bankName">Nama Bank:</label>
+        <input type="text" id="bankName" name="bankName" required style="width:100%; padding:10px; margin:10px 0; border-radius:5px; border:none;">
+
+        <label for="accNumber">No Akaun Bank:</label>
+        <input type="text" id="accNumber" name="accNumber" required style="width:100%; padding:10px; margin:10px 0; border-radius:5px; border:none;">
+
+        <button type="submit" class="logout-btn" style="background-color:#ff9900;">Hantar Permintaan Tebus</button>
+        <p id="redeemStatus"></p>
+      </form>
+    </div>
+
+<script type="module">
+// Tambahan pada skrip sedia ada (letak selepas window.logout = function...)
+import { collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const form = document.getElementById("redeemForm");
+form.addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const redeemPoints = document.getElementById("redeemPoints").value;
+  const bankName = document.getElementById("bankName").value;
+  const accNumber = document.getElementById("accNumber").value;
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    await addDoc(collection(db, "redemptions"), {
+      userId: user.uid,
+      email: user.email,
+      redeemPoints: parseInt(redeemPoints),
+      bankName,
+      accNumber,
+      status: "Menunggu Semakan",
+      createdAt: Timestamp.now()
+    });
+    document.getElementById("redeemStatus").textContent = "Permintaan dihantar. Sila tunggu semakan admin.";
+    form.reset();
+  } catch (err) {
+    document.getElementById("redeemStatus").textContent = "Ralat berlaku: " + err.message;
+  }
+});
+</script>
+<!-- ... (tamat dokumen) ... -->
+
 </body>
 </html>
