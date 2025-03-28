@@ -161,22 +161,28 @@
       });
     }
   </script>
-  <!-- ... (dokumen sedia ada) ... -->
+<!-- ... (dokumen sedia ada) ... -->
 
-    <div class="card">
+    <div class="card" style="max-width: 500px; margin: 0 auto;">
       <h3>Tebus Mata (Point)</h3>
       <form id="redeemForm">
-        <label for="redeemPoints">Jumlah Mata Ingin Ditebus:</label>
-        <input type="number" id="redeemPoints" name="redeemPoints" min="100" required style="width:100%; padding:10px; margin:10px 0; border-radius:5px; border:none;">
+        <div style="margin-bottom: 10px;">
+          <label for="redeemPoints">Jumlah Mata Ingin Ditebus:</label>
+          <input type="number" id="redeemPoints" name="redeemPoints" min="100" required style="width:100%; padding:10px; border-radius:5px; border:none;">
+        </div>
 
-        <label for="bankName">Nama Bank:</label>
-        <input type="text" id="bankName" name="bankName" required style="width:100%; padding:10px; margin:10px 0; border-radius:5px; border:none;">
+        <div style="margin-bottom: 10px;">
+          <label for="bankName">Nama Bank:</label>
+          <input type="text" id="bankName" name="bankName" required style="width:100%; padding:10px; border-radius:5px; border:none;">
+        </div>
 
-        <label for="accNumber">No Akaun Bank:</label>
-        <input type="text" id="accNumber" name="accNumber" required style="width:100%; padding:10px; margin:10px 0; border-radius:5px; border:none;">
+        <div style="margin-bottom: 10px;">
+          <label for="accNumber">No Akaun Bank:</label>
+          <input type="text" id="accNumber" name="accNumber" required style="width:100%; padding:10px; border-radius:5px; border:none;">
+        </div>
 
-        <button type="submit" class="logout-btn" style="background-color:#ff9900;">Hantar Permintaan Tebus</button>
-        <p id="redeemStatus"></p>
+        <button type="submit" class="logout-btn" style="background-color:#ff9900; width:100%;">Hantar Permintaan Tebus</button>
+        <p id="redeemStatus" style="margin-top:10px;"></p>
       </form>
     </div>
 
