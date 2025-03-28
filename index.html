@@ -596,6 +596,41 @@
     document.getElementById("popup-toggle").style.display = "none";
   });
 </script>
+
+<!-- Butang Login Terapung -->
+<a href="login.html" class="login-btn-affiliate">🔐 Login Affiliate</a>
+
+<style>
+  .login-btn-affiliate {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #ff6600;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    z-index: 9999;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    transition: background 0.3s;
+  }
+
+  .login-btn-affiliate:hover {
+    background-color: #cc5500;
+  }
+
+  @media screen and (max-width: 600px) {
+    .login-btn-affiliate {
+      font-size: 13px;
+      padding: 8px 12px;
+      top: 15px;
+      right: 15px;
+    }
+  }
+</style>
+
   
 </body>
 </html>
