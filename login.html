@@ -88,12 +88,15 @@
     }
     .container {
       display: flex;
-      height: 100vh;
+      flex-direction: row;
+      min-height: 100vh;
     }
     .left-panel {
       flex: 1;
       background: url('https://i.imgur.com/1Ziuyij.jpeg') no-repeat center center;
-      background-size: cover;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-color: #000;
     }
     .right-panel {
       flex: 1;
@@ -102,13 +105,14 @@
       justify-content: center;
       position: relative;
       background: #111;
+      padding: 20px;
     }
     .form-box {
       background: #222;
-      padding: 40px;
+      padding: 30px;
       border-radius: 10px;
-      max-width: 400px;
       width: 100%;
+      max-width: 400px;
     }
     input, textarea {
       padding: 10px;
@@ -116,6 +120,11 @@
       margin: 10px 0;
       border: none;
       border-radius: 5px;
+    }
+    input[type="date"]::before {
+      content: attr(placeholder);
+      color: #999;
+      margin-right: 10px;
     }
     button {
       padding: 10px 20px;
@@ -141,7 +150,19 @@
       left: 20px;
     }
     .logo-top img {
-      width: 140px;
+      width: 100px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .left-panel {
+        height: 200px;
+        background-size: cover;
+      }
+      .right-panel {
+        padding: 10px;
+      }
     }
   </style>
 </head>
