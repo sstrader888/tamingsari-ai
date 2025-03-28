@@ -1,100 +1,80 @@
+<!-- login.html -->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Log Masuk Agen | SStrader</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Login / Daftar Affiliate</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+  <script>
+    // firebase.js
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.firebasestorage.app",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
+      measurementId: "G-54ZR1GG7ML"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f4f7fc;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-    .container {
-      max-width: 400px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #2b2d42;
-    }
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #ff6600;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #e65c00;
-    }
-    .error {
-      color: red;
-      margin-top: 10px;
-    }
+    body { font-family: Arial; background: #111; color: white; text-align: center; padding: 40px; }
+    input { padding: 10px; width: 250px; margin: 10px; }
+    button { padding: 10px 20px; margin-top: 10px; background: #ff6600; color: white; border: none; }
+    .form-box { background: #222; padding: 30px; border-radius: 10px; display: inline-block; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Log Masuk Agen</h2>
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="password" id="password" placeholder="Kata Laluan" required>
-    <button id="loginBtn">Log Masuk</button>
-    <p class="error" id="errorMsg"></p>
+  <h2>Login / Daftar Akaun Affiliate</h2>
+  <div class="form-box">
+    <input type="text" id="name" placeholder="Nama Penuh"><br>
+    <input type="email" id="email" placeholder="Email"><br>
+    <input type="password" id="password" placeholder="Kata Laluan"><br>
+    <button onclick="register()">Daftar</button>
+    <button onclick="login()">Login</button>
   </div>
+  <p id="status"></p>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+  <script>
+    async function register() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const refId = email.split('@')[0] + Math.floor(Math.random() * 1000);
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-  authDomain: "sstrader-affiliate.firebaseapp.com",
-  projectId: "sstrader-affiliate",
-  storageBucket: "sstrader-affiliate.appspot.com", // ✅ Diperbetulkan di sini
-  messagingSenderId: "859244663056",
-  appId: "1:859244663056:web:4fbad1a3655ff85f499595",
-  measurementId: "G-7DPN7Q8EQ0"
-};
-
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    const loginBtn = document.getElementById("loginBtn");
-    const errorMsg = document.getElementById("errorMsg");
-
-    loginBtn.addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-          errorMsg.textContent = "Ralat: " + error.message;
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection("users").doc(cred.user.uid).set({
+          name,
+          email,
+          refId,
+          createdAt: new Date()
         });
-    });
+        document.getElementById('status').textContent = "Pendaftaran berjaya!";
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        document.getElementById('status').textContent = error.message;
+      }
+    }
+
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        document.getElementById('status').textContent = "Login berjaya!";
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        document.getElementById('status').textContent = error.message;
+      }
+    }
   </script>
 </body>
 </html>
