@@ -126,6 +126,22 @@
     </div>
 
     <div class="card">
+      <h3>Status Jualan Mengikut Produk</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Produk</th>
+            <th>Bilangan Jualan</th>
+            <th>Jumlah Komisyen</th>
+          </tr>
+        </thead>
+        <tbody id="salesStatus">
+          <tr><td colspan="3" style="text-align:center; padding: 20px; color: #888;">Memuatkan data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
       <h3>Tebus Mata (Point)</h3>
       <form id="redeemForm">
         <div style="margin-bottom: 10px;">
@@ -194,27 +210,31 @@
       if (!userSnap.exists()) return;
 
       const userData = userSnap.data();
-
       document.getElementById("userName").textContent = userData.name;
       document.getElementById("userEmail").textContent = userData.email;
       document.getElementById("referralLink").textContent = `${window.location.origin}/?ref=${userData.refId}`;
 
-      document.getElementById("refClick").textContent = 12;
-      document.getElementById("totalSales").textContent = "RM410";
-      document.getElementById("totalPoints").textContent = 200;
-      document.getElementById("redeemable").textContent = "RM20";
-
-      const clientList = document.getElementById("clientList");
       const q = query(collection(db, "clients"), where("referrerId", "==", userData.refId));
       const qSnap = await getDocs(q);
+
+      const clientList = document.getElementById("clientList");
+      const salesStatus = document.getElementById("salesStatus");
+
+      let salesSummary = {};
+      let totalPoints = 0;
+
       clientList.innerHTML = "";
+      salesStatus.innerHTML = "";
 
       if (qSnap.empty) {
         clientList.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#888;'>Tiada client berdaftar setakat ini.</td></tr>`;
+        salesStatus.innerHTML = `<tr><td colspan='3' style='text-align:center; color:#888;'>Tiada data jualan.</td></tr>`;
       } else {
         qSnap.forEach(docSnap => {
           const data = docSnap.data();
           const tarikh = data.date?.seconds ? new Date(data.date.seconds * 1000).toLocaleDateString() : "-";
+
+          // Client List Row
           const row = `
             <tr>
               <td>${data.name || '-'}</td>
@@ -224,7 +244,35 @@
               <td>${data.point || 0}</td>
             </tr>`;
           clientList.innerHTML += row;
+
+          totalPoints += data.point || 0;
+
+          const product = data.product || "Lain-lain";
+          const commission = {
+            "Buku Fizikal": 5,
+            "Coaching 1-on-1": 200,
+            "Coaching Group (6 org)": 350,
+            "Indicator AI": 150
+          }[product] || 0;
+
+          if (!salesSummary[product]) {
+            salesSummary[product] = { count: 0, total: 0 };
+          }
+          salesSummary[product].count++;
+          salesSummary[product].total += commission;
         });
+
+        for (let product in salesSummary) {
+          salesStatus.innerHTML += `
+            <tr>
+              <td>${product}</td>
+              <td>${salesSummary[product].count}</td>
+              <td>RM${salesSummary[product].total}</td>
+            </tr>`;
+        }
+
+        document.getElementById("totalPoints").textContent = totalPoints;
+        document.getElementById("redeemable").textContent = "RM" + (totalPoints * 0.1).toFixed(2);
       }
     });
 
