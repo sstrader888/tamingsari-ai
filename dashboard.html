@@ -1,136 +1,63 @@
+<!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Agen | SStrader</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Dashboard Affiliate</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.firebasestorage.app",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
+      measurementId: "G-54ZR1GG7ML"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f4f7fc;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
-    h2 {
-      text-align: center;
-      color: #2b2d42;
-      margin-bottom: 20px;
-    }
-    .info {
-      background: #e6f4ea;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-    .info strong {
-      display: block;
-      margin-bottom: 5px;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    button {
-      background: #ff3b3b;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+    body { font-family: Arial; background: #111; color: white; text-align: center; padding: 40px; }
+    .dashboard-box { background: #222; padding: 30px; border-radius: 10px; display: inline-block; max-width: 400px; margin-top: 20px; }
+    .logout-btn { background: crimson; color: white; border: none; padding: 10px 20px; cursor: pointer; margin-top: 20px; }
+    .ref-link { background: #444; padding: 10px; margin: 10px 0; border-radius: 5px; word-break: break-all; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Dashboard Agen</h2>
-    <div class="info">
-      <strong>Email:</strong> <span id="userEmail">Memuat...</span><br>
-      <strong>Link Referral:</strong> <span id="refLink">Memuat...</span><br>
-      <strong>Jumlah Komisen Terkumpul:</strong> <span id="totalKomisen">RM0.00</span>
-    </div>
-
-    <h3>Senarai Pembelian Referral:</h3>
-    <ul id="orderList"></ul>
-
-    <button id="logoutBtn">Log Keluar</button>
+  <h2>Selamat Datang ke Dashboard Affiliate</h2>
+  <div class="dashboard-box">
+    <p><strong>Nama:</strong> <span id="username"></span></p>
+    <p><strong>Email:</strong> <span id="useremail"></span></p>
+    <p><strong>Referral Link:</strong></p>
+    <div class="ref-link" id="refLink"></div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-  authDomain: "sstrader-affiliate.firebaseapp.com",
-  projectId: "sstrader-affiliate",
-  storageBucket: "sstrader-affiliate.appspot.com", // ✅ Diperbetulkan di sini
-  messagingSenderId: "859244663056",
-  appId: "1:859244663056:web:4fbad1a3655ff85f499595",
-  measurementId: "G-7DPN7Q8EQ0"
-};
-
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const userEmail = document.getElementById("userEmail");
-    const refLink = document.getElementById("refLink");
-    const totalKomisen = document.getElementById("totalKomisen");
-    const orderList = document.getElementById("orderList");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    onAuthStateChanged(auth, async (user) => {
+  <script>
+    auth.onAuthStateChanged(async (user) => {
       if (!user) {
         window.location.href = "login.html";
         return;
       }
-
-      const uid = user.uid;
-      const userDocRef = doc(db, "users", uid);
-      const userSnap = await getDoc(userDocRef);
-
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-        const refID = data.refID || "tidak tersedia";
-
-        userEmail.textContent = data.email;
-        refLink.textContent = `https://thesstrader.com/?ref=${refID}`;
-
-        const q = query(collection(db, "orders"), where("referral", "==", refID));
-        const querySnapshot = await getDocs(q);
-
-        let total = 0;
-        querySnapshot.forEach((doc) => {
-          const order = doc.data();
-          total += 10; // anggaran RM10 setiap jualan
-          const li = document.createElement("li");
-          li.textContent = `${order.nama} membeli ${order.produk} pada ${new Date(order.tarikh.seconds * 1000).toLocaleString()}`;
-          orderList.appendChild(li);
-        });
-
-        totalKomisen.textContent = `RM${total.toFixed(2)}`;
-      } else {
-        userEmail.textContent = "Tiada data pengguna.";
+      const docRef = db.collection("users").doc(user.uid);
+      const docSnap = await docRef.get();
+      if (docSnap.exists) {
+        const data = docSnap.data();
+        document.getElementById('username').textContent = data.name;
+        document.getElementById('useremail').textContent = data.email;
+        document.getElementById('refLink').textContent = `https://thesstrader.com/?ref=${data.refId}`;
       }
     });
 
-    logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      });
-    });
+    function logout() {
+      auth.signOut().then(() => window.location.href = "login.html");
+    }
   </script>
 </body>
 </html>
