@@ -220,5 +220,65 @@ form.addEventListener("submit", async function (e) {
 </script>
 <!-- ... (tamat dokumen) ... -->
 
+<!-- ... (dokumen sedia ada) ... -->
+
+    <div class="card" style="max-width: 900px; margin: 40px auto;">
+      <h3>Senarai Client Berdaftar di Bawah Anda</h3>
+      <table style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background-color: #333;">
+            <th style="padding:10px; border-bottom: 1px solid #555;">Nama Client</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Produk</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Tarikh</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Status</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Point</th>
+          </tr>
+        </thead>
+        <tbody id="clientList">
+          <tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Memuatkan data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<script type="module">
+// Tambahan untuk paparan client bawah user
+import { query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+async function loadClients() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const q = query(collection(db, "clients"), where("referrerId", "==", user.uid));
+  const querySnapshot = await getDocs(q);
+
+  const tbody = document.getElementById("clientList");
+  tbody.innerHTML = "";
+
+  if (querySnapshot.empty) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Tiada client berdaftar setakat ini.</td></tr>';
+    return;
+  }
+
+  querySnapshot.forEach(doc => {
+    const data = doc.data();
+    const row = `
+      <tr>
+        <td style='padding: 8px;'>${data.name}</td>
+        <td style='padding: 8px;'>${data.product}</td>
+        <td style='padding: 8px;'>${new Date(data.date.seconds * 1000).toLocaleDateString()}</td>
+        <td style='padding: 8px;'>${data.status}</td>
+        <td style='padding: 8px;'>${data.point}</td>
+      </tr>`;
+    tbody.innerHTML += row;
+  });
+}
+
+onAuthStateChanged(auth, (user) => {
+  if (user) loadClients();
+});
+</script>
+<!-- ... (tamat dokumen) ... -->
+
+
 </body>
 </html>
