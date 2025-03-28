@@ -27,6 +27,11 @@
     const usernameEl = document.getElementById('username');
     const emailEl = document.getElementById('useremail');
     const refLinkEl = document.getElementById('refLink');
+    const phoneEl = document.getElementById('userphone');
+    const bankNameEl = document.getElementById('userbankname');
+    const bankAccEl = document.getElementById('userbankacc');
+    const birthEl = document.getElementById('userbirth');
+    const addressEl = document.getElementById('useraddress');
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -37,9 +42,14 @@
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        usernameEl.textContent = data.name;
-        emailEl.textContent = data.email;
-        refLinkEl.textContent = `https://thesstrader.com/?ref=${data.refId}`;
+        usernameEl.textContent = data.name || '-';
+        emailEl.textContent = data.email || '-';
+        refLinkEl.textContent = `https://thesstrader.com/?ref=${data.refId || ''}`;
+        phoneEl.textContent = data.phone || '-';
+        bankNameEl.textContent = data.bankName || '-';
+        bankAccEl.textContent = data.bankAcc || '-';
+        birthEl.textContent = data.birthDate || '-';
+        addressEl.textContent = data.address || '-';
       }
     });
 
@@ -49,10 +59,10 @@
   </script>
   <style>
     body { font-family: Arial; background: #111; color: white; text-align: center; padding: 40px; }
-    .dashboard-box { background: #222; padding: 30px; border-radius: 10px; display: inline-block; max-width: 400px; margin-top: 20px; }
-    .logout-btn { background: crimson; color: white; border: none; padding: 10px 20px; cursor: pointer; margin-top: 20px; border-radius: 6px; }
+    .dashboard-box { background: #222; padding: 30px; border-radius: 10px; display: inline-block; max-width: 500px; margin-top: 20px; text-align: left; }
+    .logout-btn { background: crimson; color: white; border: none; padding: 10px 20px; cursor: pointer; margin-top: 20px; border-radius: 6px; display: block; margin-left: auto; margin-right: auto; }
     .ref-link { background: #444; padding: 10px; margin: 10px 0; border-radius: 5px; word-break: break-all; }
-    .label { font-weight: bold; text-align: left; }
+    .label { font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -62,6 +72,16 @@
     <div id="username">...</div>
     <div class="label">Email:</div>
     <div id="useremail">...</div>
+    <div class="label">No Telefon:</div>
+    <div id="userphone">...</div>
+    <div class="label">Nama Bank:</div>
+    <div id="userbankname">...</div>
+    <div class="label">No Akaun Bank:</div>
+    <div id="userbankacc">...</div>
+    <div class="label">Tarikh Lahir:</div>
+    <div id="userbirth">...</div>
+    <div class="label">Alamat:</div>
+    <div id="useraddress">...</div>
     <div class="label">Referral Link:</div>
     <div class="ref-link" id="refLink">...</div>
     <button class="logout-btn" onclick="logout()">Logout</button>
