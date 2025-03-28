@@ -14,7 +14,7 @@
     }
     .container {
       padding: 30px;
-      max-width: 800px;
+      max-width: 1000px;
       margin: auto;
     }
     .header {
@@ -62,6 +62,14 @@
     .stat-item p {
       margin: 5px 0 0;
       color: #ccc;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
     }
   </style>
 </head>
@@ -112,12 +120,44 @@
       <p>1 mata = RM0.10 → <strong>100 mata = RM10</strong></p>
       <p>Point boleh ditebus dalam bentuk <strong>wang tunai</strong>.</p>
     </div>
+
+    <div class="card">
+      <h3>Tebus Mata (Point)</h3>
+      <form id="redeemForm">
+        <label>Jumlah Mata Ingin Ditebus:</label>
+        <input type="number" id="redeemPoints" name="redeemPoints" min="100" required>
+        <label>Nama Bank:</label>
+        <input type="text" id="bankName" name="bankName" required>
+        <label>No Akaun Bank:</label>
+        <input type="text" id="accNumber" name="accNumber" required>
+        <button type="submit" class="logout-btn" style="background-color:#ff9900; width:100%;">Hantar Permintaan Tebus</button>
+        <p id="redeemStatus"></p>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Senarai Client Berdaftar di Bawah Anda</h3>
+      <table style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background-color: #333;">
+            <th style="padding:10px; border-bottom: 1px solid #555;">Nama Client</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Produk</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Tarikh</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Status</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Point</th>
+          </tr>
+        </thead>
+        <tbody id="clientList">
+          <tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Memuatkan data...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
@@ -133,194 +173,81 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    onAuthStateChanged(auth, async user => {
-      if (user) {
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          document.getElementById("userName").textContent = data.name;
-          document.getElementById("userEmail").textContent = data.email;
-          document.getElementById("referralLink").textContent = `${window.location.origin}/?ref=${data.refId}`;
-
-          // Dummy statistik - akan digantikan dgn data sebenar
-          document.getElementById("refClick").textContent = 12;
-          document.getElementById("totalSales").textContent = "RM410";
-          document.getElementById("totalPoints").textContent = 200;
-          document.getElementById("redeemable").textContent = "RM20";
-        }
-      } else {
-        window.location.href = "login.html";
-      }
-    });
-
-    window.logout = function () {
+    function logout() {
       signOut(auth).then(() => {
         window.location.href = "login.html";
       });
     }
-  </script>
-<!-- ... (dokumen sedia ada) ... -->
+    window.logout = logout;
 
-    <div class="card" style="max-width: 500px; margin: 0 auto;">
-      <h3>Tebus Mata (Point)</h3>
-      <form id="redeemForm">
-        <div style="margin-bottom: 10px;">
-          <label for="redeemPoints">Jumlah Mata Ingin Ditebus:</label>
-          <input type="number" id="redeemPoints" name="redeemPoints" min="100" required style="width:100%; padding:10px; border-radius:5px; border:none;">
-        </div>
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) return;
+        const data = docSnap.data();
+        document.getElementById("userName").textContent = data.name;
+        document.getElementById("userEmail").textContent = data.email;
+        document.getElementById("referralLink").textContent = `${window.location.origin}/?ref=${data.refId}`;
 
-        <div style="margin-bottom: 10px;">
-          <label for="bankName">Nama Bank:</label>
-          <input type="text" id="bankName" name="bankName" required style="width:100%; padding:10px; border-radius:5px; border:none;">
-        </div>
+        document.getElementById("refClick").textContent = 12;
+        document.getElementById("totalSales").textContent = "RM410";
+        document.getElementById("totalPoints").textContent = 200;
+        document.getElementById("redeemable").textContent = "RM20";
 
-        <div style="margin-bottom: 10px;">
-          <label for="accNumber">No Akaun Bank:</label>
-          <input type="text" id="accNumber" name="accNumber" required style="width:100%; padding:10px; border-radius:5px; border:none;">
-        </div>
+        const q = query(collection(db, "clients"), where("referrerId", "==", data.refId));
+        const querySnapshot = await getDocs(q);
+        const tbody = document.getElementById("clientList");
+        tbody.innerHTML = "";
 
-        <button type="submit" class="logout-btn" style="background-color:#ff9900; width:100%;">Hantar Permintaan Tebus</button>
-        <p id="redeemStatus" style="margin-top:10px;"></p>
-      </form>
-    </div>
+        if (querySnapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Tiada client berdaftar setakat ini.</td></tr>';
+        } else {
+          querySnapshot.forEach(doc => {
+            const d = doc.data();
+            let date = "-";
+            try {
+              if (d.date?.seconds) date = new Date(d.date.seconds * 1000).toLocaleDateString();
+              else if (d.date) date = new Date(d.date).toLocaleDateString();
+            } catch {}
 
-<script type="module">
-// Tambahan pada skrip sedia ada (letak selepas window.logout = function...)
-import { collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+            tbody.innerHTML += `
+              <tr>
+                <td style='padding: 8px;'>${d.name || '-'}</td>
+                <td style='padding: 8px;'>${d.product || '-'}</td>
+                <td style='padding: 8px;'>${date}</td>
+                <td style='padding: 8px;'>${d.status || '-'}</td>
+                <td style='padding: 8px;'>${d.point || 0}</td>
+              </tr>`;
+          });
+        }
 
-const form = document.getElementById("redeemForm");
-form.addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const redeemPoints = document.getElementById("redeemPoints").value;
-  const bankName = document.getElementById("bankName").value;
-  const accNumber = document.getElementById("accNumber").value;
-
-  const user = auth.currentUser;
-  if (!user) return;
-
-  try {
-    await addDoc(collection(db, "redemptions"), {
-      userId: user.uid,
-      email: user.email,
-      redeemPoints: parseInt(redeemPoints),
-      bankName,
-      accNumber,
-      status: "Menunggu Semakan",
-      createdAt: Timestamp.now()
-    });
-    document.getElementById("redeemStatus").textContent = "Permintaan dihantar. Sila tunggu semakan admin.";
-    form.reset();
-  } catch (err) {
-    document.getElementById("redeemStatus").textContent = "Ralat berlaku: " + err.message;
-  }
-});
-</script>
-<!-- ... (tamat dokumen) ... -->
-
-<!-- ... (dokumen sedia ada) ... -->
-
-    <div class="card" style="max-width: 900px; margin: 40px auto;">
-      <h3>Senarai Client Berdaftar di Bawah Anda</h3>
-      <table style="width:100%; border-collapse: collapse;">
-        <thead>
-          <tr style="background-color: #333;">
-            <th style="padding:10px; border-bottom: 1px solid #555;">Nama Client</th>
-            <th style="padding:10px; border-bottom: 1px solid #555;">Produk</th>
-            <th style="padding:10px; border-bottom: 1px solid #555;">Tarikh</th>
-            <th style="padding:10px; border-bottom: 1px solid #555;">Status</th>
-            <th style="padding:10px; border-bottom: 1px solid #555;">Point</th>
-          </tr>
-        </thead>
-        <tbody id="clientList">
-          <tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Memuatkan data...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-<script type="module">
-<!-- ... (dokumen sedia ada) ... -->
-
-    <div class="card" style="max-width: 900px; margin: 40px auto;">
-      <h3>Senarai Client Berdaftar di Bawah Anda</h3>
-      <table style="width:100%; border-collapse: collapse;">
-        <thead>
-          <tr style="background-color: #333;">
-            <th style="padding:10px; border-bottom: 1px solid #555;">Nama Client</th>
-            <th style="padding:10px; border-bottom: 1px solid #555;">Produk</th>
-            <th style="padding:10px; border-bottom: 1px solid #555;">Tarikh</th>
-            <th style="padding:10px; border-bottom: 1px solid #555;">Status</th>
-            <th style="padding:10px; border-bottom: 1px solid #555;">Point</th>
-          </tr>
-        </thead>
-        <tbody id="clientList">
-          <tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Memuatkan data...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-<script type="module">
-import { collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { db, auth } from './firebase-config.js'; // pastikan ini merujuk fail config firebase cikgu
-
-async function loadClients(user, userData) {
-  const q = query(collection(db, "clients"), where("referrerId", "==", userData.refId));
-  const querySnapshot = await getDocs(q);
-
-  const tbody = document.getElementById("clientList");
-  tbody.innerHTML = "";
-
-  if (querySnapshot.empty) {
-    console.log("[DEBUG] Tiada data dijumpai untuk refId ini.");
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Tiada client berdaftar setakat ini.</td></tr>';
-    return;
-  }
-
-  querySnapshot.forEach(doc => {
-    const data = doc.data();
-    let tarikhPaparan = "-";
-    try {
-      if (data.date?.seconds) {
-        tarikhPaparan = new Date(data.date.seconds * 1000).toLocaleDateString();
-      } else if (data.date) {
-        tarikhPaparan = new Date(data.date).toLocaleDateString();
+        const form = document.getElementById("redeemForm");
+        form.addEventListener("submit", async e => {
+          e.preventDefault();
+          const redeemPoints = document.getElementById("redeemPoints").value;
+          const bankName = document.getElementById("bankName").value;
+          const accNumber = document.getElementById("accNumber").value;
+          try {
+            await addDoc(collection(db, "redemptions"), {
+              userId: user.uid,
+              email: user.email,
+              redeemPoints: parseInt(redeemPoints),
+              bankName,
+              accNumber,
+              status: "Menunggu Semakan",
+              createdAt: Timestamp.now()
+            });
+            document.getElementById("redeemStatus").textContent = "Permintaan dihantar. Sila tunggu semakan admin.";
+            form.reset();
+          } catch (err) {
+            document.getElementById("redeemStatus").textContent = "Ralat berlaku: " + err.message;
+          }
+        });
+      } else {
+        window.location.href = "login.html";
       }
-    } catch (e) {
-      console.warn("[DEBUG] Ralat tukar tarikh:", e);
-    }
-
-    const row = `
-      <tr>
-        <td style='padding: 8px;'>${data.name || '-'}</td>
-        <td style='padding: 8px;'>${data.product || '-'}</td>
-        <td style='padding: 8px;'>${tarikhPaparan}</td>
-        <td style='padding: 8px;'>${data.status || '-'}</td>
-        <td style='padding: 8px;'>${data.point || 0}</td>
-      </tr>`;
-    tbody.innerHTML += row;
-  });
-}
-
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const docRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) return;
-    const userData = docSnap.data();
-
-    console.log("[DEBUG] Pengguna login:", user.email);
-    console.log("[DEBUG] refId digunakan untuk query:", userData.refId);
-
-    loadClients(user, userData);
-  } else {
-    console.warn("[DEBUG] Pengguna belum login atau session tamat.");
-  }
-});
-</script>
-<!-- ... (tamat dokumen) ... -->
-
+    });
+  </script>
 </body>
 </html>
