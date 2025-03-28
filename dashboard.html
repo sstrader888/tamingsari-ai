@@ -262,34 +262,25 @@ form.addEventListener("submit", async function (e) {
     </div>
 
 <script type="module">
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { db, auth } from './firebase-config.js'; // pastikan ini merujuk fail config firebase cikgu
 
-async function loadClients() {
-  const user = auth.currentUser;
-  if (!user) return;
-
-  console.log("[DEBUG] UID pengguna aktif:", user.uid); // debug UID
-
-  const q = query(collection(db, "clients"), where("referrerId", "==", user.uid));
+async function loadClients(user, userData) {
+  const q = query(collection(db, "clients"), where("referrerId", "==", userData.refId));
   const querySnapshot = await getDocs(q);
 
   const tbody = document.getElementById("clientList");
   tbody.innerHTML = "";
 
   if (querySnapshot.empty) {
-    console.log("[DEBUG] Tiada data dijumpai untuk UID ini.");
+    console.log("[DEBUG] Tiada data dijumpai untuk refId ini.");
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Tiada client berdaftar setakat ini.</td></tr>';
     return;
   }
 
-  console.log("[DEBUG] Jumlah dokumen dijumpai:", querySnapshot.size);
-
   querySnapshot.forEach(doc => {
     const data = doc.data();
-    console.log("[DEBUG] Data dokumen:", data);
-
     let tarikhPaparan = "-";
     try {
       if (data.date?.seconds) {
@@ -313,18 +304,23 @@ async function loadClients() {
   });
 }
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    const userData = docSnap.data();
+
     console.log("[DEBUG] Pengguna login:", user.email);
-    loadClients();
+    console.log("[DEBUG] refId digunakan untuk query:", userData.refId);
+
+    loadClients(user, userData);
   } else {
     console.warn("[DEBUG] Pengguna belum login atau session tamat.");
   }
 });
 </script>
 <!-- ... (tamat dokumen) ... -->
-
-
 
 </body>
 </html>
