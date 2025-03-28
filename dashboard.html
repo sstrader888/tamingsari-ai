@@ -270,6 +270,8 @@ async function loadClients() {
   const user = auth.currentUser;
   if (!user) return;
 
+  console.log("[DEBUG] UID pengguna aktif:", user.uid); // debug UID
+
   const q = query(collection(db, "clients"), where("referrerId", "==", user.uid));
   const querySnapshot = await getDocs(q);
 
@@ -277,12 +279,17 @@ async function loadClients() {
   tbody.innerHTML = "";
 
   if (querySnapshot.empty) {
+    console.log("[DEBUG] Tiada data dijumpai untuk UID ini.");
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Tiada client berdaftar setakat ini.</td></tr>';
     return;
   }
 
+  console.log("[DEBUG] Jumlah dokumen dijumpai:", querySnapshot.size);
+
   querySnapshot.forEach(doc => {
     const data = doc.data();
+    console.log("[DEBUG] Data dokumen:", data);
+
     let tarikhPaparan = "-";
     try {
       if (data.date?.seconds) {
@@ -290,7 +297,9 @@ async function loadClients() {
       } else if (data.date) {
         tarikhPaparan = new Date(data.date).toLocaleDateString();
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn("[DEBUG] Ralat tukar tarikh:", e);
+    }
 
     const row = `
       <tr>
@@ -305,10 +314,16 @@ async function loadClients() {
 }
 
 onAuthStateChanged(auth, (user) => {
-  if (user) loadClients();
+  if (user) {
+    console.log("[DEBUG] Pengguna login:", user.email);
+    loadClients();
+  } else {
+    console.warn("[DEBUG] Pengguna belum login atau session tamat.");
+  }
 });
 </script>
 <!-- ... (tamat dokumen) ... -->
+
 
 
 </body>
