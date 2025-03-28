@@ -79,35 +79,95 @@
     }
   </script>
   <style>
-    body { font-family: Arial; background: #111; color: white; text-align: center; padding: 40px; }
-    input, textarea { padding: 10px; width: 250px; margin: 10px; }
-    button { padding: 10px 20px; margin-top: 10px; background: #ff6600; color: white; border: none; cursor: pointer; }
-    .form-box { background: #222; padding: 30px; border-radius: 10px; display: inline-block; }
-    .forgot-link { display: block; margin-top: 10px; color: #ccc; cursor: pointer; text-decoration: underline; }
-    .logo-box img { width: 150px; margin-bottom: 20px; }
+    body {
+      font-family: Arial;
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      color: white;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .left-panel {
+      flex: 1;
+      background: url('https://i.imgur.com/1Ziuyij.jpeg') no-repeat center center;
+      background-size: cover;
+    }
+    .right-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #111;
+    }
+    .form-box {
+      background: #222;
+      padding: 40px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 100%;
+    }
+    input, textarea {
+      padding: 10px;
+      width: 100%;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      background: #ff6600;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      width: 100%;
+    }
+    .forgot-link {
+      display: block;
+      margin-top: 10px;
+      color: #ccc;
+      cursor: pointer;
+      text-decoration: underline;
+      text-align: center;
+    }
+    .logo-top {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+    .logo-top img {
+      width: 140px;
+    }
   </style>
 </head>
 <body>
-  <div class="logo-box">
-    <img src="/images/logo.png" alt="SStrader Logo">
-  </div>
-  <h2>Login / Daftar Akaun Affiliate</h2>
-  <div class="form-box">
-    <input type="text" id="name" placeholder="Nama Penuh"><br>
-    <input type="email" id="email" placeholder="Email"><br>
-    <input type="password" id="password" placeholder="Kata Laluan"><br>
-    <input type="text" id="phone" placeholder="No Telefon"><br>
-    <input type="text" id="bankName" placeholder="Nama Bank"><br>
-    <input type="text" id="bankAcc" placeholder="No Akaun Bank"><br>
-    <input type="date" id="birthDate" placeholder="Tarikh Lahir"><br>
-    <textarea id="address" placeholder="Alamat" rows="2"></textarea><br>
-    <button onclick="register()">Daftar</button>
-    <button onclick="login()">Login</button>
-    <span class="forgot-link" onclick="forgotPassword()">Lupa Kata Laluan?</span>
-  </div>
-  <p id="status"></p>
-  <div class="logo-box">
-    <img src="/images/photo_2025-03-29_04-37-12.jpg" alt="Produk Taming Sari AI" style="max-width: 300px; margin-top: 30px;">
+  <div class="container">
+    <div class="left-panel"></div>
+    <div class="right-panel">
+      <div class="logo-top">
+        <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="SStrader Logo">
+      </div>
+      <div class="form-box">
+        <h2 style="text-align:center">Login / Daftar Akaun Affiliate</h2>
+        <input type="text" id="name" placeholder="Nama Penuh">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Kata Laluan">
+        <input type="text" id="phone" placeholder="No Telefon">
+        <input type="text" id="bankName" placeholder="Nama Bank">
+        <input type="text" id="bankAcc" placeholder="No Akaun Bank">
+        <input type="date" id="birthDate" placeholder="Tarikh Lahir">
+        <textarea id="address" placeholder="Alamat" rows="2"></textarea>
+        <button onclick="register()">Daftar</button>
+        <button onclick="login()">Login</button>
+        <span class="forgot-link" onclick="forgotPassword()">Lupa Kata Laluan?</span>
+        <p id="status"></p>
+      </div>
+    </div>
   </div>
 </body>
 </html>
