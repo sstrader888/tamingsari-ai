@@ -241,8 +241,30 @@ form.addEventListener("submit", async function (e) {
     </div>
 
 <script type="module">
-// Tambahan untuk paparan client bawah user
-import { query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!-- ... (dokumen sedia ada) ... -->
+
+    <div class="card" style="max-width: 900px; margin: 40px auto;">
+      <h3>Senarai Client Berdaftar di Bawah Anda</h3>
+      <table style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background-color: #333;">
+            <th style="padding:10px; border-bottom: 1px solid #555;">Nama Client</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Produk</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Tarikh</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Status</th>
+            <th style="padding:10px; border-bottom: 1px solid #555;">Point</th>
+          </tr>
+        </thead>
+        <tbody id="clientList">
+          <tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Memuatkan data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<script type="module">
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { db, auth } from './firebase-config.js'; // pastikan ini merujuk fail config firebase cikgu
 
 async function loadClients() {
   const user = auth.currentUser;
@@ -261,13 +283,22 @@ async function loadClients() {
 
   querySnapshot.forEach(doc => {
     const data = doc.data();
+    let tarikhPaparan = "-";
+    try {
+      if (data.date?.seconds) {
+        tarikhPaparan = new Date(data.date.seconds * 1000).toLocaleDateString();
+      } else if (data.date) {
+        tarikhPaparan = new Date(data.date).toLocaleDateString();
+      }
+    } catch (e) {}
+
     const row = `
       <tr>
-        <td style='padding: 8px;'>${data.name}</td>
-        <td style='padding: 8px;'>${data.product}</td>
-        <td style='padding: 8px;'>${new Date(data.date.seconds * 1000).toLocaleDateString()}</td>
-        <td style='padding: 8px;'>${data.status}</td>
-        <td style='padding: 8px;'>${data.point}</td>
+        <td style='padding: 8px;'>${data.name || '-'}</td>
+        <td style='padding: 8px;'>${data.product || '-'}</td>
+        <td style='padding: 8px;'>${tarikhPaparan}</td>
+        <td style='padding: 8px;'>${data.status || '-'}</td>
+        <td style='padding: 8px;'>${data.point || 0}</td>
       </tr>`;
     tbody.innerHTML += row;
   });
