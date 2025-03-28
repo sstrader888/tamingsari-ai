@@ -32,20 +32,8 @@
     .hero img.indicator {
       max-width: 300px;
       width: 100%;
-      margin: 20px;
-    }
-    .hero .intro-text {
-      max-width: 400px;
-      margin: 20px;
-    }
-    .hero .intro-text h1 {
-      color: #00ff88;
-      font-size: 32px;
-      margin-bottom: 10px;
-    }
-    .hero .intro-text p {
-      font-size: 16px;
-      color: #ccc;
+      margin: 20px auto;
+      display: block;
     }
     .form-container {
       background-color: #1a1a1a;
@@ -106,6 +94,67 @@
       }
     }
   </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, setDoc, doc, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.appspot.com",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
+      measurementId: "G-54ZR1GG7ML"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.onload = () => {
+      const registerBtn = document.querySelector("#registerForm .btn");
+      const loginBtn = document.querySelector("#loginForm .btn");
+
+      registerBtn.addEventListener("click", async () => {
+        const inputs = document.querySelectorAll("#registerForm input, #registerForm textarea");
+        const [name, email, password, phone, bankName, bankAcc, birthDate, address] = [...inputs].map(i => i.value);
+
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          await setDoc(doc(db, "users", user.uid), {
+            name,
+            email,
+            phone,
+            bankName,
+            bankAcc,
+            birthDate,
+            address,
+            refId: user.uid.slice(0, 12),
+            createdAt: Timestamp.now()
+          });
+
+          alert("Pendaftaran berjaya. Sila login.");
+        } catch (error) {
+          alert("Ralat: " + error.message);
+        }
+      });
+
+      loginBtn.addEventListener("click", async () => {
+        const email = document.querySelector("#loginForm input[type='email']").value;
+        const password = document.querySelector("#loginForm input[type='password']").value;
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          window.location.href = "dashboard.html";
+        } catch (error) {
+          alert("Login gagal: " + error.message);
+        }
+      });
+    };
+  </script>
 </head>
 <body>
   <header>
@@ -113,11 +162,7 @@
   </header>
 
   <div class="hero">
-    <img src="https://i.imgur.com/R1SGp5j.jpeg" alt="Indicator" class="indicator">
-    <div class="intro-text">
-      <h1>Simple. Tepat. Auto.</h1>
-      <p>Indicator Taming Sari + AI di TradingView – untuk entry yang penuh keyakinan.<br> www.THESSTRADER.com</p>
-    </div>
+    <img src="https://i.imgur.com/28iZR8v.png" alt="Indicator" class="indicator">
   </div>
 
   <div class="tab-switch">
@@ -127,51 +172,21 @@
 
   <div class="form-container" id="registerForm">
     <h2>Daftar Akaun Affiliate</h2>
-    <div class="form-group">
-      <label>Nama Penuh</label>
-      <input type="text">
-    </div>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email">
-    </div>
-    <div class="form-group">
-      <label>Kata Laluan</label>
-      <input type="password">
-    </div>
-    <div class="form-group">
-      <label>No Telefon</label>
-      <input type="text">
-    </div>
-    <div class="form-group">
-      <label>Nama Bank</label>
-      <input type="text">
-    </div>
-    <div class="form-group">
-      <label>No Akaun Bank</label>
-      <input type="text">
-    </div>
-    <div class="form-group">
-      <label>Tarikh Lahir</label>
-      <input type="date">
-    </div>
-    <div class="form-group">
-      <label>Alamat</label>
-      <textarea></textarea>
-    </div>
+    <div class="form-group"><label>Nama Penuh</label><input type="text"></div>
+    <div class="form-group"><label>Email</label><input type="email"></div>
+    <div class="form-group"><label>Kata Laluan</label><input type="password"></div>
+    <div class="form-group"><label>No Telefon</label><input type="text"></div>
+    <div class="form-group"><label>Nama Bank</label><input type="text"></div>
+    <div class="form-group"><label>No Akaun Bank</label><input type="text"></div>
+    <div class="form-group"><label>Tarikh Lahir</label><input type="date"></div>
+    <div class="form-group"><label>Alamat</label><textarea></textarea></div>
     <button class="btn">Daftar</button>
   </div>
 
   <div class="form-container" id="loginForm" style="display:none;">
     <h2>Login Akaun Affiliate</h2>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email">
-    </div>
-    <div class="form-group">
-      <label>Kata Laluan</label>
-      <input type="password">
-    </div>
+    <div class="form-group"><label>Email</label><input type="email"></div>
+    <div class="form-group"><label>Kata Laluan</label><input type="password"></div>
     <button class="btn">Login</button>
   </div>
 
