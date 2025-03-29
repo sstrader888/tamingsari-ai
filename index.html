@@ -58,28 +58,6 @@
       background: var(--primary);
       color: #000;
     }
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #222;
-      min-width: 180px;
-      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-      z-index: 1;
-      border-radius: 8px;
-    }
-    .dropdown-content a {
-      color: white;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
     .hero {
       display: flex;
       flex-wrap: wrap;
@@ -107,11 +85,14 @@
       margin: 5px;
       padding: 12px 20px;
       border-radius: 6px;
-      background: var(--accent);
+      background: var(--primary);
       color: #000;
       font-weight: 600;
       text-decoration: none;
       transition: 0.3s;
+    }
+    .hero-buttons a.buy {
+      background: var(--accent);
     }
     .hero-buttons a:hover {
       opacity: 0.85;
@@ -136,58 +117,44 @@
       color: var(--gray);
       line-height: 1.6;
     }
-    .produk-link {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      justify-items: center;
-    }
-    .produk-link a {
-      background: var(--accent);
-      padding: 20px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: bold;
-      color: black;
-      width: 100%;
+    .testimoni {
       text-align: center;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
     }
-    .coaching-packages {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
-    }
-    .coaching-box {
-      background: var(--card);
-      padding: 20px;
+    .testimoni-box {
+      background: #111;
       border-radius: 10px;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+      padding: 20px;
+      margin: 10px auto;
+      max-width: 600px;
     }
-    .coaching-box h3 {
-      color: var(--primary);
+    .stars {
+      color: gold;
       margin-bottom: 10px;
     }
-    .coaching-box a {
+    iframe {
+      display: block;
+      margin: 20px auto;
+      border-radius: 12px;
+    }
+    .produk-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .produk-link a {
+      color: var(--light);
       background: var(--accent);
-      padding: 10px 15px;
-      display: inline-block;
-      margin-top: 10px;
+      padding: 10px 20px;
       border-radius: 6px;
-      color: black;
       text-decoration: none;
-      font-weight: 600;
     }
-    .coaching-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
-    .coaching-gallery img {
-      width: 100%;
-      border-radius: 10px;
+    footer {
+      background: #111;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
     }
   </style>
 </head>
@@ -196,7 +163,7 @@
     <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
     <nav>
       <a href="login.html">Login</a>
-      <div class="dropdown">
+   <div class="dropdown">
         <a href="#produk">Produk</a>
         <div class="dropdown-content">
           <a href="https://api.whatsapp.com/send?phone=60194173200&text=Beli%20Indicator">Indicator</a>
@@ -204,9 +171,79 @@
           <a href="#coaching">Coaching</a>
           <a href="https://api.whatsapp.com/send?phone=60194173200&text=Daftar%20Copytrade">Copytrade</a>
         </div>
-      </div>
+      <a href="#tutorial">Tutorial</a>
       <a href="#about">Tentang Kami</a>
       <a href="#hubungi">Hubungi</a>
       <a href="#beli" class="buy-btn">Beli Sekarang</a>
     </nav>
   </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
+      <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
+      <div class="hero-buttons">
+        <a href="#beli" class="buy">Beli Sekarang</a>
+      </div>
+    </div>
+    <div>
+      <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator">
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <h2>Tentang Kami</h2>
+    <p>SSTrader ialah komuniti trader Malaysia yang fokus dalam mendidik dan memudahkan proses entry dengan bantuan teknologi AI serta indikator Taming Sari. Kami menyediakan pelbagai bentuk produk termasuk coaching, buku, sistem copytrade dan indikator premium di TradingView.</p>
+  </section>
+
+  <section class="section">
+    <h2>Testimoni Pelanggan</h2>
+    <div class="testimoni">
+      <div class="testimoni-box">
+        <p>"Selepas guna indicator Taming Sari+AI, saya lebih yakin buat entry. Profit pun makin konsisten!"</p>
+        <div class="stars">★★★★★</div>
+        <em>- Ahmad, Trader Full-Time</em>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tutorial">
+    <h2>Video Demo Teknik AI Taming Sari</h2>
+    <iframe width="100%" height="400" src="https://www.youtube.com/embed/pjIyeQJvyZM?si=asPDJ11ZovVeEzTJ" frameborder="0" allowfullscreen></iframe>
+  </section>
+
+  <section class="section" id="produk">
+    <h2>Produk & Servis</h2>
+    <div class="produk-link">
+      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Daftar%20Copytrade">🌀 Daftar Copytrade</a>
+      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Beli%20Buku%20Taming%20Sari">📘 Beli Buku RM100</a>
+      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Beli%20Indicator%20Taming%20Sari+AI">📈 Beli Indicator</a>
+      <a href="#coaching">🎓 Pakej Coaching</a>
+    </div>
+  </section>
+
+  <section class="section" id="coaching">
+    <h2>📚 Pakej Personal Coaching</h2>
+    <ul>
+      <li><strong>1+1 Personal Coaching</strong> – RM8000</li>
+      <li><strong>Small Group Coaching</strong> – RM2000/pax (maks 6 orang)</li>
+    </ul>
+    <p><a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20coaching">Hubungi Kami untuk Coaching</a></p>
+  </section>
+
+  <footer>
+    <p>⚠️ Risiko: Dagangan CFD berisiko tinggi dan mungkin tidak sesuai untuk semua pelabur. Sila rujuk kepada penasihat kewangan anda.</p>
+    <p>Broker Partners: JustMarkets, GMI, FXPrimus</p>
+    <p>&copy; 2025 SSTrader. Hak Cipta Terpelihara.</p>
+  </footer>
+
+  <script>
+    ScrollReveal().reveal('.hero, .section', {
+      delay: 100,
+      distance: '30px',
+      origin: 'bottom',
+      duration: 800
+    });
+  </script>
+</body>
+</html>
