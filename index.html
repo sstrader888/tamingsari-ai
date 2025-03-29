@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ms">
+<!DOCTYPE html>
+<html lang="ms">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -89,56 +90,37 @@
     .dropdown:hover .dropdown-content {
       display: block;
     }
-    .hero {
-      text-align: center;
-      padding: 80px 40px;
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
     }
-    .hero img {
-      max-width: 300px;
-      margin-bottom: 20px;
+    .hamburger div {
+      width: 25px;
+      height: 3px;
+      background: white;
+      margin: 4px 0;
     }
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      color: var(--primary);
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: var(--card);
+      padding: 10px 20px;
     }
-    .hero p {
-      font-size: 1.2rem;
-      color: var(--gray);
-      margin-bottom: 30px;
-    }
-    .hero a {
-      display: inline-block;
-      padding: 12px 24px;
-      background: var(--accent);
-      color: #000;
-      font-weight: bold;
+    .mobile-menu a {
+      color: white;
+      padding: 10px 0;
       text-decoration: none;
-      border-radius: 6px;
-      transition: 0.3s;
-    }
-    .hero a:hover {
-      opacity: 0.85;
+      border-bottom: 1px solid #333;
     }
     @media (max-width: 768px) {
-      .hamburger {
-        display: block;
-        background: none;
-        font-size: 1.5rem;
-        color: white;
-        border: none;
-        cursor: pointer;
-      }
-      nav {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      nav ul {
+      nav.desktop-nav {
         display: none;
-        flex-direction: column;
-        width: 100%;
       }
-      nav ul.show {
+      .hamburger {
+        display: flex;
+      }
+      .mobile-menu.active {
         display: flex;
       }
     }
@@ -151,26 +133,46 @@
       let msg = `Saya berminat dengan ${product}`;
       if (ref) msg += `&ref=${ref}`;
       window.open(base + encodeURIComponent(msg), '_blank');
-    }window.addEventListener('DOMContentLoaded', () => {
-  ScrollReveal().reveal('.hero img', { duration: 1000, origin: 'bottom', distance: '40px' });
-  ScrollReveal().reveal('.hero h1', { duration: 1200, origin: 'bottom', distance: '30px', delay: 200 });
-  ScrollReveal().reveal('.hero p', { duration: 1400, origin: 'bottom', distance: '30px', delay: 400 });
-  ScrollReveal().reveal('.hero a', { duration: 1600, origin: 'bottom', distance: '30px', delay: 600 });
-});
+    }
 
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu').classList.toggle('active');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      ScrollReveal().reveal('.hero img', { duration: 1000, origin: 'bottom', distance: '40px' });
+      ScrollReveal().reveal('.hero h1', { duration: 1200, origin: 'bottom', distance: '30px', delay: 200 });
+      ScrollReveal().reveal('.hero p', { duration: 1400, origin: 'bottom', distance: '30px', delay: 400 });
+      ScrollReveal().reveal('.hero a', { duration: 1600, origin: 'bottom', distance: '30px', delay: 600 });
+
+      const ref = localStorage.getItem("referralId") || "";
+      const produkLinks = ["link-buku", "link-indicator", "link-coaching", "link-copytrade"];
+      produkLinks.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.href += ref;
+        }
+      });
+    });
   </script>
 </head>
-<body></style><!-- Inside <body> --><header>
+<body>
+
+<header>
   <div class="logo-section">
     <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SSTrader">
     <a href="index.html" style="text-decoration: none; color: white;">
       <span>SSTrader</span>
     </a>
-  </div>  <!-- Hamburger menu (mobile only) -->  <div class="hamburger" onclick="toggleMobileMenu()">
+  </div>
+
+  <div class="hamburger" onclick="toggleMobileMenu()">
     <div></div>
     <div></div>
     <div></div>
-  </div>  <!-- Desktop navigation -->  <nav class="desktop-nav">
+  </div>
+
+  <nav class="desktop-nav">
     <a href="login.html">Login</a>
     <a href="artikel.html">Artikel</a>
     <div class="dropdown">
@@ -186,17 +188,22 @@
     <a href="#hubungi">Hubungi</a>
     <a href="#produk" class="buy-btn">Beli Sekarang</a>
   </nav>
-</header><!-- Mobile menu --><script>
-  function toggleMenu() {
-    const menu = document.getElementById('mobileMenu');
-    menu.classList.toggle('active');
-  }
+</header>
 
-  function toggleSubmenu(event) {
-    event.preventDefault();
-    const submenu = event.target.nextElementSibling;
-    submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
-  }
+<div class="mobile-menu" id="mobileMenu">
+  <a href="login.html">Login</a>
+  <a href="artikel.html">Artikel</a>
+  <details>
+    <summary style="color: white; font-weight: 600;">Produk</summary>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Buku&ref=" id="link-buku">Buku</a>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Indicator&ref=" id="link-indicator">Indicator</a>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Coaching&ref=" id="link-coaching">Coaching</a>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Copytrade&ref=" id="link-copytrade">Copytrade</a>
+  </details>
+  <a href="#about">Tentang Kami</a>
+  <a href="#hubungi">Hubungi</a>
+  <a href="#produk" class="buy-btn">Beli Sekarang</a>
+</div>
 
   // ✅ Tambah referral ID ke link produk
   window.onload = function () {
