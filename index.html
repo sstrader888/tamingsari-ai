@@ -37,8 +37,18 @@
       align-items: center;
       flex-wrap: wrap;
     }
-    header img {
+    header .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header .logo-section img {
       height: 50px;
+    }
+    header .logo-section span {
+      font-weight: 600;
+      color: white;
+      font-size: 1.2rem;
     }
     nav {
       display: flex;
@@ -170,7 +180,10 @@
 <body>
 
 <header>
-  <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
+  <div class="logo-section">
+    <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
+    <span>SSTrader</span>
+  </div>
   <nav>
     <a href="login.html">Login</a>
     <div class="dropdown" tabindex="0">
@@ -207,28 +220,15 @@
   <h2>❓ Soalan Lazim</h2>
   <div class="faq" data-sr><strong>S: Adakah saya perlu tahu teknikal analisis sebelum guna indikator?</strong>
   <p>J: Tidak perlu, indikator ini mudah dan direka khas untuk semua peringkat trader.</p></div>
+
   <div class="faq" data-sr><strong>S: Platform apa yang digunakan?</strong>
   <p>J: TradingView – platform charting terkemuka dunia dan mesra pengguna.</p></div>
+
   <div class="faq" data-sr><strong>S: Adakah boleh support live trading?</strong>
   <p>J: Ya, termasuk sesi live trading semasa coaching dan sokongan komuniti.</p></div>
+
   <div class="faq" data-sr><strong>S: Apakah kelebihan daftar melalui IB?</strong>
   <p>J: Anda mendapat mata ganjaran (point) dan akses bonus seperti kelas percuma.</p></div>
-</section>
-
-<section class="section">
-  <h2>🎥 Demo Video Indicator</h2>
-  <div style="text-align:center;">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/pjIyeQJvyZM" frameborder="0" allowfullscreen></iframe>
-  </div>
-</section>
-
-<section class="section">
-  <h2>🤝 Rakan Broker Rasmi</h2>
-  <p>Didukung oleh broker pilihan kami:</p>
-  <div class="broker-logos">
-    <img src="https://i.imgur.com/QcgQW74.png" alt="JustMarkets">
-    <img src="https://i.imgur.com/uZv8Lof.png" alt="GMI">
-  </div>
 </section>
 
 <footer>
