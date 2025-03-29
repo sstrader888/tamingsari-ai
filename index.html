@@ -204,18 +204,7 @@
   <a href="#hubungi">Hubungi</a>
   <a href="#produk" class="buy-btn">Beli Sekarang</a>
 </div>
-
-  // ✅ Tambah referral ID ke link produk
-  window.onload = function () {
-    const ref = localStorage.getItem("referralId") || "";
-    const produkLinks = ["linkBuku", "linkIndicator", "linkCoaching", "linkCopytrade"];
-    produkLinks.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.href += ref;
-      }
-    });
-  };
+  
 </script>  <section class="hero">
     <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
     <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
