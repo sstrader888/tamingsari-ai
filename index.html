@@ -1,268 +1,155 @@
 <!DOCTYPE html>
-
 <html lang="ms">
-
 <head>
-  <!-- META SEO -->
-<meta name="description" content="Taming Sari+AI indikator forex AI terbaik di Malaysia oleh Cikgu Heri. Dapatkan signal buy/sell yang tepat dengan coaching, copytrade dan eBook.">
-<meta name="keywords" content="indikator forex, indikator AI, indikator tradingview, copytrade forex Malaysia, teknik taming sari, coaching forex">
-<meta name="author" content="Cikgu Heri">
-
-<script>
-  // Simpan refId jika ada dalam URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const ref = urlParams.get('ref');
-  if (ref) {
-    localStorage.setItem('referralId', ref);
-  }
-</script>
-
-<!-- Untuk Facebook/WhatsApp preview -->
-<meta property="og:title" content="Taming Sari+AI – Indikator Forex AI Malaysia oleh Cikgu Heri">
-<meta property="og:description" content="Indikator AI, coaching, copytrade & sistem sokongan untuk trader forex Malaysia.">
-<meta property="og:image" content="https://i.imgur.com/qzYmSNR.jpeg">
-<meta property="og:url" content="https://thesstrader.com">
-<meta property="og:type" content="website">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taming Sari+AI – Indikator Forex Power</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <title>Taming Sari+AI Landing Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/scrollreveal"></script>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
       margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom right, #1a1a1a, #2c2c2c);
-      color: white;
-      text-align: center;
-    }
-    .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: auto;
-      padding: 20px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
-      backdrop-filter: blur(5px);
-      box-shadow: 0px 0px 20px rgba(0,0,0,0.5);
+      font-family: 'Poppins', sans-serif;
+      background-color: #000;
+      color: #fff;
+      scroll-behavior: smooth;
     }
     header {
-     <header style="display: flex; align-items: center; justify-content: center;">
-  <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo Taming Sari" style="height:50px; border-radius:8px; margin-right:10px;">
-  <span style="font-weight: bold;">Taming Sari+AI</span>
-</header>
-
+      text-align: center;
+      padding: 30px;
+      background-color: #111;
     }
     header img {
-      height: 50px;
-      margin-right: 10px;
+      max-height: 60px;
     }
-    .section {
-      padding: 30px;
-      margin: 20px 0;
-      border-radius: 10px;
-    }
-    .image-container img {
-      width: 80%;
-      max-width: 500px;
-      border-radius: 10px;
-      display: block;
-      margin: 10px auto;
-    }
-    .grid-container {
+    .hero {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       justify-content: center;
+      padding: 40px 20px;
+    }
+    .hero-content {
+      max-width: 600px;
+      padding: 20px;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      color: #00ff99;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+    .hero-buttons a {
+      margin: 10px 10px 0 0;
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 5px;
+      background-color: #00ff99;
+      color: black;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .hero img {
+      max-width: 300px;
+      border-radius: 20px;
+    }
+    section {
+      padding: 40px 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #00ff99;
+      margin-bottom: 20px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
     }
-    .grid-item {
-      background: #333;
+    .card {
+      background-color: #111;
       padding: 20px;
       border-radius: 10px;
-      width: 300px;
-      box-shadow: 0px 0px 10px rgba(255,255,255,0.1);
-      transition: transform 0.3s ease-in-out;
-    }
-    .grid-item:hover {
-      transform: scale(1.05);
-    }
-    .cta-btn {
-      display: inline-block;
-      padding: 12px 20px;
-      background-color: #ff6600;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 5px;
-      font-size: 18px;
-      margin-top: 10px;
-    }
-    .cta-btn:hover {
-      background-color: #cc5500;
-    }
-    .broker-logos {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin: 40px 0;
-      flex-wrap: wrap;
-    }
-    .broker-box {
-      text-align: center;
-    }
-    .broker-box .emoji {
-      font-size: 30px;
-      animation: bounce 1.2s infinite;
-    }
-    .note {
-      font-size: 12px;
-      color: #ccc;
-      margin-top: 5px;
-    }
-    .countdown {
-      font-size: 26px;
-      color: #ffcc00;
-      margin-top: 10px;
-    }
-    .faq-container {
-      max-width: 800px;
-      margin: auto;
-      text-align: left;
     }
     .faq-item {
-      background: #222;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      padding: 15px;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      margin-bottom: 20px;
     }
-    .faq-item:hover {
-      background: #333;
-    }
-    .faq-question {
-      font-weight: bold;
-      font-size: 16px;
-    }
-    .faq-answer {
-      max-height: 0;
-      overflow: hidden;
-      font-size: 14px;
-      margin-top: 10px;
-      transition: max-height 0.4s ease, opacity 0.4s ease;
-      opacity: 0;
-    }
-    .faq-item.active .faq-answer {
-      max-height: 500px;
-      opacity: 1;
+    .faq-item h4 {
+      color: #00ff99;
     }
     footer {
-      background: #000;
-      color: white;
-      padding: 10px;
+      background: #111;
+      padding: 20px;
       text-align: center;
-      font-size: 14px;
-      margin-top: 40px;
+      font-size: 0.9rem;
     }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
+  <header>
+    <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo">
+  </header>
 
-<!-- Fakta Ringkas -->
-<div style="background:#333; color:#eee; padding:10px 0; display:flex; justify-content:space-around; flex-wrap:wrap;">
-  <div style="margin:10px;">✅ 700+ Trader Dibimbing</div>
-  <div style="margin:10px;">✅ 4 Tahun Pengalaman</div>
-  <div style="margin:10px;">✅ Sistem AI Verified</div>
-</div>
-
-<div class="container">
-  <div class="section">
-    <h1>Indikator AI Canggih untuk Entry Power!</h1>
-    <p>Gunakan teknologi terbaru untuk mendapatkan signal <span style="color:lime;">BUY</span> & <span style="color:red;">SELL</span> yang lebih tepat!</p>
-    <div class="image-container">
-      <img src="https://i.imgur.com/kZWCRNd.png" alt="Indikator di TradingView">
-    </div>
-    <p>💰 Harga Promosi: RM1000 (Lifetime License)</p>
-    <p class="countdown">Promosi Tamat Dalam: <span id="timer"></span></p>
-    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20untuk%20membeli%20indikator" class="cta-btn">🚀 Daftar Sekarang</a>
-  </div>
-<!-- Kod broker baharu yang betul diletakkan di bawah butang Daftar Sekarang -->
-<div class="section">
-  <h3 style="color:#ffcc00;">Daftar Broker Rasmi</h3>
-  <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 40px; margin-top: 20px;">
-    <div style="text-align:center;">
-      <div style="font-size:30px;">👇</div>
-      <a href="https://one.justmarkets.link/a/q4dvp07gaj" target="_blank">
-        <img src="https://i.imgur.com/Bsr6R21.jpeg" alt="JustMarkets" style="width:80px; border-radius:10px; box-shadow:0 0 8px rgba(255,255,255,0.1);">
-      </a>
-      <div style="font-size:14px; color:#ffcc00; font-weight:bold; margin-top:5px;">Klik untuk daftar</div>
-    </div>
-
-    <div style="text-align:center;">
-      <div style="font-size:30px;">👇</div>
-      <a href="https://gmi-ma.biz/account/register?token=NWYyMWE4OGQzMzc1NDRjYzdlN2UzMWIyYjg1MWYxMWU%3D" target="_blank">
-        <img src="https://gmimarkets.com/about/webp/about.webp" alt="GMI" style="width:80px; border-radius:10px; box-shadow:0 0 8px rgba(255,255,255,0.1);">
-      </a>
-      <div style="font-size:14px; color:#ffcc00; font-weight:bold; margin-top:5px;">Klik untuk daftar</div>
-    </div>
-  </div>
-</div>
-<!-- Tamat bahagian broker -->
-
-<script>
-  // Dapatkan maklumat pengguna dan paparkan ref link
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-  const auth = getAuth();
-  const db = getFirestore();
-
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-        if (data.refId) {
-          const refLink = "https://thesstrader.com/?ref=" + data.refId;
-          document.getElementById("refLink").textContent = refLink;
-        } else {
-          document.getElementById("refLink").textContent = "Tiada refId dijumpai";
-        }
-      }
-    }
-  });
-</script>
-
-
-
-  <!-- Coaching Packages -->
-  <div class="section">
-    <h2>📚 Pakej Personal Coaching</h2>
-    <div class="grid-container">
-      <div class="grid-item">
-        <h3>1+1 Personal Coaching</h3>
-        <p>💰 RM8000</p>
-        <p>🔹 1-on-1 sesi dengan Cikgu Heri</p>
-        <p>🔹 Latihan live trading</p>
-        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20coaching%201+1" class="cta-btn">📌 Daftar Sekarang</a>
-      </div>
-      <div class="grid-item">
-        <h3>Small Group Coaching</h3>
-        <p>💰 RM2000 per pax</p>
-        <p>🔹 Maksimum 6 peserta</p>
-        <p>🔹 Pembelajaran intensif</p>
-        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20coaching%20berkumpulan" class="cta-btn">📌 Daftar Sekarang</a>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Teknik AI Taming Sari<br>untuk Entry Penuh Keyakinan.</h1>
+      <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
+      <div class="hero-buttons">
+        <a href="login.html">Login</a>
+        <a href="login.html">Daftar</a>
+        <a href="#tutorial">Lihat Tutorial</a>
+        <a href="#produk">Produk</a>
+        <a href="#hubungi">Hubungi Kami</a>
       </div>
     </div>
-  </div>
+    <img src="https://i.imgur.com/ooU8RLW.png" alt="Gambar Indicator">
+  </section>
 
-  <!-- Galeri Coaching -->
-  <div class="section">
+  <section id="produk">
+    <h2>Produk Kami</h2>
+    <div class="card-grid">
+      <div class="card"><img src="https://i.imgur.com/233qLSp.png" width="100%"><p>Buku Taming Sari RM100</p><a href="https://wa.me/601111624164">Beli Sekarang</a></div>
+      <div class="card"><p>Ebook Panduan Taming Sari</p><a href="#">Muat Turun Ebook</a></div>
+      <div class="card"><p>Pendaftaran Copytrade</p><a href="https://forms.gle/fpGYbEv3XZL7imwN9">Daftar Copytrade</a></div>
+      <div class="card"><p>Daftar Broker JustMarkets / GMI</p><a href="#">Daftar Sekarang</a></div>
+    </div>
+  </section>
+
+  <section id="testimoni">
+    <h2>Testimoni Pelanggan</h2>
+    <div class="card-grid">
+      <div class="card">“Saya berjaya konsisten profit dengan Teknik Taming Sari!”<br>★★★★★</div>
+      <div class="card">“Indikator AI sangat membantu buat keputusan entry.”<br>★★★★★</div>
+      <div class="card">“Coaching jelas, mudah faham & terus nampak improvement.”<br>★★★★★</div>
+    </div>
+  </section>
+
+  <section id="video">
+    <h2>Video Demo</h2>
+    <div style="text-align:center">
+      <iframe width="300" height="170" src="https://www.youtube.com/embed/pjIyeQJvyZM" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <section id="harga">
+    <h2>Harga Pakej</h2>
+    <div class="card-grid">
+      <div class="card"><h3>Indikator AI</h3><p>RM1000 lifetime / atau daftar melalui broker</p></div>
+      <div class="card"><h3>1+1 Personal Coaching</h3><p>RM8000</p><p>🔹 1-on-1 sesi dengan Cikgu Heri</p><p>🔹 Latihan live trading</p><a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20coaching%201+1">📌 Daftar Sekarang</a></div>
+      <div class="card"><h3>Small Group Coaching</h3><p>RM2000 per pax</p><p>🔹 Maksimum 6 peserta</p><p>🔹 Pembelajaran intensif</p><a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20coaching%20berkumpulan">📌 Daftar Sekarang</a></div>
+    </div>
+  </section>
+
+  <section id="galeri">
     <h2>Galeri Sesi Coaching</h2>
     <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
       <img src="https://i.imgur.com/yPllXC7.jpeg" alt="Coaching 1" style="width:45%; border-radius:10px;">
@@ -270,367 +157,35 @@
       <img src="https://i.imgur.com/UqmHOtC.jpeg" alt="Coaching 3" style="width:45%; border-radius:10px;">
       <img src="https://i.imgur.com/cj0F9ew.jpeg" alt="Coaching 4" style="width:45%; border-radius:10px;">
     </div>
-  </div>
+  </section>
 
-  <!-- Pengenalan Team -->
-  <div class="section" style="background:#222; border:1px solid #444;">
-    <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader" style="height:70px; margin-bottom:15px;">
-    <h2>Kenali Team SStrader</h2>
-    <p>Team ini diketuai oleh <strong>Cikgu Heri</strong>, seorang Technical Chartist yang telah melatih ramai trader berjaya melalui pendekatan berdisiplin dan teknikal seperti Taming Sari, Dominan Candle, Candle Break dan banyak lagi.</p>
-  </div>
-
-  <!-- Buku Fizikal -->
-  <div class="section">
-    <h2>Buku Fizikal: Teknik Lengkap Taming Sari</h2>
-    <img src="https://i.imgur.com/233qLSp.png" alt="Buku Taming Sari" style="max-width:100%; width:220px; height:auto; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.5); margin-bottom:15px;">
-    <p>Dapatkan buku fizikal edisi khas Teknik Lengkap Taming Sari secara eksklusif!</p>
-    <p><strong>Harga Promosi: RM100 sahaja</strong></p>
-    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20buku%20Teknik%20Lengkap%20Taming%20Sari" class="cta-btn">📚 Tempah Buku Sekarang</a>
-  </div>
-
-  <!-- Kelebihan Pembelian -->
-  <div class="section">
-    <h2>Apa Anda Akan Dapat?</h2>
-    <ul style="text-align:left; max-width: 800px; margin:auto;">
-      <li>✅ Akses Indikator AI Taming Sari (Lifetime)</li>
-      <li>✅ Tutorial Video & E-Book Lengkap</li>
-      <li>✅ Akses Group Analisa oleh Cg Heri</li>
-      <li>✅ Sokongan Group Support Harian</li>
-      <li>✅ Peluang duduk & belajar terus di HQ Trade House SStrader, Taiping</li>
-    </ul>
-  </div>
-
-  <!-- Langgan Alternatif -->
-  <div class="section">
-    <h2>Alternatif: Langgan Secara Bulanan</h2>
-    <p><strong>Langgan indikator secara PERCUMA</strong> dengan mendaftar melalui broker rasmi kami:</p>
-    <ul style="text-align:left; max-width: 800px; margin:auto;">
-      <li>1️⃣ Daftar dengan <strong>JustMarkets</strong> atau <strong>GMI</strong></li>
-      <li>2️⃣ Minimum deposit <strong>100 USD</strong></li>
-      <li>3️⃣ Dapat akses indikator + support group + bonus sama seperti pembelian RM1000</li>
-    </ul>
-  </div>
-
-  <!-- Copytrade -->
-  <div class="section">
-    <h2>Copytrade Bersama SStrader</h2>
-    <p>Pihak SStrader juga menyediakan pilihan <strong>Copytrade</strong> untuk anda yang ingin menjana keuntungan tanpa perlu trading sendiri.</p>
-    <ul style="text-align:left; max-width: 800px; margin:auto;">
-      <li>✅ Modal minimum serendah <strong>RM5000</strong></li>
-      <li>✅ Diurus oleh trader berpengalaman Team SStrader</li>
-      <li>✅ Sesuai untuk yang sibuk atau baru bermula</li>
-    </ul>
-    <a href="https://forms.gle/fpGYbEv3XZL7imwN9" target="_blank" class="cta-btn">📝 Daftar untuk Copytrade</a>
-  </div>
-
-  <!-- Harga Emas Live oleh OANDA -->
-<div class="section" style="background:#1f1f1f; border:1px solid #444;">
-  <h2 style="color:#ffcc00;">Harga Emas Semasa (XAU/USD – Live)</h2>
-  <div class="tradingview-widget-container" style="margin:auto; max-width:600px;">
-    <div id="tradingview_xauusd"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-    {
-      "symbol": "OANDA:XAUUSD",
-      "width": "100%",
-      "height": "100",
-      "locale": "en",
-      "dateRange": "1D",
-      "colorTheme": "dark",
-      "isTransparent": false,
-      "autosize": true
-    }
-    </script>
-  </div>
-</div>
-  
-  <!-- FAQ -->
-  <div class="section">
+  <section id="faq">
     <h2>Soalan Lazim (FAQ)</h2>
-    <div class="faq-container">
-      <div class="faq-item" onclick="toggleFAQ(this)">
-        <div class="faq-question">1. Adakah indikator ini sesuai untuk pemula?</div>
-        <div class="faq-answer">Ya, indikator ini direka agar mudah difahami oleh pemula dan dgunakan oleh trader berpengalaman.</div>
-      </div>
-      <div class="faq-item" onclick="toggleFAQ(this)">
-        <div class="faq-question">2. Perlu langgan TradingView berbayar ke?</div>
-        <div class="faq-answer">Tidak wajib. Boleh digunakan dengan akaun percuma di TradingView.</div>
-      </div>
-      <div class="faq-item" onclick="toggleFAQ(this)">
-        <div class="faq-question">3. Apa beza beli RM1000 dan daftar melalui broker?</div>
-        <div class="faq-answer">Jika beli RM1000 – dapat akses seumur hidup. Jika daftar melalui broker – langganan bulanan selagi aktif deposit & trade.</div>
-      </div>
-      <div class="faq-item" onclick="toggleFAQ(this)">
-        <div class="faq-question">4. Berapa cepat saya boleh mula guna selepas daftar?</div>
-        <div class="faq-answer">Dalam masa 24 jam selepas pengesahan bayaran atau akaun broker aktif.</div>
-      </div>
+    <div class="faq-item">
+      <h4>Apa itu Teknik Taming Sari?</h4>
+      <p>Ia adalah teknik gabungan Fibonacci, candle pattern dan AI untuk membantu entry lebih tepat.</p>
     </div>
-  </div>
-
-  <!-- Penafian Risiko -->
-  <div class="section" style="background:#111; color:#ccc;">
-    <h2>Penafian Risiko</h2>
-    <p style="max-width:800px; margin:auto; font-size:14px;">
-      Dagangan CFD membawa risiko tinggi dan mungkin tidak sesuai untuk semua pelabur. Sila pastikan anda memahami sepenuhnya risiko sebelum mula berdagang. Prestasi lalu bukan jaminan hasil masa depan. SStrader dan Cikgu Heri tidak bertanggungjawab atas sebarang kerugian yang mungkin berlaku.
-    </p>
-  </div>
-
-</div>
-
-<!-- WhatsApp Bubble -->
-<a href="https://api.whatsapp.com/send?phone=60194173200" 
-   style="position:fixed; bottom:20px; right:20px; background:#25D366; color:white; padding:10px 15px; 
-   font-size:16px; border-radius:50px; text-decoration:none;">
-   💬 Chat dengan Kami!
-</a>
-
-<!-- Skrip FAQ dan Countdown -->
-<script>
-  const countDownDate = new Date("Mar 31, 2025 23:59:59").getTime();
-  const timerEl = document.getElementById("timer");
-  setInterval(function() {
-    const now = new Date().getTime();
-    const distance = countDownDate - now;
-    if (distance < 0) {
-      timerEl.innerHTML = "Promosi Tamat";
-      return;
-    }
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    timerEl.innerHTML = days + "h " + hours + "m " + minutes + "s";
-  }, 1000);
-
-  function toggleFAQ(element) {
-    element.classList.toggle('active');
-  }
-</script>
-
-  <!-- Artikel Terkini -->
-<div style="padding:30px; background:#111; color:#fff; margin-top:40px; border-top:3px solid #ff6600;">
-  <h2 style="color:#ffcc00; text-align:center;">Artikel Terkini</h2>
-  <ul style="list-style:none; padding-left:0; text-align:left; max-width:800px; margin:auto;">
-    <li style="margin:10px 0;">
-      <a href="artikel1.html" style="color:#00ccff; font-size:16px; text-decoration:none;">
-        ➤ Rahsia Indikator Forex AI Taming Sari: Teknik Power Oleh Cikgu Heri
-      </a>
-    </li>
-    <li style="margin:10px 0;">
-      <a href="artikel2.html" style="color:#00ccff; font-size:16px; text-decoration:none;">
-        ➤ Cara Entry Guna Dominan Candle – Teknik Forex Tersusun dan Disiplin
-      </a>
-    </li>
-    <li style="margin:10px 0;">
-      <a href="artikel3.html" style="color:#00ccff; font-size:16px; text-decoration:none;">
-        ➤ Langkah Demi Langkah Guna Fibo Taming Sari untuk Entry & Take Profit
-      </a>
-    </li>
-    <li style="margin:10px 0;">
-  <a href="artikel4.html" style="color:#00ccff; font-size:16px; text-decoration:none;">
-    ➤ Strategi Money Management & Compounding Untuk Konsisten Profit Dalam Forex
-  </a>
-    </li>
-  </ul>
-</div>
-
-  <!-- Ikon Media Sosial -->
-<div style="margin-top: 30px;">
-  <h3 style="color: #ffcc00;">Ikuti Kami di Media Sosial</h3>
-  <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
-    <a href="https://www.tiktok.com/@cikguherisstrader?_t=ZS-8uuJsf78i19&_r=1" target="_blank" title="TikTok">
-      <img src="https://cdn-icons-png.flaticon.com/512/3046/3046122.png" alt="TikTok" style="width: 30px;">
-    </a>
-    <a href="https://www.facebook.com/share/1AEiBQbVs5/" target="_blank" title="Facebook">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width: 30px;">
-    </a>
-    <a href="https://www.youtube.com/@SantaiSantaiTrader" target="_blank" title="YouTube">
-      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" style="width: 30px;">
-    </a>
-  </div>
-</div>
-
-<footer>© 2025 Taming Sari+AI. Semua hak cipta terpelihara.</footer>
-
-<!-- Iklan Pop-up dengan Hide-to-Icon -->
-
-<style>
-  #iklan-popup {
-    display: none;
-    position: fixed;
-    bottom: 100px;
-    right: 10px;
-    background: #1e1e1e;
-    border: 1px solid #444;
-    border-radius: 10px;
-    padding: 10px;
-    width: 200px;
-    max-width: 90%;
-    z-index: 9997;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-  }
-
-  #iklan-popup h4 {
-    margin: 5px 0 10px 0;
-    font-size: 13px;
-    color: #ffcc00;
-    text-align: center;
-  }
-
-  #iklan-popup button {
-    position: absolute;
-    top: 5px;
-    right: 8px;
-    background: none;
-    color: #ccc;
-    border: none;
-    font-size: 14px;
-    cursor: pointer;
-  }
-
-  .iklan-row {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .iklan-box {
-    width: 80px;
-    text-align: center;
-  }
-
-  .iklan-box img {
-    width: 100%;
-    border-radius: 5px;
-  }
-
-  .iklan-box p {
-    font-size: 10px;
-    color: #ccc;
-    margin: 5px 0 0 0;
-  }
-
-  .iklan-box a {
-    color: #00ccff;
-    font-size: 11px;
-    text-decoration: none;
-  }
-
-  #iklan-icon {
-    display: none;
-    position: fixed;
-    bottom: 100px;
-    right: 10px;
-    background: #ff6600;
-    color: white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    line-height: 40px;
-    cursor: pointer;
-    z-index: 9998;
-  }
-</style>
-
-<!-- IKLAN POPUP -->
-<div id="popup-iklan" style="
-  position: fixed;
-  bottom: 80px;
-  right: 15px;
-  width: 270px;
-  background-color: #111;
-  color: white;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(255,255,255,0.2);
-  z-index: 9999;
-">
-  <div style="text-align:right;">
-    <span id="tutup-iklan" style="cursor:pointer; font-weight:bold;">✖</span>
-  </div>
-  <div style="font-weight:bold; color:#ffcc00; text-align:center;">Iklan Tempatan</div>
-  <div style="display:flex; justify-content:space-around; align-items:center; margin-top:10px;">
-    <div style="text-align:center;">
-      <img src="https://i.imgur.com/ILKSa28.jpeg" alt="Iron Gamers" style="width:60px; height:auto; border-radius:5px;">
-      <div style="font-size:11px;">Iron Gamers</div>
-      <a href="https://www.facebook.com/profile.php?id=61566999705522" target="_blank" style="font-size:10px; color:#00ccff;">Repair Console</a>
+    <div class="faq-item">
+      <h4>Perlu buka akaun broker?</h4>
+      <p>Ya, boleh daftar melalui JustMarkets atau GMI untuk guna indikator secara percuma.</p>
     </div>
-    <div style="text-align:center;">
-      <img src="https://i.imgur.com/jvmALJ0.jpeg" alt="Big John" style="width:60px; height:auto; border-radius:5px;">
-      <div style="font-size:11px;">Big John</div>
-      <a href="https://bigjohnhouseofrotijohn.orderla.my/" target="_blank" style="font-size:10px; color:#00ccff;">Roti John Order</a>
+  </section>
+
+  <section id="rakan">
+    <h2>Rakan Broker Rasmi</h2>
+    <div class="card-grid">
+      <div class="card"><img src="https://justmarkets.com/images/just-logo.svg" width="100"></div>
+      <div class="card"><img src="https://gmi.market/images/logo.svg" width="100"></div>
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- ICON KECIL AKTIFKAN POPUP -->
-<div id="popup-toggle" style="
-  position: fixed;
-  bottom: 80px;
-  right: 15px;
-  width: 40px;
-  height: 40px;
-  background-color: #ff6600;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-  border-radius: 50%;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 9999;
-">🔔</div>
+  <footer>
+    <p><strong>Penafian:</strong> Dagangan CFD adalah berisiko. Sila fahami risiko sebelum mula berdagang.</p>
+    <p>&copy; 2025 SStrader Affiliate. All rights reserved.</p>
+  </footer>
 
-<!-- JS UNTUK KAWAL POPUP -->
-<script>
-  document.getElementById("tutup-iklan").addEventListener("click", function () {
-    document.getElementById("popup-iklan").style.display = "none";
-    document.getElementById("popup-toggle").style.display = "flex";
-  });
-
-  document.getElementById("popup-toggle").addEventListener("click", function () {
-    document.getElementById("popup-iklan").style.display = "block";
-    document.getElementById("popup-toggle").style.display = "none";
-  });
-</script>
-
-<!-- Butang Login Terapung -->
-<a href="login.html" class="login-btn-affiliate">🔐 Login Affiliate</a>
-
-<style>
-  .login-btn-affiliate {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #ff6600;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 14px;
-    z-index: 9999;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    transition: background 0.3s;
-  }
-
-  .login-btn-affiliate:hover {
-    background-color: #cc5500;
-  }
-
-  @media screen and (max-width: 600px) {
-    .login-btn-affiliate {
-      font-size: 13px;
-      padding: 8px 12px;
-      top: 15px;
-      right: 15px;
-    }
-  }
-</style>
-
-  
+  <script>
+    ScrollReveal().reveal('.hero, .card, h2, .faq-item', { delay: 200, distance: '30px', origin: 'bottom', duration: 800 });
+  </script>
 </body>
 </html>
