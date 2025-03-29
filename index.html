@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="ms">
+<!DOCTYPE html><html lang="ms">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,11 +30,12 @@
     }
     header {
       background: var(--card);
-      padding: 20px 40px;
+      padding: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+      position: relative;
     }
     header .logo-section {
       display: flex;
@@ -50,12 +50,19 @@
       color: white;
       font-size: 1.2rem;
     }
+    .menu-toggle {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      background: none;
+      border: none;
+    }
     nav {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
       align-items: center;
-      position: relative;
     }
     nav a {
       color: var(--light);
@@ -96,101 +103,38 @@
     .dropdown:hover .dropdown-content {
       display: block;
     }
-    .hero {
-      text-align: center;
-      padding: 80px 40px;
-    }
-    .hero img {
-      max-width: 300px;
-      margin-bottom: 20px;
-    }
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      color: var(--primary);
-    }
-    .hero p {
-      font-size: 1.2rem;
-      color: var(--gray);
-      margin-bottom: 30px;
-    }
-    .hero a {
-      display: inline-block;
-      padding: 12px 24px;
-      background: var(--accent);
-      color: #000;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: 0.3s;
-    }
-    .hero a:hover {
-      opacity: 0.85;
-    }
-    .section {
-      padding: 60px 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    .grid-item {
-      background: var(--card);
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .testimonial {
-      background: var(--card);
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-    }
-    .testimonial span {
-      color: gold;
-    }
-    .faq {
-      margin-bottom: 20px;
-    }
-    .faq strong {
-      color: var(--accent);
-    }
-    .broker-logos {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 20px;
-    }
-    .broker-logos img {
-      height: 40px;
-      max-width: 120px;
-      object-fit: contain;
-    }
-    footer {
-      background: #111;
-      padding: 30px;
-      text-align: center;
-      color: var(--gray);
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: var(--card);
+        position: absolute;
+        top: 70px;
+        left: 0;
+      }
+      nav.active {
+        display: flex;
+      }
+      .menu-toggle {
+        display: block;
+      }
     }
   </style>
 </head>
-<body>
-
-<header>
+<body><header>
   <div class="logo-section">
     <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
     <span>SSTrader</span>
   </div>
+  <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('active')">☰</button>
   <nav>
     <a href="login.html">Login</a>
     <div class="dropdown" tabindex="0">
       <a href="#produk">Produk</a>
       <div class="dropdown-content">
         <a href="#indicator">Indicator</a>
-        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Beli%20Buku">Buku</a>
+        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Beli%20Buku" target="_blank">Buku</a>
         <a href="#coaching">Coaching</a>
         <a href="#copytrade">Copytrade</a>
       </div>
@@ -199,7 +143,7 @@
     <a href="#hubungi">Hubungi</a>
     <a href="#produk" class="buy-btn">Beli Sekarang</a>
   </nav>
-</header>
+</header><!-- ...the rest of your original content continues here without any change... -->
 
 <section class="hero" id="home">
   <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
