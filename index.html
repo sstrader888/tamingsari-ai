@@ -200,6 +200,28 @@
       display: flex;
     }
   }
+   
+.mobile-dropdown > a {
+  font-weight: 500;
+  padding: 10px 0;
+  color: var(--light);
+  display: block;
+}
+
+.mobile-submenu {
+  display: none;
+  flex-direction: column;
+  padding-left: 20px;
+  margin-top: 5px;
+}
+
+.mobile-submenu a {
+  color: var(--gray);
+  padding: 6px 0;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
 </style>
 
 <!-- Inside <body> -->
@@ -239,38 +261,49 @@
 </header>
 
 <!-- Mobile menu -->
-<div class="mobile-nav" id="mobileNav">
+<div class="mobile-menu" id="mobileMenu">
   <a href="login.html">Login</a>
   <a href="artikel.html">Artikel</a>
-  <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Buku&ref=" id="mobile-link-buku">Buku</a>
-  <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Indicator&ref=" id="mobile-link-indicator">Indicator</a>
-  <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Coaching&ref=" id="mobile-link-coaching">Coaching</a>
-  <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Copytrade&ref=" id="mobile-link-copytrade">Copytrade</a>
-  <a href="#about">Tentang Kami</a>
-  <a href="#hubungi">Hubungi</a>
-  <a href="#produk" class="buy-btn">Beli Sekarang</a>
+
+  <div class="mobile-dropdown">
+    <a href="#" onclick="toggleSubmenu(event)">Produk ▼</a>
+    <div class="mobile-submenu">
+      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Buku&ref=" id="linkBuku">Buku</a>
+      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Indicator&ref=" id="linkIndicator">Indicator</a>
+      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Coaching&ref=" id="linkCoaching">Coaching</a>
+      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Copytrade&ref=" id="linkCopytrade">Copytrade</a>
+    </div>
+  </div>
+
+  <a href="index.html#about">Tentang Kami</a>
+  <a href="index.html#hubungi">Hubungi</a>
+  <a href="index.html#produk" class="buy-btn">Beli Sekarang</a>
 </div>
 
+
 <script>
-  function toggleMobileMenu() {
-    const nav = document.getElementById('mobileNav');
-    nav.classList.toggle('active');
+  function toggleMenu() {
+    const menu = document.getElementById('mobileMenu');
+    menu.classList.toggle('active');
   }
 
-  // Automatik tambah referral ID jika ada
-  const refId = localStorage.getItem('referralId');
-  if (refId) {
-    const produkLinks = [
-      'link-buku', 'link-indicator', 'link-coaching', 'link-copytrade',
-      'mobile-link-buku', 'mobile-link-indicator', 'mobile-link-coaching', 'mobile-link-copytrade'
-    ];
+  function toggleSubmenu(event) {
+    event.preventDefault();
+    const submenu = event.target.nextElementSibling;
+    submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
+  }
+
+  // ✅ Tambah referral ID ke link produk
+  window.onload = function () {
+    const ref = localStorage.getItem("referralId") || "";
+    const produkLinks = ["linkBuku", "linkIndicator", "linkCoaching", "linkCopytrade"];
     produkLinks.forEach(id => {
       const el = document.getElementById(id);
       if (el) {
-        el.href += refId;
+        el.href += ref;
       }
     });
-  }
+  };
 </script>
 
 
