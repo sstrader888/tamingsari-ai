@@ -37,6 +37,7 @@
     nav {
       display: flex;
       gap: 16px;
+      align-items: center;
     }
     nav a {
       color: var(--light);
@@ -55,13 +56,17 @@
       color: var(--dark);
     }
     .hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
       gap: 40px;
       padding: 80px 40px;
       max-width: 1400px;
       margin: auto;
+    }
+    .hero-content {
+      flex: 1 1 500px;
     }
     .hero-content h1 {
       font-size: 3rem;
@@ -96,13 +101,10 @@
       width: 100%;
       max-width: 480px;
       border-radius: 20px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
     }
     @media (max-width: 960px) {
       .hero {
-        grid-template-columns: 1fr;
+        flex-direction: column-reverse;
         text-align: center;
       }
       .hero-buttons {
@@ -113,6 +115,22 @@
         align-items: flex-end;
       }
     }
+    .about-section {
+      padding: 60px 40px;
+      max-width: 1000px;
+      margin: auto;
+      text-align: center;
+    }
+    .about-section h2 {
+      color: var(--primary);
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    .about-section p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
@@ -121,7 +139,7 @@
     <nav>
       <a href="login.html">Login</a>
       <a href="#produk">Produk</a>
-      <a href="#tutorial">Lihat Tutorial</a>
+      <a href="#tutorial">Tutorial</a>
       <a href="#hubungi">Hubungi Kami</a>
       <a href="#about">Tentang Kami</a>
       <a href="#beli" class="buy-btn">Beli Sekarang</a>
@@ -144,6 +162,11 @@
     <div>
       <img src="https://i.imgur.com/ooU8RLW.png" alt="Gambar Indicator">
     </div>
+  </section>
+
+  <section class="about-section" id="about">
+    <h2>Tentang Kami</h2>
+    <p>SSTrader adalah platform latihan dan perkongsian ilmu dalam dunia dagangan forex dan emas. Kami menyediakan indikator eksklusif berasaskan AI, latihan coaching, sistem copytrade, serta sokongan komuniti kepada trader yang serius ingin menjana pendapatan konsisten dari pasaran kewangan global.</p>
   </section>
 
   <script>
