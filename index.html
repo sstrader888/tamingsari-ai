@@ -7,89 +7,110 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/scrollreveal"></script>
   <style>
+    :root {
+      --primary: #00ff99;
+      --dark: #000;
+      --light: #fff;
+      --card: #111;
+      --accent: #ff9800;
+    }
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background-color: #000;
-      color: #fff;
+      background-color: var(--dark);
+      color: var(--light);
       scroll-behavior: smooth;
     }
     header {
-      text-align: center;
-      padding: 30px;
-      background-color: #111;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--card);
+      padding: 20px 40px;
     }
     header img {
-      max-height: 60px;
+      height: 50px;
+    }
+    nav {
+      display: flex;
+      gap: 16px;
+    }
+    nav a {
+      color: var(--light);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    nav a.buy-btn {
+      background-color: var(--accent);
+      color: #000;
+    }
+    nav a:hover {
+      background-color: var(--primary);
+      color: var(--dark);
     }
     .hero {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-    .hero-content {
-      max-width: 600px;
-      padding: 20px;
-    }
-    .hero h1 {
-      font-size: 2.8rem;
-      color: #00ff99;
-    }
-    .hero p {
-      font-size: 1.2rem;
-      margin-top: 10px;
-    }
-    .hero-buttons a {
-      margin: 10px 10px 0 0;
-      display: inline-block;
-      padding: 10px 20px;
-      border-radius: 5px;
-      background-color: #00ff99;
-      color: black;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    .hero img {
-      max-width: 300px;
-      border-radius: 20px;
-    }
-    section {
-      padding: 40px 20px;
-      max-width: 900px;
+      gap: 40px;
+      padding: 80px 40px;
+      max-width: 1400px;
       margin: auto;
     }
-    h2 {
-      text-align: center;
-      color: #00ff99;
+    .hero-content h1 {
+      font-size: 3rem;
+      color: var(--primary);
       margin-bottom: 20px;
     }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
+    .hero-content p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
     }
-    .card {
-      background-color: #111;
-      padding: 20px;
-      border-radius: 10px;
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
     }
-    .faq-item {
-      margin-bottom: 20px;
+    .hero-buttons a {
+      padding: 12px 20px;
+      border-radius: 8px;
+      background-color: var(--primary);
+      color: #000;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s;
     }
-    .faq-item h4 {
-      color: #00ff99;
+    .hero-buttons a.buy {
+      background-color: var(--accent);
     }
-    footer {
-      background: #111;
-      padding: 20px;
-      text-align: center;
-      font-size: 0.9rem;
+    .hero-buttons a:hover {
+      background-color: #00cc77;
     }
-    @media (max-width: 768px) {
+    .hero img {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (max-width: 960px) {
       .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero-buttons {
+        justify-content: center;
+      }
+      nav {
         flex-direction: column;
+        align-items: flex-end;
       }
     }
   </style>
@@ -97,11 +118,19 @@
 <body>
   <header>
     <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo">
+    <nav>
+      <a href="login.html">Login</a>
+      <a href="#produk">Produk</a>
+      <a href="#tutorial">Lihat Tutorial</a>
+      <a href="#hubungi">Hubungi Kami</a>
+      <a href="#about">Tentang Kami</a>
+      <a href="#beli" class="buy-btn">Beli Sekarang</a>
+    </nav>
   </header>
 
   <section class="hero">
     <div class="hero-content">
-      <h1>Teknik AI Taming Sari<br>untuk Entry Penuh Keyakinan.</h1>
+      <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
       <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
       <div class="hero-buttons">
         <a href="login.html">Login</a>
@@ -109,83 +138,21 @@
         <a href="#tutorial">Lihat Tutorial</a>
         <a href="#produk">Produk</a>
         <a href="#hubungi">Hubungi Kami</a>
+        <a href="#beli" class="buy">Beli Sekarang</a>
       </div>
     </div>
-    <img src="https://i.imgur.com/ooU8RLW.png" alt="Gambar Indicator">
-  </section>
-
-  <section id="produk">
-    <h2>Produk Kami</h2>
-    <div class="card-grid">
-      <div class="card"><img src="https://i.imgur.com/233qLSp.png" width="100%"><p>Buku Taming Sari RM100</p><a href="https://wa.me/601111624164">Beli Sekarang</a></div>
-      <div class="card"><p>Ebook Panduan Taming Sari</p><a href="#">Muat Turun Ebook</a></div>
-      <div class="card"><p>Pendaftaran Copytrade</p><a href="https://forms.gle/fpGYbEv3XZL7imwN9">Daftar Copytrade</a></div>
-      <div class="card"><p>Daftar Broker JustMarkets / GMI</p><a href="#">Daftar Sekarang</a></div>
+    <div>
+      <img src="https://i.imgur.com/ooU8RLW.png" alt="Gambar Indicator">
     </div>
   </section>
-
-  <section id="testimoni">
-    <h2>Testimoni Pelanggan</h2>
-    <div class="card-grid">
-      <div class="card">“Saya berjaya konsisten profit dengan Teknik Taming Sari!”<br>★★★★★</div>
-      <div class="card">“Indikator AI sangat membantu buat keputusan entry.”<br>★★★★★</div>
-      <div class="card">“Coaching jelas, mudah faham & terus nampak improvement.”<br>★★★★★</div>
-    </div>
-  </section>
-
-  <section id="video">
-    <h2>Video Demo</h2>
-    <div style="text-align:center">
-      <iframe width="300" height="170" src="https://www.youtube.com/embed/pjIyeQJvyZM" frameborder="0" allowfullscreen></iframe>
-    </div>
-  </section>
-
-  <section id="harga">
-    <h2>Harga Pakej</h2>
-    <div class="card-grid">
-      <div class="card"><h3>Indikator AI</h3><p>RM1000 lifetime / atau daftar melalui broker</p></div>
-      <div class="card"><h3>1+1 Personal Coaching</h3><p>RM8000</p><p>🔹 1-on-1 sesi dengan Cikgu Heri</p><p>🔹 Latihan live trading</p><a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20coaching%201+1">📌 Daftar Sekarang</a></div>
-      <div class="card"><h3>Small Group Coaching</h3><p>RM2000 per pax</p><p>🔹 Maksimum 6 peserta</p><p>🔹 Pembelajaran intensif</p><a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20coaching%20berkumpulan">📌 Daftar Sekarang</a></div>
-    </div>
-  </section>
-
-  <section id="galeri">
-    <h2>Galeri Sesi Coaching</h2>
-    <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
-      <img src="https://i.imgur.com/yPllXC7.jpeg" alt="Coaching 1" style="width:45%; border-radius:10px;">
-      <img src="https://i.imgur.com/tP41zon.jpeg" alt="Coaching 2" style="width:45%; border-radius:10px;">
-      <img src="https://i.imgur.com/UqmHOtC.jpeg" alt="Coaching 3" style="width:45%; border-radius:10px;">
-      <img src="https://i.imgur.com/cj0F9ew.jpeg" alt="Coaching 4" style="width:45%; border-radius:10px;">
-    </div>
-  </section>
-
-  <section id="faq">
-    <h2>Soalan Lazim (FAQ)</h2>
-    <div class="faq-item">
-      <h4>Apa itu Teknik Taming Sari?</h4>
-      <p>Ia adalah teknik gabungan Fibonacci, candle pattern dan AI untuk membantu entry lebih tepat.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Perlu buka akaun broker?</h4>
-      <p>Ya, boleh daftar melalui JustMarkets atau GMI untuk guna indikator secara percuma.</p>
-    </div>
-  </section>
-
-  <section id="rakan">
-    <h2>Rakan Broker Rasmi</h2>
-    <div class="card-grid">
-      <div class="card"><img src="https://justmarkets.com/images/just-logo.svg" width="100"></div>
-      <div class="card"><img src="https://gmi.market/images/logo.svg" width="100"></div>
-    </div>
-  </section>
-
-  <footer>
-    <p><strong>Penafian:</strong> Dagangan CFD adalah berisiko. Sila fahami risiko sebelum mula berdagang.</p>
-    <p>&copy; 2025 SStrader Affiliate. All rights reserved.</p>
-  </footer>
 
   <script>
-    ScrollReveal().reveal('.hero, .card, h2, .faq-item', { delay: 200, distance: '30px', origin: 'bottom', duration: 800 });
+    ScrollReveal().reveal('.hero, .card, h2, .faq-item', {
+      delay: 200,
+      distance: '30px',
+      origin: 'bottom',
+      duration: 800
+    });
   </script>
 </body>
 </html>
