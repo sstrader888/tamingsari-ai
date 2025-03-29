@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ms">
+<!DOCTYPE html>
+<html lang="ms">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,9 +26,6 @@
       color: var(--light);
       scroll-behavior: smooth;
     }
-    h1, h2, h3 {
-      font-weight: 600;
-    }
     header {
       background: var(--card);
       padding: 20px 40px;
@@ -36,15 +34,15 @@
       align-items: center;
       flex-wrap: wrap;
     }
-    header .logo-section {
+    .logo-section {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    header .logo-section img {
+    .logo-section img {
       height: 50px;
     }
-    header .logo-section span {
+    .logo-section span {
       font-weight: 600;
       color: white;
       font-size: 1.2rem;
@@ -70,30 +68,6 @@
     nav a:hover {
       background: var(--primary);
       color: #000;
-    }
-    .dropdown {
-      position: relative;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: #222;
-      min-width: 180px;
-      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-      z-index: 1;
-      border-radius: 8px;
-    }
-    .dropdown-content a {
-      color: white;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
-    .dropdown:focus-within .dropdown-content,
-    .dropdown:hover .dropdown-content {
-      display: block;
     }
     .hero {
       text-align: center;
@@ -131,16 +105,6 @@
       max-width: 1000px;
       margin: auto;
     }
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    .grid-item {
-      background: var(--card);
-      padding: 20px;
-      border-radius: 10px;
-    }
     .testimonial {
       background: var(--card);
       padding: 20px;
@@ -149,12 +113,6 @@
     }
     .testimonial span {
       color: gold;
-    }
-    .faq {
-      margin-bottom: 20px;
-    }
-    .faq strong {
-      color: var(--primary);
     }
     .broker-logos {
       display: flex;
@@ -179,57 +137,68 @@
     }
   </style>
 </head>
-<body><section class="hero" id="home">
-  <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
-  <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
-  <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
-  <a href="#produk">Beli Sekarang</a>
-</section><section class="section" id="testimoni">
-  <h2>⭐ Testimoni Pelanggan</h2>
-  <div class="testimonial"><p>“Saya tak pernah profit konsisten sebelum jumpa teknik Taming Sari AI. Sekarang saya yakin untuk trading!”<br><span>★★★★★</span></p></div>
-  <div class="testimonial"><p>“Coaching sangat membantu, segala persoalan saya dijawab dengan jelas.”<br><span>★★★★☆</span></p></div>
-  <div class="testimonial"><p>“Indicator ni sangat jelas dan mudah difahami. Saya boleh fokus entry tanpa ragu.”<br><span>★★★★★</span></p></div>
-  <div class="testimonial"><p>“Saya mula dengan akaun kecil, tapi sekarang dah ada konsistensi dalam profit.”<br><span>★★★★☆</span></p></div>
-</section><section class="section" id="faq">
-  <h2>❓ Soalan Lazim</h2>
-  <div class="faq"><strong>S: Adakah saya perlu tahu teknikal analisis sebelum guna indikator?</strong>
-  <p>J: Tidak perlu, indikator ini mudah dan direka khas untuk semua peringkat trader.</p></div>  <div class="faq"><strong>S: Platform apa yang digunakan?</strong>
-  <p>J: TradingView – platform charting terkemuka dunia dan mesra pengguna.</p></div>  <div class="faq"><strong>S: Adakah boleh support live trading?</strong>
-  <p>J: Ya, termasuk sesi live trading semasa coaching dan sokongan komuniti.</p></div>  <div class="faq"><strong>S: Apakah kelebihan daftar melalui IB?</strong>
-  <p>J: Anda mendapat mata ganjaran (point) dan akses bonus seperti kelas percuma.</p></div>
-</section><section class="section" id="about">
-  <h2>🏢 Tentang SSTrader</h2>
-  <p>SSTrader merupakan komuniti trading profesional yang berpangkalan di HQ Trading House Taiping, Perak. Kami menyediakan indikator AI, program coaching intensif, copytrade dan bahan pembelajaran untuk membantu trader mencapai kejayaan konsisten. Diterajui oleh tenaga pengajar berpengalaman dan sistem tersusun, kami komited membimbing anda ke arah profit yang berterusan.</p>
-</section><section class="section" id="coaching">
-  <h2>📘 Pakej Coaching</h2>
-  <div class="grid-container">
-    <div class="grid-item">
-      <h3>1+1 Personal Coaching</h3>
-      <p><strong>RM8000</strong> – 1-on-1 bersama Cikgu Heri</p>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Minat%20Coaching%201+1">Daftar Sekarang</a>
+<body>
+  <header>
+    <div class="logo-section">
+      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
+      <span>SSTrader</span>
     </div>
-    <div class="grid-item">
-      <h3>Group Coaching</h3>
-      <p><strong>RM2000/pax</strong> – Maksimum 6 orang</p>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Minat%20Group%20Coaching">Daftar Sekarang</a>
+    <nav>
+      <a href="login.html">Login</a>
+      <a href="#produk">Produk</a>
+      <a href="#about">Tentang Kami</a>
+      <a href="#hubungi">Hubungi</a>
+      <a href="#produk" class="buy-btn">Beli Sekarang</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
+    <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
+    <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
+    <a href="#produk">Beli Sekarang</a>
+  </section>
+
+  <section class="section" id="about">
+    <h2>Tentang Kami</h2>
+    <p>SSTrader merupakan komuniti trading profesional yang berpangkalan di HQ Trading House Taiping, Perak. Kami menyediakan indikator AI, program coaching intensif, copytrade dan bahan pembelajaran untuk membantu trader mencapai kejayaan konsisten.</p>
+  </section>
+
+  <section class="section" id="testimoni">
+    <h2>⭐ Testimoni Pelanggan</h2>
+    <div class="testimonial"><p>“Saya tak pernah profit konsisten sebelum jumpa teknik Taming Sari AI. Sekarang saya yakin untuk trading!”<br><span>★★★★★</span></p></div>
+    <div class="testimonial"><p>“Coaching sangat membantu, segala persoalan saya dijawab dengan jelas.”<br><span>★★★★☆</span></p></div>
+  </section>
+
+  <section class="section" id="coaching">
+    <h2>📌 Pakej Coaching</h2>
+    <p>1+1 Personal Coaching – RM8000<br>Small Group Coaching – RM2000/pax (maks 6 orang)</p>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Minat%20Coaching" class="buy-btn">Daftar Sekarang</a>
+  </section>
+
+  <section class="section" id="copytrade">
+    <h2>💼 Copytrade Bersama Kami</h2>
+    <p>Dengan modal minimum RM5000, anda boleh mula menjana pendapatan secara automatik melalui sistem copytrade SSTrader.</p>
+    <a href="https://forms.gle/fpGYbEv3XZL7imwN9" class="buy-btn">Daftar Copytrade</a>
+  </section>
+
+  <section class="section" id="faq">
+    <h2>❓ Soalan Lazim</h2>
+    <p><strong style="color: var(--primary);">S: Perlu ada modal besar untuk mula?</strong><br>A: Tidak, anda boleh bermula dengan RM100 di akaun broker terpilih.</p>
+    <p><strong style="color: var(--primary);">S: Berapa lama nak mahir guna indicator ini?</strong><br>A: Biasanya dalam 3–5 hari latihan dan praktikal dengan bimbingan.</p>
+  </section>
+
+  <section class="section">
+    <h2>🤝 Rakan Broker Rasmi</h2>
+    <div class="broker-logos">
+      <img src="https://i.imgur.com/QcgQW74.png" alt="JustMarkets">
+      <img src="https://i.imgur.com/uZv8Lof.png" alt="GMI">
     </div>
-  </div>
-</section><section class="section" id="rakan-broker">
-  <h2>🤝 Rakan Broker Rasmi</h2>
-  <div class="broker-logos">
-    <img src="https://i.imgur.com/QcgQW74.png" alt="JustMarkets">
-    <img src="https://i.imgur.com/uZv8Lof.png" alt="GMI">
-  </div>
-</section><footer>
-  ⚠ Risiko: Dagangan CFD berisiko tinggi dan mungkin tidak sesuai untuk semua pelabur.<br>
-  &copy; 2025 SSTrader. Hak Cipta Terpelihara.
-</footer><script>
-  ScrollReveal().reveal('[data-sr]', {
-    distance: '30px',
-    duration: 1000,
-    easing: 'ease-in-out',
-    origin: 'bottom',
-    interval: 100
-  });
-</script></body>
+  </section>
+
+  <footer>
+    ⚠ Risiko: Dagangan CFD berisiko tinggi dan mungkin tidak sesuai untuk semua pelabur.<br>
+    &copy; 2025 SSTrader. Hak Cipta Terpelihara.
+  </footer>
+</body>
 </html>
