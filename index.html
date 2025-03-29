@@ -163,29 +163,116 @@
   </script>
 </head>
 <body>
-  <header>
-    <div class="logo-section">
-      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
-     <a href="/" style="text-decoration: none; color: white;"><span>SSTrader</span></a>
-    </div>
-    <button class="hamburger" onclick="document.querySelector('nav').classList.toggle('show')">☰</button>
-    <nav>
-      <a href="login.html">Login</a>
-      <a href="artikel.html">Artikel</a>
-      <div class="dropdown">
-        <a href="#produk">Produk ▾</a>
-        <div class="dropdown-content">
-          <a href="javascript:void(0)" onclick="openReferralLink('Buku Teknik Lengkap')">Buku</a>
-          <a href="javascript:void(0)" onclick="openReferralLink('Indicator Taming Sari AI')">Indicator</a>
-          <a href="javascript:void(0)" onclick="openReferralLink('Coaching')">Coaching</a>
-          <a href="javascript:void(0)" onclick="openReferralLink('Copytrade')">Copytrade</a>
-        </div>
+ <style>
+  /* Tambahan untuk responsif */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  .hamburger div {
+    width: 25px;
+    height: 3px;
+    background: white;
+    margin: 4px 0;
+  }
+  .mobile-nav {
+    display: none;
+    flex-direction: column;
+    background: var(--card);
+    padding: 10px 20px;
+  }
+  .mobile-nav a {
+    color: white;
+    padding: 10px 0;
+    text-decoration: none;
+    border-bottom: 1px solid #333;
+  }
+
+  @media (max-width: 768px) {
+    nav.desktop-nav {
+      display: none;
+    }
+    .hamburger {
+      display: flex;
+    }
+    .mobile-nav.active {
+      display: flex;
+    }
+  }
+</style>
+
+<!-- Inside <body> -->
+
+<header>
+  <div class="logo-section">
+    <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SSTrader">
+    <a href="index.html" style="text-decoration: none; color: white;">
+      <span>SSTrader</span>
+    </a>
+  </div>
+
+  <!-- Hamburger menu (mobile only) -->
+  <div class="hamburger" onclick="toggleMobileMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <!-- Desktop navigation -->
+  <nav class="desktop-nav">
+    <a href="login.html">Login</a>
+    <a href="artikel.html">Artikel</a>
+    <div class="dropdown">
+      <a href="#">Produk ▾</a>
+      <div class="dropdown-content">
+        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Buku&ref=" id="link-buku">Buku</a>
+        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Indicator&ref=" id="link-indicator">Indicator</a>
+        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Coaching&ref=" id="link-coaching">Coaching</a>
+        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Copytrade&ref=" id="link-copytrade">Copytrade</a>
       </div>
-      <a href="#about">Tentang Kami</a>
-      <a href="#hubungi">Hubungi</a>
-      <a href="#produk" class="buy-btn">Beli Sekarang</a>
-    </nav>
-  </header>
+    </div>
+    <a href="#about">Tentang Kami</a>
+    <a href="#hubungi">Hubungi</a>
+    <a href="#produk" class="buy-btn">Beli Sekarang</a>
+  </nav>
+</header>
+
+<!-- Mobile menu -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="login.html">Login</a>
+  <a href="artikel.html">Artikel</a>
+  <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Buku&ref=" id="mobile-link-buku">Buku</a>
+  <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Indicator&ref=" id="mobile-link-indicator">Indicator</a>
+  <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Coaching&ref=" id="mobile-link-coaching">Coaching</a>
+  <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Copytrade&ref=" id="mobile-link-copytrade">Copytrade</a>
+  <a href="#about">Tentang Kami</a>
+  <a href="#hubungi">Hubungi</a>
+  <a href="#produk" class="buy-btn">Beli Sekarang</a>
+</div>
+
+<script>
+  function toggleMobileMenu() {
+    const nav = document.getElementById('mobileNav');
+    nav.classList.toggle('active');
+  }
+
+  // Automatik tambah referral ID jika ada
+  const refId = localStorage.getItem('referralId');
+  if (refId) {
+    const produkLinks = [
+      'link-buku', 'link-indicator', 'link-coaching', 'link-copytrade',
+      'mobile-link-buku', 'mobile-link-indicator', 'mobile-link-coaching', 'mobile-link-copytrade'
+    ];
+    produkLinks.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.href += refId;
+      }
+    });
+  }
+</script>
+
 
   <section class="hero">
     <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
