@@ -264,22 +264,17 @@
 <div class="mobile-menu" id="mobileMenu">
   <a href="login.html">Login</a>
   <a href="artikel.html">Artikel</a>
-
-  <div class="mobile-dropdown">
-    <a href="#" onclick="toggleSubmenu(event)">Produk ▼</a>
-    <div class="mobile-submenu">
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Buku&ref=" id="linkBuku">Buku</a>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Indicator&ref=" id="linkIndicator">Indicator</a>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Coaching&ref=" id="linkCoaching">Coaching</a>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Copytrade&ref=" id="linkCopytrade">Copytrade</a>
-    </div>
-  </div>
-
+  <details>
+    <summary style="color: white; font-weight: 600;">Produk</summary>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Buku&ref=" style="padding-left: 16px;">Buku</a>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Indicator&ref=" style="padding-left: 16px;">Indicator</a>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Coaching&ref=" style="padding-left: 16px;">Coaching</a>
+    <a href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20Copytrade&ref=" style="padding-left: 16px;">Copytrade</a>
+  </details>
   <a href="index.html#about">Tentang Kami</a>
   <a href="index.html#hubungi">Hubungi</a>
   <a href="index.html#produk" class="buy-btn">Beli Sekarang</a>
 </div>
-
 
 <script>
   function toggleMenu() {
@@ -305,7 +300,6 @@
     });
   };
 </script>
-
 
   <section class="hero">
     <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
