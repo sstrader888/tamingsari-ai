@@ -26,6 +26,9 @@
       color: var(--light);
       scroll-behavior: smooth;
     }
+    h1, h2, h3 {
+      font-weight: 600;
+    }
     header {
       background: var(--card);
       padding: 20px 40px;
@@ -58,78 +61,41 @@
       background: var(--primary);
       color: #000;
     }
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #222;
-      min-width: 180px;
-      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-      z-index: 1;
-      border-radius: 8px;
-    }
-    .dropdown-content a {
-      color: white;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
     .hero {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
+      text-align: center;
       padding: 80px 40px;
-      max-width: 1300px;
-      margin: auto;
-    }
-    .hero-content {
-      flex: 1 1 500px;
-    }
-    .hero-content h1 {
-      font-size: 3rem;
-      color: var(--primary);
-      margin-bottom: 20px;
-    }
-    .hero-content p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      color: var(--gray);
-    }
-    .hero-buttons a {
-      display: inline-block;
-      margin: 5px;
-      padding: 12px 20px;
-      border-radius: 6px;
-      background: var(--accent);
-      color: #000;
-      font-weight: 600;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-    .hero-buttons a:hover {
-      opacity: 0.85;
     }
     .hero img {
-      width: 100%;
-      max-width: 450px;
-      border-radius: 16px;
+      max-width: 300px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 30px;
+    }
+    .hero a {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--accent);
+      color: #000;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    .hero a:hover {
+      opacity: 0.85;
     }
     .section {
-      padding: 60px 40px;
-      max-width: 1200px;
+      padding: 60px 20px;
+      max-width: 1000px;
       margin: auto;
-    }
-    .section h2 {
-      color: var(--primary);
-      margin-bottom: 20px;
-      font-size: 2rem;
     }
     .grid-container {
       display: grid;
@@ -144,11 +110,17 @@
     .testimonial {
       background: var(--card);
       padding: 20px;
-      border-radius: 10px;
       margin-bottom: 20px;
+      border-radius: 10px;
     }
     .testimonial span {
       color: gold;
+    }
+    .faq {
+      margin-bottom: 20px;
+    }
+    .faq strong {
+      color: var(--accent);
     }
     .broker-logos {
       display: flex;
@@ -164,14 +136,14 @@
     }
     footer {
       background: #111;
+      padding: 30px;
       text-align: center;
-      padding: 20px;
-      font-size: 0.9rem;
-      color: #aaa;
+      color: var(--gray);
     }
   </style>
 </head>
 <body>
+
 <header>
   <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
   <nav>
@@ -191,68 +163,31 @@
   </nav>
 </header>
 
-<section class="hero">
-  <div class="hero-content">
-    <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
-    <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
-    <div class="hero-buttons">
-      <a href="#produk">Beli Sekarang</a>
-    </div>
-  </div>
+<section class="hero" id="home">
   <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
+  <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
+  <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
+  <a href="#produk">Beli Sekarang</a>
 </section>
 
-<section class="section" id="about">
-  <h2>Tentang Kami</h2>
-  <p>SSTrader merupakan komuniti trading profesional yang berpangkalan di HQ Trading House Taiping, Perak. Kami menyediakan indikator AI, program coaching intensif, copytrade dan bahan pembelajaran untuk membantu trader mencapai kejayaan konsisten. Diterajui oleh tenaga pengajar berpengalaman dan sistem tersusun, kami komited membimbing anda ke arah profit yang berterusan.</p>
-</section>
-
-<section class="section" id="produk">
-  <h2>Produk & Servis</h2>
-  <div class="grid-container">
-    <div class="grid-item">
-      <h3>📈 Indicator AI</h3>
-      <p>Indikator Taming Sari + AI eksklusif di TradingView.</p>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Beli%20Indicator">Beli Sekarang</a>
-    </div>
-    <div class="grid-item">
-      <h3>📚 Buku Teknik Lengkap</h3>
-      <img src="https://i.imgur.com/233qLSp.png" alt="Buku Teknik" style="width:100%; border-radius:10px; margin-top:10px;">
-      <p>Harga promosi: <strong>RM100</strong></p>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Beli%20Buku">Beli Buku</a>
-    </div>
-    <div class="grid-item">
-      <h3>💼 Daftar Copytrade</h3>
-      <p>Minimum modal RM5000 dan hasilkan keuntungan secara automatik dengan team SSTrader.</p>
-      <a href="https://forms.gle/fpGYbEv3XZL7imwN9">Daftar Sekarang</a>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="coaching">
-  <h2>📌 Pakej Coaching</h2>
-  <div class="grid-container">
-    <div class="grid-item">
-      <h3>1+1 Personal Coaching</h3>
-      <p><strong>RM8000</strong> – 1-on-1 bersama Cikgu Heri</p>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Minat%20Coaching%201+1">Daftar</a>
-    </div>
-    <div class="grid-item">
-      <h3>Group Coaching</h3>
-      <p><strong>RM2000/pax</strong> – Maksimum 6 orang</p>
-      <a href="https://api.whatsapp.com/send?phone=60194173200&text=Minat%20Group%20Coaching">Daftar</a>
-    </div>
-  </div>
-  <div style="text-align:center; margin-top:30px;">
-    <img src="https://i.imgur.com/yPllXC7.jpeg" style="max-width:40%; border-radius:10px;">
-    <img src="https://i.imgur.com/UqmHOtC.jpeg" style="max-width:40%; border-radius:10px;">
-  </div>
-</section>
-
-<section class="section">
+<section class="section" id="testimoni">
   <h2>⭐ Testimoni Pelanggan</h2>
-  <div class="testimonial">“Saya tak pernah profit konsisten sebelum jumpa teknik Taming Sari AI. Sekarang saya yakin untuk trading!”<br><span>★★★★★</span></div>
-  <div class="testimonial">“Coaching sangat membantu, segala persoalan saya dijawab dengan jelas.”<br><span>★★★★☆</span></div>
+  <div class="testimonial" data-sr><p>“Saya tak pernah profit konsisten sebelum jumpa teknik Taming Sari AI. Sekarang saya yakin untuk trading!”<br><span>★★★★★</span></p></div>
+  <div class="testimonial" data-sr><p>“Coaching sangat membantu, segala persoalan saya dijawab dengan jelas.”<br><span>★★★★☆</span></p></div>
+  <div class="testimonial" data-sr><p>“Indicator ni sangat jelas dan mudah difahami. Saya boleh fokus entry tanpa ragu.”<br><span>★★★★★</span></p></div>
+  <div class="testimonial" data-sr><p>“Saya mula dengan akaun kecil, tapi sekarang dah ada konsistensi dalam profit.”<br><span>★★★★☆</span></p></div>
+</section>
+
+<section class="section" id="faq">
+  <h2>❓ Soalan Lazim</h2>
+  <div class="faq" data-sr><strong>S: Adakah saya perlu tahu teknikal analisis sebelum guna indikator?</strong>
+  <p>J: Tidak perlu, indikator ini mudah dan direka khas untuk semua peringkat trader.</p></div>
+  <div class="faq" data-sr><strong>S: Platform apa yang digunakan?</strong>
+  <p>J: TradingView – platform charting terkemuka dunia dan mesra pengguna.</p></div>
+  <div class="faq" data-sr><strong>S: Adakah boleh support live trading?</strong>
+  <p>J: Ya, termasuk sesi live trading semasa coaching dan sokongan komuniti.</p></div>
+  <div class="faq" data-sr><strong>S: Apakah kelebihan daftar melalui IB?</strong>
+  <p>J: Anda mendapat mata ganjaran (point) dan akses bonus seperti kelas percuma.</p></div>
 </section>
 
 <section class="section">
@@ -260,12 +195,6 @@
   <div style="text-align:center;">
     <iframe width="560" height="315" src="https://www.youtube.com/embed/pjIyeQJvyZM" frameborder="0" allowfullscreen></iframe>
   </div>
-</section>
-
-<section class="section">
-  <h2>❓ Soalan Lazim</h2>
-  <p><strong>S: Perlu ada modal besar untuk mula?</strong><br>A: Tidak, anda boleh bermula dengan RM100 di akaun broker terpilih.</p>
-  <p><strong>S: Berapa lama nak mahir guna indicator ini?</strong><br>A: Biasanya dalam 3–5 hari latihan dan praktikal dengan bimbingan.</p>
 </section>
 
 <section class="section">
@@ -278,9 +207,19 @@
 </section>
 
 <footer>
-  ⚠ Risiko: Dagangan CFD berisiko tinggi dan mungkin tidak sesuai untuk semua pelabur. Sila rujuk kepada penasihat kewangan anda.<br>
+  ⚠ Risiko: Dagangan CFD berisiko tinggi dan mungkin tidak sesuai untuk semua pelabur.<br>
   &copy; 2025 SSTrader. Hak Cipta Terpelihara.
 </footer>
+
+<script>
+  ScrollReveal().reveal('[data-sr]', {
+    distance: '30px',
+    duration: 1000,
+    easing: 'ease-in-out',
+    origin: 'bottom',
+    interval: 100
+  });
+</script>
 
 </body>
 </html>
