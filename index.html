@@ -229,9 +229,9 @@
 <div id="mobileMenu" class="mobile-menu">
   <a href="login.html">Login</a>
   <a href="artikel.html">Artikel</a>
-  <div>
-    <a href="#">Produk</a>
-    <div class="sub-menu">
+  <div onclick="toggleSubMenu()" style="cursor: pointer;">
+    <span id="produkToggle">Produk ▾</span>
+    <div class="sub-menu" id="produkSubMenu" style="display: none;">
       <a href="order.html?produk=Buku%20Teknik%20Taming%20Sari">Buku</a>
       <a href="order.html?produk=Indicator%20Taming%20Sari+AI%20(Lifetime)">Indicator</a>
       <a href="order.html?produk=Coaching%201%20on%201">Coaching</a>
@@ -242,7 +242,6 @@
   <a href="#hubungi">Hubungi</a>
   <a href="#produk">Beli Sekarang</a>
 </div>
-
 
 <section class="hero">
   <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
