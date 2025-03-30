@@ -114,6 +114,13 @@
       padding-left: 15px;
       background-color: #111;
       border-radius: 4px;
+      display: none;
+    }
+    .mobile-menu .sub-menu.active {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 0 8px 15px;
     }
     .hero {
       text-align: center;
@@ -174,18 +181,14 @@
     function toggleMobileMenu() {
       document.getElementById('mobileMenu').classList.toggle('active');
     }
-function toggleSubMenu() {
+
+    function toggleSubMenu() {
       const submenu = document.getElementById("produkSubMenu");
       const toggleText = document.getElementById("produkToggle");
-
-      if (submenu.style.display === "none") {
-        submenu.style.display = "block";
-        toggleText.textContent = "Produk ▴";
-      } else {
-        submenu.style.display = "none";
-        toggleText.textContent = "Produk ▾";
-      }
+      submenu.classList.toggle("active");
+      toggleText.textContent = submenu.classList.contains("active") ? "Produk ▴" : "Produk ▾";
     }
+
     window.addEventListener('DOMContentLoaded', () => {
       ScrollReveal().reveal('.hero img', { duration: 1000, origin: 'bottom', distance: '40px' });
       ScrollReveal().reveal('.hero h1', { duration: 1200, origin: 'bottom', distance: '30px', delay: 200 });
@@ -242,7 +245,7 @@ function toggleSubMenu() {
   <a href="artikel.html">Artikel</a>
   <div onclick="toggleSubMenu()" style="cursor: pointer;">
     <span id="produkToggle">Produk ▾</span>
-    <div class="sub-menu" id="produkSubMenu" style="display: none;">
+    <div class="sub-menu" id="produkSubMenu">
       <a href="order.html?produk=Buku%20Teknik%20Taming%20Sari">Buku</a>
       <a href="order.html?produk=Indicator%20Taming%20Sari+AI%20(Lifetime)">Indicator</a>
       <a href="order.html?produk=Coaching%201%20on%201">Coaching</a>
