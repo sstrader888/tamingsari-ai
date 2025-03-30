@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Log Masuk | SSTrader</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-  <script>
-     const firebaseConfig = {
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const firebaseConfig = {
       apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
       authDomain: "sstrader-affiliate.firebaseapp.com",
       projectId: "sstrader-affiliate",
@@ -18,20 +19,22 @@
       appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
       measurementId: "G-54ZR1GG7ML"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    async function login() {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.login = async function () {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       try {
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        const agenDoc = await db.collection("agen").doc(user.uid).get();
-        if (agenDoc.exists) {
-          const data = agenDoc.data();
+        const agenRef = doc(db, "agen", user.uid);
+        const agenSnap = await getDoc(agenRef);
+        if (agenSnap.exists()) {
+          const data = agenSnap.data();
           if (data.role === "admin") {
             window.location.href = "dashboard-admin.html";
           } else {
@@ -40,8 +43,9 @@
           return;
         }
 
-        const penggunaDoc = await db.collection("pengguna").doc(user.uid).get();
-        if (penggunaDoc.exists) {
+        const penggunaRef = doc(db, "pengguna", user.uid);
+        const penggunaSnap = await getDoc(penggunaRef);
+        if (penggunaSnap.exists()) {
           window.location.href = "dashboard-pengguna.html";
           return;
         }
@@ -50,7 +54,7 @@
       } catch (error) {
         alert("Ralat semasa login: " + error.message);
       }
-    }
+    };
   </script>
   <style>
     body {
