@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | SSTrader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+  <style>
+    :root {
+      --primary: #00ff99;
+      --dark: #0d0d0d;
+      --light: #fff;
+      --card: #111;
+      --accent: #ff9800;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--dark);
+      color: var(--light);
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: var(--card);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--light);
+    }
+    header .logo img {
+      height: 38px;
+      margin-right: 10px;
+    }
+    header .logout-btn {
+      background: var(--accent);
+      color: black;
+      font-weight: bold;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    main {
+      padding: 40px 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+    h1 {
+      color: var(--primary);
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    section {
+      background: var(--card);
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s ease;
+    }
+    h2 {
+      color: var(--accent);
+      margin-bottom: 15px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #222;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">
+      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo">
+      <span>SSTrader</span>
+    </a>
+    <button class="logout-btn" onclick="firebase.auth().signOut().then(() => window.location.href = 'login.html')">Log Keluar</button>
+  </header>
+  <main>
+    <h1>Panel Admin SSTrader</h1>
+
+    <section>
+      <h2>📋 Senarai Permintaan Tebusan</h2>
+      <div id="withdrawList">Memuatkan data tebusan...</div>
+    </section>
+
+    <section>
+      <h2>📦 Senarai Semua Pesanan</h2>
+      <div id="orderList">Memuatkan senarai pesanan...</div>
+    </section>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) return location.href = "login.html";
+      loadWithdrawals();
+      loadOrders();
+    });
+
+    async function loadWithdrawals() {
+      const div = document.getElementById("withdrawList");
+      const snapshot = await db.collection("withdrawals").orderBy("tarikh", "desc").get();
+      if (snapshot.empty) return div.innerHTML = "Tiada data permintaan.";
+
+      let html = `<table><thead><tr><th>Email</th><th>Jumlah</th><th>Bank</th><th>No Akaun</th><th>Status</th></tr></thead><tbody>`;
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        html += `<tr><td>${d.email}</td><td>RM ${d.amount}</td><td>${d.bank}</td><td>${d.noAkaun}</td><td>${d.status}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+      div.innerHTML = html;
+    }
+
+    async function loadOrders() {
+      const div = document.getElementById("orderList");
+      const snapshot = await db.collection("pesanan").orderBy("tarikh", "desc").get();
+      if (snapshot.empty) return div.innerHTML = "Tiada pesanan direkodkan.";
+
+      let html = `<table><thead><tr><th>Nama</th><th>Produk</th><th>Ref</th><th>Komisen</th><th>Point</th><th>Tarikh</th></tr></thead><tbody>`;
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const date = d.tarikh?.seconds ? new Date(d.tarikh.seconds * 1000).toLocaleDateString() : 'Tiada Tarikh';
+        html += `<tr><td>${d.nama || '-'}</td><td>${d.produk}</td><td>${d.ref}</td><td>RM ${d.komisen || 0}</td><td>${d.point || 0}</td><td>${date}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+      div.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
