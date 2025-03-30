@@ -5,73 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Agen | SSTrader</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.appspot.com",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    auth.onAuthStateChanged(async user => {
-      if (!user) return window.location.href = "login.html";
-      const doc = await db.collection("pengguna").doc(user.uid).get();
-      const data = doc.data();
-      document.getElementById("namaAgen").textContent = data.nama;
-      document.getElementById("emailAgen").textContent = data.email;
-      document.getElementById("referralLink").textContent = `${window.location.origin}/?ref=${user.uid}`;
-      loadSales(user.uid);
-    });
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-    async function loadSales(uid) {
-      const tableBody = document.getElementById("salesTableBody");
-      tableBody.innerHTML = "<tr><td colspan='4'>Memuatkan...</td></tr>";
-
+    window.logout = async function () {
       try {
-        const snapshot = await db.collection("pesanan")
-          .where("ref", "==", uid)
-          .get();
-        if (snapshot.empty) {
-          tableBody.innerHTML = "<tr><td colspan='4'>Tiada jualan direkodkan.</td></tr>";
-          return;
-        }
-
-        let totalKomisen = 0;
-        let totalPoint = 0;
-        tableBody.innerHTML = "";
-
-        snapshot.forEach(doc => {
-          const d = doc.data();
-          const komisen = d.komisen || 0;
-          const point = d.point || 0;
-          totalKomisen += komisen;
-          totalPoint += point;
-
-          const row = `
-            <tr>
-              <td>${d.nama || '-'}</td>
-              <td>${d.produk || '-'}</td>
-              <td>RM ${komisen.toFixed(2)}</td>
-              <td>${point} pts</td>
-            </tr>`;
-          tableBody.innerHTML += row;
-        });
-
-        document.getElementById("totalKomisen").textContent = `RM ${totalKomisen.toFixed(2)}`;
-        document.getElementById("totalPoint").textContent = `${totalPoint} pts`;
-      } catch (e) {
-        tableBody.innerHTML = "<tr><td colspan='4'>Ralat memuatkan data.</td></tr>";
+        await signOut(auth);
+        window.location.href = "login.html";
+      } catch (error) {
+        alert("Ralat semasa log keluar: " + error.message);
       }
-    }
-
-    function logout() {
-      auth.signOut().then(() => window.location.href = "login.html");
-    }
+    };
   </script>
   <style>
     body {
@@ -82,77 +39,43 @@
       padding: 0;
     }
     header {
-      background: #111;
-      padding: 15px 20px;
+      background-color: #111;
+      padding: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
-    header .logo {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      color: white;
+    header h1 {
+      color: #00ff99;
+      margin: 0;
     }
-    header .logo img {
-      height: 38px;
-      margin-right: 10px;
-    }
-    header .logout-btn {
+    .logout-btn {
       background: #ff9800;
       color: black;
-      font-weight: bold;
-      padding: 8px 16px;
       border: none;
+      padding: 10px 20px;
       border-radius: 6px;
+      font-weight: bold;
       cursor: pointer;
     }
-    main {
-      padding: 40px 20px;
-      max-width: 1000px;
-      margin: auto;
+    .logout-btn:hover {
+      background: #ffcc00;
     }
-    h1 {
-      color: #00ff99;
-      font-size: 1.8rem;
-    }
-    .info, .sales, .summary {
-      margin-bottom: 30px;
-    }
-    .info p, .summary p {
-      margin: 6px 0;
-    }
-    .ref-link {
-      background: #222;
-      padding: 10px;
-      border-radius: 6px;
-      word-break: break-word;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #333;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: #222;
+    .container {
+      padding: 30px;
     }
   </style>
 </head>
 <body>
   <header>
-    <a href="index.html" class="logo">
-      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo">
-      <span>SSTrader</span>
-    </a>
+    <h1>Dashboard Agen</h1>
     <button class="logout-btn" onclick="logout()">Log Keluar</button>
   </header>
-
+  <div class="container">
+    <p>Selamat datang ke Dashboard Agen!</p>
+    <!-- Tambah kandungan dashboard di sini -->
+  </div>
+</body>
   <main>
     <h1>Selamat Datang, <span id="namaAgen">...</span></h1>
     <div class="info">
