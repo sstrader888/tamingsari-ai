@@ -36,14 +36,15 @@
           .where("uid", "==", uid)
           .get();
         if (snapshot.empty) {
-          list.innerHTML = "<p>Tiada rekod pembelian ditemui.</p>";
+          list.innerHTML = "<p>Belum ada sebarang pembelian. Sila layari halaman utama untuk membuat pembelian pertama.</p>";
           return;
         }
 
         let html = "";
         snapshot.forEach(doc => {
           const d = doc.data();
-          html += `<li><strong>${d.produk}</strong> — Tarikh: ${new Date(d.tarikh.seconds * 1000).toLocaleDateString()}</li>`;
+          const date = d.tarikh?.seconds ? new Date(d.tarikh.seconds * 1000).toLocaleDateString() : 'Tiada Tarikh';
+          html += `<li><strong>${d.produk}</strong> — Tarikh: ${date}</li>`;
         });
         list.innerHTML = `<ul style='line-height: 1.8;'>${html}</ul>`;
       } catch (e) {
