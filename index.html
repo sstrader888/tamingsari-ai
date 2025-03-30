@@ -32,6 +32,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
     .logo-section {
       display: flex;
@@ -103,12 +104,16 @@
       flex-direction: column;
       background: var(--card);
       padding: 10px 20px;
+      width: 100%;
     }
     .mobile-menu a {
       color: white;
-      padding: 8px 0;
+      padding: 10px 0;
       text-decoration: none;
       border-bottom: 1px solid #333;
+    }
+    .mobile-menu.active {
+      display: flex;
     }
     .hero {
       text-align: center;
@@ -145,46 +150,12 @@
       .hamburger {
         display: flex;
       }
-      .mobile-menu.active {
-        display: flex;
-      }
-      .hero h1 {
-        font-size: 1.5rem;
-      }
-      .hero p {
-        font-size: 0.95rem;
-      }
     }
   </style>
   <script>
-    function openReferralLink(product) {
-      const ref = localStorage.getItem('referralId') || '';
-      const phone = '60194173200';
-      const base = `https://api.whatsapp.com/send?phone=${phone}&text=`;
-      let msg = `Saya berminat dengan ${product}`;
-      if (ref) msg += `&ref=${ref}`;
-      window.open(base + encodeURIComponent(msg), '_blank');
-    }
-
     function toggleMobileMenu() {
       document.getElementById('mobileMenu').classList.toggle('active');
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      ScrollReveal().reveal('.hero img', { duration: 1000, origin: 'bottom', distance: '40px' });
-      ScrollReveal().reveal('.hero h1', { duration: 1200, origin: 'bottom', distance: '30px', delay: 200 });
-      ScrollReveal().reveal('.hero p', { duration: 1400, origin: 'bottom', distance: '30px', delay: 400 });
-      ScrollReveal().reveal('.hero a', { duration: 1600, origin: 'bottom', distance: '30px', delay: 600 });
-
-      const ref = localStorage.getItem("referralId") || "";
-      const produkLinks = ["link-buku", "link-indicator", "link-coaching", "link-copytrade"];
-      produkLinks.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.href += ref;
-        }
-      });
-    });
   </script>
 </head>
 <body>
@@ -208,15 +179,11 @@
     <a href="artikel.html">Artikel</a>
     <div class="dropdown">
       <a href="#">Produk ▾</a>
-      <li class="dropdown">
-  <a href="#" class="dropbtn">Produk ▾</a>
-  <div class="dropdown-content">
-    <a href="order.html?produk=Buku%20Teknik%20Taming%20Sari">Buku</a>
-    <a href="order.html?produk=Indicator%20Taming%20Sari+AI%20(Lifetime)">Indicator</a>
-    <a href="order.html?produk=Coaching%201%20on%201">Coaching</a>
-    <a href="order.html?produk=Copytrade%20-%20Isi%20Form%20%26%20WhatsApp">Copytrade</a>
-  </div>
-</li>
+      <div class="dropdown-content">
+        <a href="order.html?produk=Buku Teknik Taming Sari">Buku</a>
+        <a href="order.html?produk=Indicator Taming Sari+AI (Lifetime)">Indicator</a>
+        <a href="order.html?produk=Coaching 1 on 1 (Free 1 Add Ons)">Coaching</a>
+        <a href="order.html?produk=Copytrade - Isi Form & WhatsApp">Copytrade</a>
       </div>
     </div>
     <a href="#about">Tentang Kami</a>
@@ -225,11 +192,24 @@
   </nav>
 </header>
 
+<div id="mobileMenu" class="mobile-menu">
+  <a href="login.html">Login</a>
+  <a href="artikel.html">Artikel</a>
+  <a href="order.html?produk=Buku Teknik Taming Sari">Buku</a>
+  <a href="order.html?produk=Indicator Taming Sari+AI (Lifetime)">Indicator</a>
+  <a href="order.html?produk=Coaching 1 on 1 (Free 1 Add Ons)">Coaching</a>
+  <a href="order.html?produk=Copytrade - Isi Form & WhatsApp">Copytrade</a>
+  <a href="#about">Tentang Kami</a>
+  <a href="#hubungi">Hubungi</a>
+  <a href="#produk" class="buy-btn">Beli Sekarang</a>
+</div>
+
 <section class="hero">
   <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
   <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
   <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
   <a href="#produk">Beli Sekarang</a>
+</section>
 
   </section>  <!-- Harga Semasa XAU/USD --><section class="section" id="xauusd" style="padding: 60px 20px; text-align: center;">
   <h2 style="color: var(--primary); margin-bottom: 20px;">💰 Harga Semasa XAU/USD</h2>
