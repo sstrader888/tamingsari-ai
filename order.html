@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Pembelian Produk | SSTrader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -22,10 +23,49 @@
       background-color: #000;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      position: relative;
     }
     header img {
       height: 60px;
+      margin-left: 20px;
+    }
+    nav {
+      margin-right: 20px;
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropbtn {
+      background-color: #00ff88;
+      color: #000;
+      padding: 10px 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #1a1a1a;
+      min-width: 200px;
+      z-index: 1;
+      border-radius: 8px;
+    }
+    .dropdown-content a {
+      color: #fff;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    .dropdown-content a:hover {
+      background-color: #00ff88;
+      color: #000;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
     }
     .form-container {
       background-color: #1a1a1a;
@@ -62,6 +102,20 @@
     }
     button:hover {
       background-color: #00cc6e;
+    }
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav {
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+      }
+      .dropbtn {
+        width: 100%;
+      }
     }
   </style>
   <script type="module">
@@ -143,7 +197,19 @@
     <a href="index.html">
       <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="SSTrader Logo">
     </a>
+    <nav>
+      <div class="dropdown">
+        <button class="dropbtn">Produk ▾</button>
+        <div class="dropdown-content">
+          <a href="order.html?produk=Buku%20Teknik%20Taming%20Sari">Buku</a>
+          <a href="order.html?produk=Indicator%20Taming%20Sari+AI%20(Lifetime)">Indicator</a>
+          <a href="order.html?produk=Coaching%201%20on%201%20(Free%201%20Add%20Ons)">Coaching</a>
+          <a href="order.html?produk=Copytrade%20-%20Isi%20Form%20%26%20WhatsApp">Copytrade</a>
+        </div>
+      </div>
+    </nav>
   </header>
+
   <div class="form-container">
     <h2>Borang Pembelian Produk</h2>
     <input type="text" id="nama" placeholder="Nama Pembeli">
