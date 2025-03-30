@@ -10,14 +10,14 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
   <script>
      const firebaseConfig = {
-  apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-  authDomain: "sstrader-affiliate.firebaseapp.com",
-  projectId: "sstrader-affiliate",
-  storageBucket: "sstrader-affiliate.firebasestorage.app",
-  messagingSenderId: "859244663056",
-  appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
-  measurementId: "G-54ZR1GG7ML"
-};
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.firebasestorage.app",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
+      measurementId: "G-54ZR1GG7ML"
+    };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -31,7 +31,12 @@
 
         const agenDoc = await db.collection("agen").doc(user.uid).get();
         if (agenDoc.exists) {
-          window.location.href = "dashboard-agen.html";
+          const data = agenDoc.data();
+          if (data.role === "admin") {
+            window.location.href = "dashboard-admin.html";
+          } else {
+            window.location.href = "dashboard-agen.html";
+          }
           return;
         }
 
