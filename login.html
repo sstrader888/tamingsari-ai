@@ -5,55 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Pengguna & Agen | SSTrader</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: #0d0d0d;
+      background-color: #0d0d0d;
       color: white;
-      margin: 0;
-      padding: 0;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      min-height: 100vh;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
     }
     .container {
       background: #111;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.4);
+      padding: 30px;
+      border-radius: 10px;
       width: 100%;
-      max-width: 500px;
-      margin: 40px auto;
-      animation: fadeIn 1s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      max-width: 400px;
     }
     h2 {
-      margin-bottom: 20px;
-      text-align: center;
       color: #00ff99;
+      text-align: center;
+      margin-bottom: 20px;
     }
     input, select {
       width: 100%;
       padding: 12px;
-      margin-bottom: 14px;
-      border: none;
+      margin: 10px 0;
       border-radius: 6px;
+      border: none;
       background: #222;
       color: white;
     }
@@ -61,133 +42,107 @@
       width: 100%;
       padding: 12px;
       background: #ff9800;
-      color: black;
-      font-weight: bold;
       border: none;
       border-radius: 6px;
+      font-weight: bold;
+      color: black;
       cursor: pointer;
     }
-    button:hover {
-      background: #ffc107;
-    }
-    .switch, .forgot {
+    .toggle {
+      margin-top: 12px;
       text-align: center;
-      margin-top: 10px;
-      font-size: 0.9rem;
-    }
-    .switch a, .forgot a {
-      color: #00ff99;
-      text-decoration: none;
       cursor: pointer;
+      color: #ccc;
     }
-    .logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .logo img {
-      height: 40px;
-      margin-right: 10px;
-    }
-    .logo span {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: white;
-    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="logo">
-      <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
-        <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="SSTrader">
-        <span>SSTrader</span>
-      </a>
-    </div>
-    <h2 id="formTitle">Daftar Pengguna / Agen</h2>
-    <select id="userType">
+    <h2 id="formTitle">Log Masuk</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Kata Laluan">
+    <input type="text" id="nama" class="hidden" placeholder="Nama Penuh">
+    <input type="text" id="alamat" class="hidden" placeholder="Alamat Penuh">
+    <input type="text" id="telefon" class="hidden" placeholder="No Telefon">
+    <input type="text" id="bank" class="hidden" placeholder="Nama Bank">
+    <input type="text" id="noAkaun" class="hidden" placeholder="No Akaun Bank">
+    <select id="jenis" class="hidden">
       <option value="pengguna">Pengguna</option>
       <option value="agen">Agen</option>
     </select>
-    <input type="text" id="nama" placeholder="Nama Penuh">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Kata Laluan">
-    <input type="text" id="alamat" placeholder="Alamat">
-    <div id="extraFields" style="display: none;">
-      <input type="text" id="telefon" placeholder="No Telefon">
-      <input type="text" id="namaBank" placeholder="Nama Bank">
-      <input type="text" id="noAkaun" placeholder="No Akaun Bank">
-    </div>
-    <button onclick="register()">Daftar & Login</button>
-    <div class="switch">Sudah ada akaun? <a onclick="loginMode()">Log Masuk</a></div>
-    <div class="forgot" id="forgotPass" style="display: none;">
-      <a onclick="resetPassword()">Lupa kata laluan?</a>
-    </div>
+    <button onclick="submitForm()" id="submitBtn">Log Masuk</button>
+    <div class="toggle" onclick="toggleForm()">Belum ada akaun? Daftar di sini</div>
   </div>
 
-  <script>
-    const userType = document.getElementById("userType");
-    const extraFields = document.getElementById("extraFields");
-    const forgotPass = document.getElementById("forgotPass");
-    userType.addEventListener("change", () => {
-      extraFields.style.display = userType.value === "agen" ? "block" : "none";
-    });
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-    let isLogin = false;
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID"
+    };
 
-    function loginMode() {
-      isLogin = !isLogin;
-      document.getElementById("formTitle").textContent = isLogin ? "Login Pengguna / Agen" : "Daftar Pengguna / Agen";
-      document.querySelector("button").textContent = isLogin ? "Log Masuk" : "Daftar & Login";
-      document.querySelector(".switch a").textContent = isLogin ? "Daftar sekarang" : "Log Masuk";
-      forgotPass.style.display = isLogin ? "block" : "none";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let isDaftar = false;
+
+    window.toggleForm = function () {
+      isDaftar = !isDaftar;
+      document.getElementById('formTitle').innerText = isDaftar ? "Daftar Akaun Baru" : "Log Masuk";
+      document.getElementById('submitBtn').innerText = isDaftar ? "Daftar" : "Log Masuk";
+      const extra = document.querySelectorAll('.hidden');
+      extra.forEach(el => el.style.display = isDaftar ? 'block' : 'none');
     }
 
-    async function register() {
-      const nama = document.getElementById("nama").value;
+    window.submitForm = async function () {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const alamat = document.getElementById("alamat").value;
-      const jenis = userType.value;
-      const telefon = document.getElementById("telefon").value;
-      const namaBank = document.getElementById("namaBank").value;
-      const noAkaun = document.getElementById("noAkaun").value;
 
-      try {
-        let userCred;
-        if (!isLogin) {
-          userCred = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        } else {
-          userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
-        }
+      if (isDaftar) {
+        const nama = document.getElementById("nama").value;
+        const alamat = document.getElementById("alamat").value;
+        const telefon = document.getElementById("telefon").value;
+        const bank = document.getElementById("bank").value;
+        const noAkaun = document.getElementById("noAkaun").value;
+        const jenis = document.getElementById("jenis").value;
 
-        const uid = userCred.user.uid;
-        if (!isLogin) {
-          const data = { nama, email, alamat, jenis };
-          if (jenis === "agen") {
-            data.telefon = telefon;
-            data.namaBank = namaBank;
-            data.noAkaun = noAkaun;
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const uid = userCredential.user.uid;
+          const data = { nama, email, alamat };
+
+          if (jenis === 'agen') {
+            Object.assign(data, { telefon, bank, noAkaun });
+            await setDoc(doc(db, "agen", uid), data);
+          } else {
+            await setDoc(doc(db, "pengguna", uid), data);
           }
-          await db.collection("pengguna").doc(uid).set(data);
+
+          alert("Pendaftaran berjaya!");
+          location.href = jenis === 'agen' ? "dashboard-agen.html" : "dashboard-pengguna.html";
+        } catch (e) {
+          alert("Ralat semasa daftar: " + e.message);
         }
+      } else {
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const uid = userCredential.user.uid;
 
-        alert("Login berjaya!");
-        window.location.href = "index.html";
-      } catch (error) {
-        alert((isLogin ? "Login" : "Pendaftaran") + " gagal: " + error.message);
-      }
-    }
-
-    async function resetPassword() {
-      const email = document.getElementById("email").value;
-      if (!email) return alert("Sila masukkan email terlebih dahulu.");
-      try {
-        await firebase.auth().sendPasswordResetEmail(email);
-        alert("Pautan reset kata laluan telah dihantar ke email anda.");
-      } catch (error) {
-        alert("Gagal reset kata laluan: " + error.message);
+          const agenDoc = await doc(db, "agen", uid).get();
+          if (agenDoc.exists()) {
+            location.href = "dashboard-agen.html";
+          } else {
+            location.href = "dashboard-pengguna.html";
+          }
+        } catch (e) {
+          alert("Ralat semasa login: " + e.message);
+        }
       }
     }
   </script>
