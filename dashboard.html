@@ -3,308 +3,231 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Affiliate</title>
+  <title>Dashboard Agen | SSTrader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(async user => {
+      if (!user) return window.location.href = "login.html";
+      const doc = await db.collection("pengguna").doc(user.uid).get();
+      const data = doc.data();
+      document.getElementById("namaAgen").textContent = data.nama;
+      document.getElementById("emailAgen").textContent = data.email;
+      document.getElementById("referralLink").textContent = `${window.location.origin}/?ref=${user.uid}`;
+      loadSales(user.uid);
+    });
+
+    async function loadSales(uid) {
+      const tableBody = document.getElementById("salesTableBody");
+      tableBody.innerHTML = "<tr><td colspan='4'>Memuatkan...</td></tr>";
+
+      try {
+        const snapshot = await db.collection("pesanan")
+          .where("ref", "==", uid)
+          .get();
+        if (snapshot.empty) {
+          tableBody.innerHTML = "<tr><td colspan='4'>Tiada jualan direkodkan.</td></tr>";
+          return;
+        }
+
+        let totalKomisen = 0;
+        let totalPoint = 0;
+        tableBody.innerHTML = "";
+
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const komisen = d.komisen || 0;
+          const point = d.point || 0;
+          totalKomisen += komisen;
+          totalPoint += point;
+
+          const row = `
+            <tr>
+              <td>${d.nama || '-'}</td>
+              <td>${d.produk || '-'}</td>
+              <td>RM ${komisen.toFixed(2)}</td>
+              <td>${point} pts</td>
+            </tr>`;
+          tableBody.innerHTML += row;
+        });
+
+        document.getElementById("totalKomisen").textContent = `RM ${totalKomisen.toFixed(2)}`;
+        document.getElementById("totalPoint").textContent = `${totalPoint} pts`;
+      } catch (e) {
+        tableBody.innerHTML = "<tr><td colspan='4'>Ralat memuatkan data.</td></tr>";
+      }
+    }
+
+    function logout() {
+      auth.signOut().then(() => window.location.href = "login.html");
+    }
+  </script>
   <style>
     body {
-      font-family: Arial;
+      font-family: 'Poppins', sans-serif;
+      background-color: #0d0d0d;
+      color: white;
       margin: 0;
       padding: 0;
-      background-color: #000;
+    }
+    header {
+      background: #111;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
       color: white;
     }
-    .container {
-      padding: 30px;
-      max-width: 800px;
-      margin: auto;
+    header .logo img {
+      height: 38px;
+      margin-right: 10px;
     }
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .card {
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    .card h3 {
-      margin-top: 0;
-      color: #ff9900;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    .logout-btn {
-      padding: 10px 20px;
-      background-color: crimson;
-      color: white;
+    header .logout-btn {
+      background: #ff9800;
+      color: black;
+      font-weight: bold;
+      padding: 8px 16px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
     }
-    .stat-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
+    main {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h1 {
+      color: #00ff99;
+      font-size: 1.8rem;
+    }
+    .info, .sales, .summary {
       margin-bottom: 30px;
     }
-    .stat-item {
-      flex: 1 1 45%;
-      background-color: #333;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
+    .info p, .summary p {
+      margin: 6px 0;
     }
-    .stat-item h2 {
-      margin: 0;
-      color: #ffcc00;
-    }
-    .stat-item p {
-      margin: 5px 0 0;
-      color: #ccc;
+    .ref-link {
+      background: #222;
+      padding: 10px;
+      border-radius: 6px;
+      word-break: break-word;
     }
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 20px;
     }
     th, td {
+      border: 1px solid #333;
       padding: 10px;
-      border-bottom: 1px solid #444;
+      text-align: left;
     }
     th {
-      background: #333;
-      color: #ff9900;
+      background: #222;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="SStrader Logo" width="100">
-      <h2>Selamat Datang ke Dashboard Affiliate</h2>
-      <p><strong>Nama:</strong> <span id="userName"></span></p>
-      <p><strong>Email:</strong> <span id="userEmail"></span></p>
-      <p><strong>Referral Link:</strong> <span id="referralLink"></span></p>
-      <button class="logout-btn" onclick="logout()">Logout</button>
+  <header>
+    <a href="index.html" class="logo">
+      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo">
+      <span>SSTrader</span>
+    </a>
+    <button class="logout-btn" onclick="logout()">Log Keluar</button>
+  </header>
+
+  <main>
+    <h1>Selamat Datang, <span id="namaAgen">...</span></h1>
+    <div class="info">
+      <p><strong>Email:</strong> <span id="emailAgen">...</span></p>
+      <p><strong>Link Referral:</strong></p>
+      <div class="ref-link" id="referralLink">...</div>
     </div>
 
-    <div class="stat-box">
-      <div class="stat-item">
-        <h2 id="refClick">0</h2>
-        <p>Referral Klik</p>
-      </div>
-      <div class="stat-item">
-        <h2 id="totalSales">RM0</h2>
-        <p>Jumlah Jualan</p>
-      </div>
-      <div class="stat-item">
-        <h2 id="totalPoints">0</h2>
-        <p>Mata Terkumpul</p>
-      </div>
-      <div class="stat-item">
-        <h2 id="redeemable">RM0</h2>
-        <p>Boleh Ditebus</p>
-      </div>
+    <div class="summary">
+      <h2 style="color:#ff9800;">Ringkasan Komisen & Point</h2>
+      <p><strong>Total Komisen:</strong> <span id="totalKomisen">RM 0.00</span></p>
+      <p><strong>Total Point:</strong> <span id="totalPoint">0 pts</span></p>
     </div>
 
-    <div class="card">
-      <h3>Kadar Komisyen Produk</h3>
-      <ul>
-        <li>Buku Fizikal: <strong>RM5</strong> per jualan</li>
-        <li>Coaching 1-on-1: <strong>RM200</strong> per jualan</li>
-        <li>Coaching Group (6 org): <strong>RM350</strong> per jualan</li>
-        <li>Indicator AI: <strong>RM150</strong> per jualan</li>
-        <li>Lain-lain produk: <em>akan dikemaskini</em></li>
-      </ul>
-    </div>
-
-    <div class="card">
-      <h3>Royalti Broker IB</h3>
-      <p>Client daftar bawah link affiliate cikgu dan deposit minimum <strong>100 USD</strong> akan menjana <strong>100 mata (point)</strong>.</p>
-      <p>1 mata = RM0.10 → <strong>100 mata = RM10</strong></p>
-      <p>Point boleh ditebus dalam bentuk <strong>wang tunai</strong>.</p>
-    </div>
-
-    <div class="card">
-      <h3>Status Jualan Mengikut Produk</h3>
+    <div class="sales">
+      <h2 style="color:#00ff99;">Senarai Jualan & Komisen</h2>
       <table>
         <thead>
           <tr>
+            <th>Nama Pelanggan</th>
             <th>Produk</th>
-            <th>Bilangan Jualan</th>
-            <th>Jumlah Komisyen</th>
-          </tr>
-        </thead>
-        <tbody id="salesStatus">
-          <tr><td colspan="3" style="text-align:center; padding: 20px; color: #888;">Memuatkan data...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h3>Tebus Mata (Point)</h3>
-      <form id="redeemForm">
-        <div style="margin-bottom: 10px;">
-          <label for="redeemPoints">Jumlah Mata Ingin Ditebus:</label>
-          <input type="number" id="redeemPoints" name="redeemPoints" min="100" required style="width:100%; padding:10px; border-radius:5px; border:none;">
-        </div>
-
-        <div style="margin-bottom: 10px;">
-          <label for="bankName">Nama Bank:</label>
-          <input type="text" id="bankName" name="bankName" required style="width:100%; padding:10px; border-radius:5px; border:none;">
-        </div>
-
-        <div style="margin-bottom: 10px;">
-          <label for="accNumber">No Akaun Bank:</label>
-          <input type="text" id="accNumber" name="accNumber" required style="width:100%; padding:10px; border-radius:5px; border:none;">
-        </div>
-
-        <button type="submit" class="logout-btn" style="background-color:#ff9900; width:100%;">Hantar Permintaan Tebus</button>
-        <p id="redeemStatus" style="margin-top:10px;"></p>
-      </form>
-    </div>
-
-    <div class="card">
-      <h3>Senarai Client Berdaftar di Bawah Anda</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Nama Client</th>
-            <th>Produk</th>
-            <th>Tarikh</th>
-            <th>Status</th>
+            <th>Komisen (RM)</th>
             <th>Point</th>
           </tr>
         </thead>
-        <tbody id="clientList">
-          <tr><td colspan="5" style="text-align:center; padding: 20px; color: #888;">Memuatkan data...</td></tr>
+        <tbody id="salesTableBody">
+          <tr><td colspan="4">Tiada data...</td></tr>
         </tbody>
       </table>
     </div>
-  </div>
+  </main>
+<div class="withdraw" style="background: #111; padding: 30px; border-radius: 10px; margin-top: 40px;">
+  <h2 style="color: var(--accent); font-size: 1.5rem; margin-bottom: 20px;">💸 Tebus Komisen</h2>
+  <form id="withdrawForm" onsubmit="submitWithdrawal(event)">
+    <label for="amount" style="display:block; margin-bottom: 8px; font-weight: 600;">Jumlah yang ingin ditebus (RM):</label>
+    <input type="number" id="amount" min="1" step="0.01" required placeholder="Contoh: 100" style="width: 100%; padding: 12px; border-radius: 6px; border: none; margin-bottom: 16px; background: #222; color: white;">
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, addDoc, Timestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <label for="bank" style="display:block; margin-bottom: 8px; font-weight: 600;">Bank:</label>
+    <input type="text" id="bank" required placeholder="Contoh: Maybank" style="width: 100%; padding: 12px; border-radius: 6px; border: none; margin-bottom: 16px; background: #222; color: white;">
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-      authDomain: "sstrader-affiliate.firebaseapp.com",
-      projectId: "sstrader-affiliate",
-      storageBucket: "sstrader-affiliate.firebasestorage.app",
-      messagingSenderId: "859244663056",
-      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
-      measurementId: "G-54ZR1GG7ML"
-    };
+    <label for="noAkaun" style="display:block; margin-bottom: 8px; font-weight: 600;">No Akaun Bank:</label>
+    <input type="text" id="noAkaun" required placeholder="Contoh: 1234567890" style="width: 100%; padding: 12px; border-radius: 6px; border: none; margin-bottom: 16px; background: #222; color: white;">
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    <button type="submit" style="width: 100%; background: var(--accent); color: black; padding: 12px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">Hantar Permintaan Tebus</button>
+  </form>
+  <p id="withdrawStatus" style="margin-top:14px; color: lime; font-weight: 600;"></p>
+</div>
 
-    onAuthStateChanged(auth, async user => {
-      if (!user) return (window.location.href = "login.html");
+<script>
+async function submitWithdrawal(event) {
+  event.preventDefault();
+  const user = firebase.auth().currentUser;
+  if (!user) return alert("Sila login semula.");
 
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-      if (!userSnap.exists()) return;
+  const amount = parseFloat(document.getElementById("amount").value);
+  const bank = document.getElementById("bank").value.trim();
+  const noAkaun = document.getElementById("noAkaun").value.trim();
+  const statusText = document.getElementById("withdrawStatus");
 
-      const userData = userSnap.data();
-      document.getElementById("userName").textContent = userData.name;
-      document.getElementById("userEmail").textContent = userData.email;
-      document.getElementById("referralLink").textContent = `${window.location.origin}/?ref=${userData.refId}`;
-
-      const q = query(collection(db, "clients"), where("referrerId", "==", userData.refId));
-      const qSnap = await getDocs(q);
-
-      const clientList = document.getElementById("clientList");
-      const salesStatus = document.getElementById("salesStatus");
-
-      let salesSummary = {};
-      let totalPoints = 0;
-
-      clientList.innerHTML = "";
-      salesStatus.innerHTML = "";
-
-      if (qSnap.empty) {
-        clientList.innerHTML = `<tr><td colspan='5' style='text-align:center; color:#888;'>Tiada client berdaftar setakat ini.</td></tr>`;
-        salesStatus.innerHTML = `<tr><td colspan='3' style='text-align:center; color:#888;'>Tiada data jualan.</td></tr>`;
-      } else {
-        qSnap.forEach(docSnap => {
-          const data = docSnap.data();
-          const tarikh = data.date?.seconds ? new Date(data.date.seconds * 1000).toLocaleDateString() : "-";
-
-          // Client List Row
-          const row = `
-            <tr>
-              <td>${data.name || '-'}</td>
-              <td>${data.product || '-'}</td>
-              <td>${tarikh}</td>
-              <td>${data.status || '-'}</td>
-              <td>${data.point || 0}</td>
-            </tr>`;
-          clientList.innerHTML += row;
-
-          totalPoints += data.point || 0;
-
-          const product = data.product || "Lain-lain";
-          const commission = {
-            "Buku Fizikal": 5,
-            "Coaching 1-on-1": 200,
-            "Coaching Group (6 org)": 350,
-            "Indicator AI": 150
-          }[product] || 0;
-
-          if (!salesSummary[product]) {
-            salesSummary[product] = { count: 0, total: 0 };
-          }
-          salesSummary[product].count++;
-          salesSummary[product].total += commission;
-        });
-
-        for (let product in salesSummary) {
-          salesStatus.innerHTML += `
-            <tr>
-              <td>${product}</td>
-              <td>${salesSummary[product].count}</td>
-              <td>RM${salesSummary[product].total}</td>
-            </tr>`;
-        }
-
-        document.getElementById("totalPoints").textContent = totalPoints;
-        document.getElementById("redeemable").textContent = "RM" + (totalPoints * 0.1).toFixed(2);
-      }
+  try {
+    await db.collection("withdrawals").add({
+      uid: user.uid,
+      email: user.email,
+      amount,
+      bank,
+      noAkaun,
+      status: "pending",
+      tarikh: new Date()
     });
-
-    window.logout = () => signOut(auth).then(() => (window.location.href = "login.html"));
-
-    const form = document.getElementById("redeemForm");
-    form.addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      const redeemPoints = document.getElementById("redeemPoints").value;
-      const bankName = document.getElementById("bankName").value;
-      const accNumber = document.getElementById("accNumber").value;
-
-      const user = auth.currentUser;
-      if (!user) return;
-
-      try {
-        await addDoc(collection(db, "redemptions"), {
-          userId: user.uid,
-          email: user.email,
-          redeemPoints: parseInt(redeemPoints),
-          bankName,
-          accNumber,
-          status: "Menunggu Semakan",
-          createdAt: Timestamp.now()
-        });
-        document.getElementById("redeemStatus").textContent = "Permintaan dihantar. Sila tunggu semakan admin.";
-        form.reset();
-      } catch (err) {
-        document.getElementById("redeemStatus").textContent = "Ralat berlaku: " + err.message;
-      }
-    });
-  </script>
+    statusText.textContent = "Permintaan telah dihantar. Sila tunggu pengesahan admin.";
+    document.getElementById("withdrawForm").reset();
+  } catch (error) {
+    statusText.textContent = "Gagal hantar permintaan. Sila cuba lagi.";
+  }
+}
+</script>
 </body>
 </html>
