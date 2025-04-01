@@ -574,12 +574,12 @@
       <span>Roti John Kamunting</span>
     </div>
   </div>
-</div>
-
-<script>
-  window.addEventListener('scroll', function () {
+</div>  window.addEventListener('scroll', function () {
     const popup = document.getElementById('popup-rakan-niaga');
-    if (window.scrollY > 200) {
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const pageHeight = document.body.offsetHeight;
+
+    if ((scrollPosition / pageHeight) > 0.7) {
       popup.classList.add('show');
     }
   });
