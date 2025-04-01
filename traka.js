@@ -3,7 +3,7 @@
 // 1. Semak status login pengguna
 auth.onAuthStateChanged(user => {
   if (!user) {
-    window.location.href = "login.html"; // Tukar ke halaman login jika belum login
+    window.location.href = "traka-login.html"; // Tukar ke halaman login FirebaseUI
   } else {
     loadTrades(user);
   }
