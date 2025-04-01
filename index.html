@@ -259,7 +259,7 @@
   <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
     <a href="https://toyyibpay.com/Indicator-Taming-Sari-AI" class="btn-orange" target="_blank" rel="noopener noreferrer">Beli Sekarang</a>
   </section>
- <style> 
+<style> 
   .scroll-marquee {
     margin-top: 20px;
     color: #ffcc00;
@@ -268,15 +268,19 @@
     overflow: hidden;
     white-space: nowrap;
     box-sizing: border-box;
-    animation: marquee 20s linear infinite;
+    position: relative;
+    height: 30px;
+    background-color: transparent;
   }
   .scroll-marquee span {
     display: inline-block;
-    min-width: 200%;
-    padding-left: 100%;
+    white-space: nowrap;
+    position: absolute;
+    will-change: transform;
+    animation: marquee 15s linear infinite;
   }
   @keyframes marquee {
-    0% { transform: translateX(0); }
+    0% { transform: translateX(100%); }
     100% { transform: translateX(-100%); }
   }
 </style>
@@ -285,7 +289,7 @@
 <div class="scroll-marquee">
   <span>✨ HARGA PROMOSI LIFETIME TAMING SARI AI: RM1000 SAHAJA ✨ JANGAN LEPASKAN PELUANG INI! ✨ HARGA PROMOSI LIFETIME TAMING SARI AI: RM1000 SAHAJA ✨ JANGAN LEPASKAN PELUANG INI!</span>
 </div>
-</div>
+  
   <!-- Redirect Message (Mesej Selepas Pembelian) -->
   <section id="thankyou" style="display:none;">
     <h2>Terima Kasih!</h2>
