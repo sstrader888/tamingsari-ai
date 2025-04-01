@@ -262,7 +262,8 @@
 <!-- Animated Hero Scrolling Text -->
 <div class="scroll-marquee">
   <span>✨ HARGA PROMOSI LIFETIME TAMING SARI AI: RM1000 SAHAJA ✨ JANGAN LEPASKAN PELUANG INI!</span>
-   <style> .scroll-marquee {
+ <style> 
+  .scroll-marquee {
     margin-top: 20px;
     color: #ffcc00;
     font-weight: bold;
@@ -270,16 +271,17 @@
     overflow: hidden;
     white-space: nowrap;
     box-sizing: border-box;
-    animation: marquee 15s linear infinite;
+    animation: marquee 20s linear infinite;
+  }
+  .scroll-marquee span {
+    display: inline-block;
+    min-width: 200%;
+    padding-left: 100%;
   }
   @keyframes marquee {
-    0% { transform: translateX(100%); }
+    0% { transform: translateX(0); }
     100% { transform: translateX(-100%); }
   }
-     .scroll-marquee span {
-  display: inline-block;
-  min-width: 200%;
-}
 </style>
 </div>
   <!-- Redirect Message (Mesej Selepas Pembelian) -->
