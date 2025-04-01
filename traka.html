@@ -1,3 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRAKA Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script>
+    function filterTable() {
+      const setupFilter = document.getElementById("filterSetup").value.toLowerCase();
+      const table = document.getElementById("tradeTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        const setup = cells[2].textContent.toLowerCase();
+
+        if (setupFilter === "" || setup.includes(setupFilter)) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="max-w-4xl mx-auto mt-10">
+    <header class="bg-white shadow-md rounded-2xl p-6 mb-6">
+      <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
+      <p class="text-sm text-gray-500">Assalamualaikum, Cikgu Heri. Jejak perjalanan trading anda secara berdisiplin.</p>
+    </header>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white p-4 rounded-2xl shadow">
+        <h2 class="text-lg font-semibold">Jumlah Trade</h2>
+        <p class="text-2xl font-bold text-blue-600">52</p>
+      </div>
+      <div class="bg-white p-4 rounded-2xl shadow">
+        <h2 class="text-lg font-semibold">Win Rate</h2>
+        <p class="text-2xl font-bold text-green-600">68%</p>
+      </div>
+      <div class="bg-white p-4 rounded-2xl shadow">
+        <h2 class="text-lg font-semibold">Profit Bulanan</h2>
+        <p class="text-2xl font-bold text-yellow-600">RM3,200</p>
+      </div>
+    </section>
+
+    <section class="bg-white p-6 rounded-2xl shadow mb-6">
+      <h2 class="text-xl font-semibold mb-4">Statistik Ikut Setup</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-gray-50 p-4 rounded-xl border">
+          <h3 class="text-md font-semibold">Dominan Candle</h3>
+          <p class="text-sm text-gray-500">Trade: 22</p>
+          <p class="text-sm text-green-600">Win Rate: 70%</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-xl border">
+          <h3 class="text-md font-semibold">Breakout</h3>
+          <p class="text-sm text-gray-500">Trade: 18</p>
+          <p class="text-sm text-green-600">Win Rate: 61%</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-xl border">
+          <h3 class="text-md font-semibold">Taming Sari</h3>
+          <p class="text-sm text-gray-500">Trade: 12</p>
+          <p class="text-sm text-green-600">Win Rate: 75%</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white p-6 rounded-2xl shadow mb-6">
+      <h2 class="text-xl font-semibold mb-4">Tambah Trade Baru</h2>
+      <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input class="p-2 border rounded" type="date" placeholder="Tarikh" required />
+        <input class="p-2 border rounded" type="text" placeholder="Pair (e.g. XAU/USD)" required />
+        <select class="p-2 border rounded" required>
+          <option value="">Pilih Setup</option>
+          <option value="Dominan Candle">Dominan Candle</option>
+          <option value="Breakout">Breakout</option>
+          <option value="Taming Sari">Taming Sari</option>
+        </select>
+        <input class="p-2 border rounded" type="number" placeholder="Profit/Loss (RM)" required />
+        <select class="p-2 border rounded" required>
+          <option value="">Emosi Sebelum Trade</option>
+          <option value="Tenang">Tenang</option>
+          <option value="Takut">Takut</option>
+          <option value="Tamak">Tamak</option>
+        </select>
+        <input class="p-2 border rounded" type="text" placeholder="Nota Ringkas (optional)" />
+        <button class="col-span-1 md:col-span-2 bg-blue-600 text-white py-2 rounded">Simpan Trade</button>
+      </form>
+    </section>
+
+    <section class="bg-white p-6 rounded-2xl shadow mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold">Log Trade Terkini</h2>
+        <select id="filterSetup" onchange="filterTable()" class="p-2 border rounded">
+          <option value="">Tapis mengikut Setup</option>
+          <option value="Dominan Candle">Dominan Candle</option>
+          <option value="Breakout">Breakout</option>
+          <option value="Taming Sari">Taming Sari</option>
+        </select>
+      </div>
+      <table id="tradeTable" class="w-full table-auto">
+        <thead>
+          <tr class="bg-gray-200 text-gray-700">
+            <th class="px-4 py-2 text-left">Tarikh</th>
+            <th class="px-4 py-2 text-left">Pair</th>
+            <th class="px-4 py-2 text-left">Setup</th>
+            <th class="px-4 py-2 text-left">Profit/Loss</th>
+            <th class="px-4 py-2 text-left">Emosi</th>
+            <th class="px-4 py-2 text-left">Nota</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t">
+            <td class="px-4 py-2">2025-04-02</td>
+            <td class="px-4 py-2">XAU/USD</td>
+            <td class="px-4 py-2">Dominan Candle</td>
+            <td class="px-4 py-2 text-green-600 font-semibold">+RM150</td>
+            <td class="px-4 py-2">Tenang</td>
+            <td class="px-4 py-2">Entry ikut arah candle H4</td>
+          </tr>
+          <tr class="border-t">
+            <td class="px-4 py-2">2025-04-01</td>
+            <td class="px-4 py-2">GBP/JPY</td>
+            <td class="px-4 py-2">Breakout</td>
+            <td class="px-4 py-2 text-red-600 font-semibold">-RM70</td>
+            <td class="px-4 py-2">Tamak</td>
+            <td class="px-4 py-2">Entry terlalu awal sebelum break zone</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="text-center text-sm text-gray-400 mt-10">
+      &copy; 2025 TRAKA by Cikgu Heri. All rights reserved.
+    </footer>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+  <!-- Konfigurasi & Fungsi TRAKA -->
+  <script src="firebase-config.js"></script>
+  <script src="traka.js"></script>
+
 // firebase-config.js
 
 // Konfigurasi Firebase dari Cikgu Heri
@@ -17,3 +165,6 @@ firebase.initializeApp(firebaseConfig);
 // Firebase services
 const auth = firebase.auth();
 const db = firebase.firestore();
+
+</body>
+</html>
