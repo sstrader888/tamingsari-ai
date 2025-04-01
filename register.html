@@ -3,142 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Akaun | SSTrader</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>Log Masuk | SSTrader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
-      background: #000;
-      color: #fff;
       font-family: 'Poppins', sans-serif;
+      background: #0d0d0d;
+      color: white;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      min-height: 100vh;
-      padding: 20px;
+      height: 100vh;
+      margin: 0;
     }
-    .register-box {
-      background: #111;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,255,153,0.2);
-      max-width: 450px;
-      width: 100%;
-    }
-    .register-box h2 {
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 20px;
-      text-align: center;
-      color: #00ff99;
     }
-    .register-box label {
-      display: block;
-      margin-top: 15px;
-      font-weight: 500;
+    .logo-section img {
+      height: 48px;
     }
-    .register-box input, .register-box select {
+    .logo-section span {
+      font-weight: 600;
+      color: white;
+      font-size: 1.5rem;
+    }
+    .login-box {
+      background: #111;
+      padding: 40px;
+      border-radius: 10px;
       width: 100%;
-      padding: 10px;
-      border: none;
-      margin-top: 5px;
-      border-radius: 6px;
-      background: #222;
-      color: #fff;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
     }
-    .register-box button {
+    h2 {
+      color: #00ff99;
+      margin-bottom: 30px;
+    }
+    input, select {
+      display: block;
       width: 100%;
       padding: 12px;
-      margin-top: 20px;
-      background: #00ff99;
-      color: #000;
+      margin-bottom: 16px;
       border: none;
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+    button {
+      background-color: #ffa500;
+      color: #000;
       font-weight: bold;
-      border-radius: 8px;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
-    .register-box .switch-role {
-      text-align: center;
-      margin-top: 10px;
+    button:hover {
+      background-color: #ffcc00;
     }
-    .logo {
-      margin-bottom: 20px;
+    .link {
+      margin-top: 15px;
+      color: #ccc;
+      font-size: 0.9em;
     }
-    .logo img {
-      height: 50px;
+    .link a {
+      color: #00ff99;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="logo">
-    <a href="/" style="text-decoration: none; color: white; font-size: 1.5rem;">
-      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SSTrader"> <strong>SSTrader</strong>
+  <div class="logo-section">
+    <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SSTrader">
+      <span>SSTrader</span>
     </a>
   </div>
-  <div class="register-box">
+
+  <div class="login-box">
     <h2>Daftar Akaun Baru</h2>
-    <label for="role">Daftar Sebagai:</label>
     <select id="role">
-      <option value="user">Pengguna</option>
-      <option value="agent">Ejen</option>
+      <option value="agen">Ejen</option>
+      <option value="pengguna">Pengguna</option>
     </select>
-
-    <div id="common-fields">
-      <label for="name">Nama Penuh:</label>
-      <input type="text" id="name" required>
-
-      <label for="email">Email:</label>
-      <input type="email" id="email" required>
-
-      <label for="password">Kata Laluan:</label>
-      <input type="password" id="password" required>
-
-      <label for="alamat">Alamat:</label>
-      <input type="text" id="alamat" required>
-    </div>
-
-    <div id="agent-fields" style="display: none;">
-      <label for="phone">No Telefon:</label>
-      <input type="text" id="phone">
-
-      <label for="bank">Nama Bank:</label>
-      <input type="text" id="bank">
-
-      <label for="account">No Akaun:</label>
-      <input type="text" id="account">
-    </div>
-
-    <button onclick="registerUser()">Daftar Sekarang</button>
-    <div class="switch-role">
-      Sudah ada akaun? <a href="login.html" style="color: #00ff99;">Login di sini</a>
+    <input type="text" id="nama" placeholder="Nama Penuh">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Kata Laluan">
+    <input type="text" id="alamat" placeholder="Alamat">
+    <input type="text" id="telefon" placeholder="No Telefon">
+    <input type="text" id="bank" placeholder="Nama Bank">
+    <input type="text" id="akaun" placeholder="No Akaun">
+    <button onclick="daftar()">Daftar Sekarang</button>
+    <div class="link">
+      Sudah ada akaun? <a href="login.html">Login di sini</a>
     </div>
   </div>
 
-  <script>
-    const roleSelect = document.getElementById("role");
-    const agentFields = document.getElementById("agent-fields");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-    roleSelect.addEventListener("change", function () {
-      agentFields.style.display = this.value === "agent" ? "block" : "none";
-    });
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.appspot.com",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
+      measurementId: "G-54ZR1GG7ML"
+    };
 
-    function registerUser() {
-      // Placeholder function for Firebase Auth
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.daftar = async function () {
       const role = document.getElementById("role").value;
-      const name = document.getElementById("name").value;
+      const nama = document.getElementById("nama").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const alamat = document.getElementById("alamat").value;
+      const telefon = document.getElementById("telefon").value;
+      const bank = document.getElementById("bank").value;
+      const akaun = document.getElementById("akaun").value;
 
-      let extraData = {};
-      if (role === 'agent') {
-        extraData = {
-          phone: document.getElementById("phone").value,
-          bank: document.getElementById("bank").value,
-          account: document.getElementById("account").value
-        };
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await setDoc(doc(db, role, user.uid), {
+          nama, email, alamat, telefon, bank, akaun,
+          role,
+          createdAt: new Date()
+        });
+
+        alert("Pendaftaran berjaya! Sila log masuk.");
+        window.location.href = "login.html";
+      } catch (error) {
+        alert("Ralat semasa pendaftaran: " + error.message);
       }
-
-      console.log("Daftar sebagai:", role, name, email, alamat, extraData);
-      // Firebase signup logic here
     }
   </script>
 </body>
