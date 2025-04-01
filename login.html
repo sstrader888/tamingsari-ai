@@ -1,16 +1,102 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <header style="text-align: center; margin-bottom: 20px;">
-  <a href="/" style="text-decoration: none; color: white; font-size: 1.5rem; display: inline-flex; align-items: center; gap: 10px;">
-    <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SSTrader" style="height: 48px;">
-    <strong>SSTrader</strong>
-  </a>
-</header>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Log Masuk | SSTrader</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0d0d0d;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .logo-section img {
+      height: 48px;
+    }
+    .logo-section span {
+      font-weight: 600;
+      color: white;
+      font-size: 1.5rem;
+    }
+    .login-box {
+      background: #111;
+      padding: 40px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+    }
+    h2 {
+      color: #00ff99;
+      margin-bottom: 30px;
+    }
+    input, select {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+    button {
+      background-color: #ffa500;
+      color: #000;
+      font-weight: bold;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #ffcc00;
+    }
+    .link {
+      margin-top: 15px;
+      color: #ccc;
+      font-size: 0.9em;
+    }
+    .link a {
+      color: #00ff99;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-section">
+    <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+      <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SSTrader">
+      <span>SSTrader</span>
+    </a>
+  </div>
+
+  <div class="login-box">
+    <h2>Log Masuk</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Kata Laluan">
+    <button onclick="login()">Log Masuk</button>
+    <div class="link">
+      Belum ada akaun? <a href="register.html">Daftar di sini</a>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
@@ -75,74 +161,5 @@
       return auth;
     }
   </script>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #0d0d0d;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .login-box {
-      background: #111;
-      padding: 40px;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
-    }
-    h2 {
-      color: #00ff99;
-      margin-bottom: 30px;
-    }
-    input, select {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 16px;
-      border: none;
-      border-radius: 6px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px;
-    }
-    button {
-      background-color: #ffa500;
-      color: #000;
-      font-weight: bold;
-      padding: 12px;
-      width: 100%;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background-color: #ffcc00;
-    }
-    .link {
-      margin-top: 15px;
-      color: #ccc;
-      font-size: 0.9em;
-    }
-    .link a {
-      color: #00ff99;
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="login-box">
-    <h2>Log Masuk</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Kata Laluan">
-    <button onclick="login()">Log Masuk</button>
-    <div class="link">
-      Belum ada akaun? <a href="register.html">Daftar di sini</a>
-    </div>
-  </div>
 </body>
 </html>
