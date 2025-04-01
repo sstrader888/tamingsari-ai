@@ -492,24 +492,99 @@
     <img src="https://i.imgur.com/QcgQW74.png" alt="JustMarkets" style="height: 50px; opacity: 0.6; filter: drop-shadow(0 0 6px var(--primary));">
     <img src="https://i.imgur.com/uZv8Lof.png" alt="GMI" style="height: 50px; opacity: 0.6; filter: drop-shadow(0 0 6px var(--primary));">
   </div>
- <div id="popup-rakan-niaga">
+<!-- Rakan Niaga Popup -->
+<style>
+  #popup-rakan-niaga {
+    position: fixed;
+    top: 20%;
+    right: -400px;
+    background: #111;
+    color: white;
+    padding: 20px;
+    border-radius: 8px 0 0 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    transition: right 0.5s ease-in-out;
+    width: 320px;
+    z-index: 9999;
+  }
+  #popup-rakan-niaga.show {
+    right: 0;
+  }
+  #popup-rakan-niaga h3 {
+    color: #00ff99;
+    margin-bottom: 16px;
+    font-size: 1.2rem;
+  }
+  #popup-rakan-niaga .partner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    background: #1a1a1a;
+    padding: 10px;
+    border-radius: 6px;
+  }
+  #popup-rakan-niaga .partner img {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+    border-radius: 6px;
+  }
+  #popup-rakan-niaga .partner-info {
+    display: flex;
+    flex-direction: column;
+  }
+  #popup-rakan-niaga .partner-info a {
+    color: #ff9800;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  #popup-rakan-niaga .partner-info span {
+    font-size: 0.85rem;
+    color: #ccc;
+  }
+  #popup-rakan-niaga .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: #ff9800;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+</style>
+
+<div id="popup-rakan-niaga">
+  <button class="close-btn" onclick="document.getElementById('popup-rakan-niaga').style.display='none'">&times;</button>
   <h3>🤝 Rakan Niaga</h3>
-  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-    <img src="https://i.imgur.com/zAeWIBV.png" alt="Iron Gamers" style="height: 36px;">
-    <div>
-      <strong>Iron Gamers</strong><br>
-      <span style="font-size: 0.85rem; color: #ccc;">Baiki konsol seluruh Malaysia</span>
+
+  <div class="partner">
+    <img src="https://i.imgur.com/WXlNs4o.jpeg" alt="Iron Gamers">
+    <div class="partner-info">
+      <a href="https://www.facebook.com/profile.php?id=61566999705522" target="_blank">Iron Gamers</a>
+      <span>Baiki konsol seluruh Malaysia</span>
     </div>
   </div>
-  <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="https://i.imgur.com/3vKOlv4.png" alt="Big John" style="height: 36px;">
-    <div>
-      <strong>Big John</strong><br>
-      <span style="font-size: 0.85rem; color: #ccc;">Roti John Kamunting</span>
+
+  <div class="partner">
+    <img src="https://i.imgur.com/7gYATX1.jpeg" alt="Big John">
+    <div class="partner-info">
+      <a href="https://bigjohnhouseofrotijohn.orderla.my" target="_blank">Big John</a>
+      <span>Roti John Kamunting</span>
     </div>
   </div>
-  <button onclick="document.getElementById('popup-rakan-niaga').style.display='none'">Tutup</button>
 </div>
+
+<script>
+  window.addEventListener('scroll', function () {
+    const popup = document.getElementById('popup-rakan-niaga');
+    if (window.scrollY > 200) {
+      popup.classList.add('show');
+    }
+  });
+</script>
+
 </section><!-- WhatsApp Floating Button --><a href="https://api.whatsapp.com/send?phone=60194173200" target="_blank" style="position: fixed; bottom: 20px; right: 20px; background-color: #25D366; color: white; padding: 14px 16px; border-radius: 50%; text-align: center; font-size: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none;">
   💬
 </a><!-- Footer Section --><footer style="background: #000; padding: 30px 20px; text-align: center; color: #aaa; font-size: 0.9rem;">
