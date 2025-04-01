@@ -556,6 +556,20 @@
     font-size: 1.2rem;
     cursor: pointer;
   }
+   .scroll-marquee {
+    margin-top: 20px;
+    color: #ffcc00;
+    font-weight: bold;
+    font-size: 1.1rem;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    animation: marquee 10s linear infinite;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
 </style>
 
 <div id="popup-rakan-niaga">
