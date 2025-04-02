@@ -113,7 +113,7 @@
           <option value="¥">JPY</option>
         </select>
       </div>
-      <button onclick="alert('Import fungsi demo belum aktif.')" class="btn-primary text-white px-4 py-2 rounded">Upload & Import</button>
+      <button onclick="parseCSVFile()" class="btn-primary text-white px-4 py-2 rounded">Upload & Import</button>
     </section>
 
     <form class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -199,5 +199,41 @@
     }
   });
 </script>
+  <script>
+function parseCSVFile() {
+  const fileInput = document.getElementById('csvUpload');
+  const file = fileInput.files[0];
+  if (!file) return alert('Sila pilih fail CSV terlebih dahulu.');
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const text = e.target.result;
+    const rows = text.split(/\r?\n/).filter(row => row.trim() !== '');
+
+    const tbody = document.querySelector('#tradeTable tbody');
+    tbody.innerHTML = ''; // Kosongkan sebelum tambah baru
+
+    rows.forEach((row, index) => {
+      const cols = row.split(',');
+      if (cols.length >= 5 && index > 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="px-2 py-1">${cols[0]}</td>
+          <td class="px-2 py-1">${cols[1]}</td>
+          <td class="px-2 py-1">${cols[2]}</td>
+          <td class="px-2 py-1">${cols[3]}</td>
+          <td class="px-2 py-1">${cols[4]}</td>
+          <td class="px-2 py-1">${cols[5] || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    });
+
+    alert('Import CSV berjaya!');
+  };
+  reader.readAsText(file);
+}
+</script>
+
 </body>
 </html>
