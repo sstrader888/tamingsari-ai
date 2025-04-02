@@ -1,5 +1,6 @@
+<!-- Full updated HTML with full features -->
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,31 +9,16 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-    }
-    .btn-primary {
-      background-color: #2563eb;
-      transition: background-color 0.3s;
-    }
-    .btn-primary:hover {
-      background-color: #1e40af;
-    }
+    body { font-family: 'Poppins', sans-serif; }
+    .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
+    .btn-primary:hover { background-color: #1e40af; }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 transition-colors duration-300">
   <div class="max-w-4xl mx-auto px-4">
     <div class="flex justify-between items-center py-4">
-      <span id="userNameDisplay" class="text-sm font-medium text-blue-700">Cikgu Heri</span>
+      <span id="userNameDisplay" class="text-sm font-medium text-blue-700">Pengguna</span>
       <div class="flex gap-2 items-center">
-     <script>
-  document.getElementById('logoutBtn').addEventListener('click', function () {
-    // Terus redirect ke halaman login
-    window.location.href = 'traka-login.html';
-  });
-</script>
-
-        <button id="themeToggle" class="text-sm border rounded px-2 py-1">🌓</button>
         <button id="logoutBtn" class="text-sm border rounded px-2 py-1 bg-red-600 text-white hover:bg-red-700">Logout</button>
         <select id="langSwitcher" class="text-sm border rounded px-2 py-1">
           <option value="ms">Bahasa Melayu</option>
@@ -44,38 +30,38 @@
     <header class="bg-white shadow-md rounded-2xl p-6 mb-6 flex items-center gap-4">
       <div class="bg-blue-600 text-white font-bold rounded-full w-12 h-12 flex items-center justify-center text-xl">T</div>
       <div>
-        <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
-        <p class="text-sm text-gray-500" id="greetingText">Jejak perjalanan trading anda secara berdisiplin.</p>
+        <h1 class="text-3xl font-bold text-gray-800" id="dashboardTitle">TRAKA Dashboard</h1>
+        <p class="text-sm text-gray-500" id="greetingText">Assalamualaikum, <span id="greetName">Pengguna</span>. Jejak perjalanan trading anda secara berdisiplin.</p>
       </div>
     </header>
 
     <section class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="text-3xl mb-2">📊</div>
-        <h2 class="text-sm font-semibold">Jumlah Trade</h2>
-        <p class="text-xl font-bold text-blue-600">52</p>
+        <h2 class="text-sm font-semibold" id="totalTradesLabel">Jumlah Trade</h2>
+        <p id="totalTrades" class="text-xl font-bold text-blue-600">0</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="text-3xl mb-2">🎯</div>
-        <h2 class="text-sm font-semibold">Win Rate</h2>
-        <p class="text-xl font-bold text-green-600">68%</p>
+        <h2 class="text-sm font-semibold" id="winRateLabel">Win Rate</h2>
+        <p id="winRate" class="text-xl font-bold text-green-600">0%</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="text-3xl mb-2">💰</div>
-        <h2 class="text-sm font-semibold flex items-center justify-center gap-2">Profit Bulanan
-          <select id="currencySelect" class="text-xs border rounded px-1 py-0.5">
-            <option value="RM">MYR</option>
-            <option value="$">USD</option>
-            <option value="€">EUR</option>
-            <option value="KY$">KYD</option>
-          </select>
-        </h2>
-        <p id="profitAmount" class="text-xl font-bold text-yellow-600">RM3,200</p>
+        <h2 class="text-sm font-semibold" id="monthlyProfitLabel">Profit Bulanan</h2>
+        <select id="currencySelector" class="text-xs mt-1 mb-2 border rounded px-2 py-1">
+          <option value="MYR">MYR</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="JPY">JPY</option>
+          <option value="SGD">SGD</option>
+        </select>
+        <p id="monthlyProfit" class="text-xl font-bold text-yellow-600" data-value="0">RM0</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="text-3xl mb-2">📈</div>
-        <h2 class="text-sm font-semibold">Profit Factor</h2>
-        <p class="text-xl font-bold text-purple-600">1.75</p>
+        <div class="text-3xl mb-2">🧠</div>
+        <h2 class="text-sm font-semibold" id="aiReviewLabel">AI Ulasan</h2>
+        <p id="aiSummary" class="text-sm italic text-gray-700">Belum dianalisis.</p>
       </div>
     </section>
 
@@ -85,87 +71,84 @@
     </section>
 
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Ulasan AI Harian</h2>
-      <div class="bg-gray-50 p-4 rounded-xl border border-yellow-300">
-        <p class="text-gray-800 italic">
-          "Hari ini anda membuat 3 trade, dua daripadanya menggunakan teknik Breakout. Emosi anda kelihatan lebih tenang berbanding semalam. Elakkan entry semasa news besar."
-        </p>
-      </div>
-    </section>
-
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Ulasan AI Mingguan</h2>
-      <div class="bg-gray-50 p-4 rounded-xl border border-blue-200">
-        <p class="text-gray-800 italic">
-          "Minggu ini anda lebih konsisten menggunakan teknik Taming Sari. Emosi tenang juga meningkat. Teruskan disiplin dan elakkan entry tergesa-gesa sebelum breakout sah."
-        </p>
-      </div>
-    </section>
-
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Muat Naik CSV dari MT5</h2>
-      <div class="flex flex-col md:flex-row gap-4 mb-4">
+      <h2 class="text-lg font-semibold mb-4">Muat Naik Fail CSV dari MT5</h2>
+      <form class="flex flex-col md:flex-row gap-4 mb-4">
         <input type="file" accept=".csv" id="csvUpload" class="p-2 border rounded w-full" />
-        <select id="csvCurrency" class="p-2 border rounded">
-          <option value="RM">MYR</option>
-          <option value="$">USD</option>
-          <option value="€">EUR</option>
-          <option value="¥">JPY</option>
-        </select>
-      </div>
-      <button onclick="parseCSVFile()" class="btn-primary text-white px-4 py-2 rounded">Upload & Import</button>
+        <button type="button" onclick="parseCSVFile()" class="btn-primary px-4 py-2 text-white rounded">Upload & Analisis CSV</button>
+      </form>
     </section>
 
-    <form class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-      <input class="p-2 border rounded" type="date" required />
-      <input class="p-2 border rounded" type="text" placeholder="Pair (cth: XAU/USD)" required />
-      <select class="p-2 border rounded" required>
-        <option value="">Pilih Setup</option>
-        <option value="Dominan Candle">Dominan Candle</option>
-        <option value="Breakout">Breakout</option>
-        <option value="Taming Sari">Taming Sari</option>
-      </select>
-      <input class="p-2 border rounded" type="number" placeholder="Profit/Loss (RM)" required />
-      <select class="p-2 border rounded" required>
-        <option value="">Emosi Sebelum Trade</option>
-        <option value="Tenang">Tenang</option>
-        <option value="Takut">Takut</option>
-        <option value="Tamak">Tamak</option>
-      </select>
-      <input class="p-2 border rounded" type="text" placeholder="Nota Ringkas (optional)" />
-      <input class="p-2 border rounded" type="file" accept="image/*" id="chartImage" />
-      <button class="col-span-1 md:col-span-2 btn-primary text-white py-2 rounded">Simpan Trade</button>
-    </form>
-
-    <section class="bg-white p-6 rounded-2xl shadow mb-10">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold">Log Trade Terkini</h2>
-        <select id="filterSetup" onchange="filterTable()" class="p-2 border rounded">
-          <option value="">Tapis mengikut Setup</option>
+    <section class="bg-white p-6 rounded-2xl shadow mb-6">
+      <h2 class="text-lg font-semibold mb-4">Tambah Trade Manual</h2>
+      <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input class="p-2 border rounded" type="date" required />
+        <input class="p-2 border rounded" type="text" placeholder="Pair (cth: XAU/USD)" required />
+        <select class="p-2 border rounded" required>
+          <option value="">Pilih Setup</option>
           <option value="Dominan Candle">Dominan Candle</option>
           <option value="Breakout">Breakout</option>
           <option value="Taming Sari">Taming Sari</option>
         </select>
-      </div>
-      <table id="tradeTable" class="w-full table-auto text-sm">
-        <thead>
-          <tr class="bg-gray-200 text-gray-700">
-            <th class="px-2 py-1 text-left">Tarikh</th>
-            <th class="px-2 py-1 text-left">Pair</th>
-            <th class="px-2 py-1 text-left">Setup</th>
-            <th class="px-2 py-1 text-left">Profit/Loss</th>
-            <th class="px-2 py-1 text-left">Emosi</th>
-            <th class="px-2 py-1 text-left">Nota</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Data akan dipaparkan di sini -->
-        </tbody>
-      </table>
+        <input class="p-2 border rounded" type="number" placeholder="Profit/Loss (RM)" required />
+        <select class="p-2 border rounded" required>
+          <option value="">Emosi Sebelum Trade</option>
+          <option value="Tenang">Tenang</option>
+          <option value="Takut">Takut</option>
+          <option value="Tamak">Tamak</option>
+        </select>
+        <input class="p-2 border rounded" type="text" placeholder="Nota Ringkas (optional)" />
+        <input class="p-2 border rounded" type="file" accept="image/*" />
+        <button class="col-span-1 md:col-span-2 btn-primary text-white py-2 rounded">Simpan Trade</button>
+      </form>
     </section>
   </div>
+
   <script>
-    const ctx = document.getElementById('performanceChart').getContext('2d');
+    const userName = localStorage.getItem("userName") || "Pengguna";
+    document.getElementById("userNameDisplay").textContent = userName;
+    document.getElementById("greetName").textContent = userName;
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem("userName");
+      window.location.href = 'traka-login.html';
+    });
+
+    const langSwitcher = document.getElementById("langSwitcher");
+    const i18n = {
+      ms: {
+        greeting: `Assalamualaikum, ${userName}. Jejak perjalanan trading anda secara berdisiplin.`,
+        totalTrades: "Jumlah Trade",
+        winRate: "Win Rate",
+        profitLabel: "Profit Bulanan",
+        aiReview: "AI Ulasan",
+        aiStatus: "Belum dianalisis."
+      },
+      en: {
+        greeting: `Welcome, ${userName}. Track your trading journey with discipline.`,
+        totalTrades: "Total Trades",
+        winRate: "Win Rate",
+        profitLabel: "Monthly Profit",
+        aiReview: "AI Summary",
+        aiStatus: "Not analyzed yet."
+      }
+    };
+
+    langSwitcher.addEventListener("change", function () {
+      const lang = this.value;
+      document.getElementById("greetingText").textContent = i18n[lang].greeting;
+      document.getElementById("totalTradesLabel").textContent = i18n[lang].totalTrades;
+      document.getElementById("winRateLabel").textContent = i18n[lang].winRate;
+      document.getElementById("monthlyProfitLabel").textContent = i18n[lang].profitLabel;
+      document.getElementById("aiReviewLabel").textContent = i18n[lang].aiReview;
+      if (document.getElementById("aiSummary").textContent === i18n.ms.aiStatus || document.getElementById("aiSummary").textContent === i18n.en.aiStatus) {
+        document.getElementById("aiSummary").textContent = i18n[lang].aiStatus;
+      }
+    });
+
+    const ctx = document.createElement('canvas');
+    ctx.id = 'performanceChart';
+    document.querySelector('section').appendChild(ctx);
+
     new Chart(ctx, {
       type: 'line',
       data: {
@@ -181,59 +164,37 @@
       },
       options: {
         responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
+        scales: { y: { beginAtZero: true } }
       }
     });
-  </script>
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const logoutButton = document.getElementById('logoutBtn');
-    if (logoutButton) {
-      logoutButton.addEventListener('click', function () {
-        window.location.href = 'traka-login.html';
-      });
+
+    function parseCSVFile() {
+      const fileInput = document.getElementById('csvUpload');
+      const file = fileInput.files[0];
+      if (!file) return alert('Sila pilih fail CSV terlebih dahulu.');
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const text = e.target.result;
+        const rows = text.split(/\n/).filter(row => row.trim() !== '');
+        let trades = 0, wins = 0, profit = 0;
+
+        rows.forEach((row, i) => {
+          const cols = row.split(',');
+          const pl = parseFloat(cols[9]) || 0;
+          profit += pl;
+          if (pl > 0) wins++;
+          if (i > 0) trades++;
+        });
+
+        const rate = Math.round((wins / trades) * 100);
+        document.getElementById("totalTrades").textContent = trades;
+        document.getElementById("winRate").textContent = rate + "%";
+        document.getElementById("monthlyProfit").textContent = 'RM' + profit.toFixed(2);
+        document.getElementById("aiSummary").textContent = `Daripada ${trades} trade, anda menang ${wins} (${rate}%). Prestasi bulan ini ${profit >= 0 ? 'positif' : 'negatif'}.`;
+      };
+      reader.readAsText(file);
     }
-  });
-</script>
-  <script>
-function parseCSVFile() {
-  const fileInput = document.getElementById('csvUpload');
-  const file = fileInput.files[0];
-  if (!file) return alert('Sila pilih fail CSV terlebih dahulu.');
-
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const text = e.target.result;
-    const rows = text.split(/\r?\n/).filter(row => row.trim() !== '');
-
-    const tbody = document.querySelector('#tradeTable tbody');
-    tbody.innerHTML = ''; // Kosongkan sebelum tambah baru
-
-    rows.forEach((row, index) => {
-      const cols = row.split(',');
-      if (cols.length >= 5 && index > 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="px-2 py-1">${cols[0]}</td>
-          <td class="px-2 py-1">${cols[1]}</td>
-          <td class="px-2 py-1">${cols[2]}</td>
-          <td class="px-2 py-1">${cols[3]}</td>
-          <td class="px-2 py-1">${cols[4]}</td>
-          <td class="px-2 py-1">${cols[5] || '-'}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    });
-
-    alert('Import CSV berjaya!');
-  };
-  reader.readAsText(file);
-}
-</script>
-
+  </script>
 </body>
 </html>
