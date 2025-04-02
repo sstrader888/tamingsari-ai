@@ -1,4 +1,4 @@
-<!-- Full updated HTML with full features -->
+<!-- Full updated HTML with fixes for graph, currency dropdown, English translation, AI CSV review and manual trade form -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,20 +66,20 @@
     </section>
 
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Graf Prestasi Harian</h2>
+      <h2 class="text-lg font-semibold mb-4" id="chartTitle">Graf Prestasi Harian</h2>
       <canvas id="performanceChart" height="200"></canvas>
     </section>
 
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Muat Naik Fail CSV dari MT5</h2>
+      <h2 class="text-lg font-semibold mb-4" id="csvTitle">Muat Naik Fail CSV dari MT5</h2>
       <form class="flex flex-col md:flex-row gap-4 mb-4">
         <input type="file" accept=".csv" id="csvUpload" class="p-2 border rounded w-full" />
-        <button type="button" onclick="parseCSVFile()" class="btn-primary px-4 py-2 text-white rounded">Upload & Analisis CSV</button>
+        <button type="button" onclick="parseCSVFile()" class="btn-primary px-4 py-2 text-white rounded" id="uploadBtn">Upload & Analisis CSV</button>
       </form>
     </section>
 
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Tambah Trade Manual</h2>
+    <section class="bg-white p-6 rounded-2xl shadow mb-10">
+      <h2 class="text-lg font-semibold mb-4" id="manualTitle">Tambah Trade Manual</h2>
       <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input class="p-2 border rounded" type="date" required />
         <input class="p-2 border rounded" type="text" placeholder="Pair (cth: XAU/USD)" required />
@@ -107,8 +107,7 @@
     const userName = localStorage.getItem("userName") || "Pengguna";
     document.getElementById("userNameDisplay").textContent = userName;
     document.getElementById("greetName").textContent = userName;
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
+    document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("userName");
       window.location.href = 'traka-login.html';
     });
@@ -121,7 +120,11 @@
         winRate: "Win Rate",
         profitLabel: "Profit Bulanan",
         aiReview: "AI Ulasan",
-        aiStatus: "Belum dianalisis."
+        aiStatus: "Belum dianalisis.",
+        chartTitle: "Graf Prestasi Harian",
+        csvTitle: "Muat Naik Fail CSV dari MT5",
+        manualTitle: "Tambah Trade Manual",
+        uploadBtn: "Upload & Analisis CSV"
       },
       en: {
         greeting: `Welcome, ${userName}. Track your trading journey with discipline.`,
@@ -129,26 +132,32 @@
         winRate: "Win Rate",
         profitLabel: "Monthly Profit",
         aiReview: "AI Summary",
-        aiStatus: "Not analyzed yet."
+        aiStatus: "Not analyzed yet.",
+        chartTitle: "Performance Chart",
+        csvTitle: "Upload CSV File from MT5",
+        manualTitle: "Add Manual Trade",
+        uploadBtn: "Upload & Analyze CSV"
       }
     };
 
     langSwitcher.addEventListener("change", function () {
       const lang = this.value;
-      document.getElementById("greetingText").textContent = i18n[lang].greeting;
-      document.getElementById("totalTradesLabel").textContent = i18n[lang].totalTrades;
-      document.getElementById("winRateLabel").textContent = i18n[lang].winRate;
-      document.getElementById("monthlyProfitLabel").textContent = i18n[lang].profitLabel;
-      document.getElementById("aiReviewLabel").textContent = i18n[lang].aiReview;
+      const t = i18n[lang];
+      document.getElementById("greetingText").textContent = t.greeting;
+      document.getElementById("totalTradesLabel").textContent = t.totalTrades;
+      document.getElementById("winRateLabel").textContent = t.winRate;
+      document.getElementById("monthlyProfitLabel").textContent = t.profitLabel;
+      document.getElementById("aiReviewLabel").textContent = t.aiReview;
+      document.getElementById("chartTitle").textContent = t.chartTitle;
+      document.getElementById("csvTitle").textContent = t.csvTitle;
+      document.getElementById("manualTitle").textContent = t.manualTitle;
+      document.getElementById("uploadBtn").textContent = t.uploadBtn;
       if (document.getElementById("aiSummary").textContent === i18n.ms.aiStatus || document.getElementById("aiSummary").textContent === i18n.en.aiStatus) {
-        document.getElementById("aiSummary").textContent = i18n[lang].aiStatus;
+        document.getElementById("aiSummary").textContent = t.aiStatus;
       }
     });
 
-    const ctx = document.createElement('canvas');
-    ctx.id = 'performanceChart';
-    document.querySelector('section').appendChild(ctx);
-
+    const ctx = document.getElementById('performanceChart').getContext('2d');
     new Chart(ctx, {
       type: 'line',
       data: {
@@ -166,6 +175,14 @@
         responsive: true,
         scales: { y: { beginAtZero: true } }
       }
+    });
+
+    document.getElementById("currencySelector").addEventListener("change", function () {
+      const selected = this.value;
+      const el = document.getElementById("monthlyProfit");
+      const val = parseFloat(el.getAttribute("data-value")) || 0;
+      const symbols = { MYR: "RM", USD: "$", EUR: "€", JPY: "¥", SGD: "S$" };
+      el.textContent = symbols[selected] + val.toFixed(2);
     });
 
     function parseCSVFile() {
@@ -187,9 +204,10 @@
           if (i > 0) trades++;
         });
 
-        const rate = Math.round((wins / trades) * 100);
+        const rate = trades ? Math.round((wins / trades) * 100) : 0;
         document.getElementById("totalTrades").textContent = trades;
         document.getElementById("winRate").textContent = rate + "%";
+        document.getElementById("monthlyProfit").setAttribute("data-value", profit);
         document.getElementById("monthlyProfit").textContent = 'RM' + profit.toFixed(2);
         document.getElementById("aiSummary").textContent = `Daripada ${trades} trade, anda menang ${wins} (${rate}%). Prestasi bulan ini ${profit >= 0 ? 'positif' : 'negatif'}.`;
       };
