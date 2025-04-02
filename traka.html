@@ -25,7 +25,13 @@
     <div class="flex justify-between items-center py-4">
       <span id="userNameDisplay" class="text-sm font-medium text-blue-700">Cikgu Heri</span>
       <div class="flex gap-2 items-center">
-        <button id="logoutBtn" class="text-sm border rounded px-2 py-1 bg-red-600 text-white hover:bg-red-700">Logout</button>
+     <script>
+  document.getElementById('logoutBtn').addEventListener('click', function () {
+    // Terus redirect ke halaman login
+    window.location.href = 'traka-login.html';
+  });
+</script>
+
         <button id="themeToggle" class="text-sm border rounded px-2 py-1">🌓</button>
         <select id="langSwitcher" class="text-sm border rounded px-2 py-1">
           <option value="ms">Bahasa Melayu</option>
