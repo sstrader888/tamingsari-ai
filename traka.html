@@ -1,4 +1,4 @@
-<!-- Full updated HTML with CSV Detection, AI Review, and Token System -->
+<!-- Full updated HTML with CSV Detection, AI Review (Daily & Weekly), and Token System -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,14 +58,28 @@
         <p id="monthlyProfit" class="text-2xl font-bold text-yellow-600">RM0</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <h3 class="text-sm font-semibold">AI Ulasan</h3>
-        <p id="aiUlasan" class="text-xs text-gray-600 italic">Belum dianalisis.</p>
+        <h3 class="text-sm font-semibold">Token</h3>
+        <p id="tokenCount" class="text-2xl font-bold text-purple-600">0</p>
       </div>
     </section>
 
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Graf Prestasi Harian</h2>
       <canvas id="performanceChart" height="200"></canvas>
+    </section>
+
+    <section class="bg-white p-6 rounded-2xl shadow mb-6">
+      <h2 class="text-lg font-semibold mb-4">Ulasan AI Harian</h2>
+      <div class="bg-gray-50 p-4 rounded-xl border border-yellow-300">
+        <p id="aiReviewDaily" class="text-gray-800 italic">Belum dianalisis.</p>
+      </div>
+    </section>
+
+    <section class="bg-white p-6 rounded-2xl shadow mb-6">
+      <h2 class="text-lg font-semibold mb-4">Ulasan AI Mingguan</h2>
+      <div class="bg-gray-50 p-4 rounded-xl border border-blue-200">
+        <p id="aiReviewWeekly" class="text-gray-800 italic">Belum dianalisis.</p>
+      </div>
     </section>
 
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
@@ -109,9 +123,7 @@
       options: {
         responsive: true,
         scales: {
-          y: {
-            beginAtZero: true
-          }
+          y: { beginAtZero: true }
         }
       }
     });
@@ -122,7 +134,7 @@
     }
 
     function handleCSVUpload() {
-      if (userToken <= 0) return;
+      if (typeof userToken !== 'undefined' && userToken <= 0) return;
       const fileInput = document.getElementById("csvUpload");
       const file = fileInput.files[0];
       if (!file) return;
@@ -150,12 +162,10 @@
         document.getElementById("winRate").textContent = total ? Math.round((win / total) * 100) + "%" : "0%";
         document.getElementById("monthlyProfit").textContent = "RM" + sum.toFixed(2);
 
-        const aiText = total > 0
-          ? `Hari ini anda upload ${total} trade. Menang ${win} (${Math.round((win / total) * 100)}%). Emosi anda kelihatan terkawal. Teruskan dengan disiplin.`
-          : "Tiada data sah dalam CSV.";
-        document.getElementById("aiUlasan").textContent = aiText;
+        document.getElementById("aiReviewDaily").textContent = `Hari ini anda upload ${total} trade. Menang ${win} (${Math.round((win / total) * 100)}%). Emosi anda kelihatan terkawal.`;
+        document.getElementById("aiReviewWeekly").textContent = `Prestasi mingguan anda menunjukkan ${win} kemenangan daripada ${total} trade. Teruskan dengan disiplin dan sabar.`;
 
-        deductToken(1);
+        if (typeof deductToken === 'function') deductToken(1);
       };
       reader.readAsText(file);
     }
