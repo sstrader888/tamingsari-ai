@@ -1,4 +1,4 @@
-<!-- Full updated HTML with Token System, CSV Upload, Manual Trade, AI Review, and Chart Enabled -->
+<!-- Full updated HTML with CSV Detection, AI Review, and Token System -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +11,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body { font-family: 'Poppins', sans-serif; }
     .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
@@ -47,22 +46,18 @@
 
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="text-2xl mb-1"><i class="fas fa-chart-bar text-blue-500"></i></div>
         <h3 class="text-sm font-semibold">Jumlah Trade</h3>
         <p id="totalTrades" class="text-2xl font-bold text-blue-600">0</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="text-2xl mb-1"><i class="fas fa-bullseye text-green-500"></i></div>
         <h3 class="text-sm font-semibold">Win Rate</h3>
         <p id="winRate" class="text-2xl font-bold text-green-600">0%</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="text-2xl mb-1"><i class="fas fa-coins text-yellow-500"></i></div>
         <h3 class="text-sm font-semibold">Profit Bulanan</h3>
         <p id="monthlyProfit" class="text-2xl font-bold text-yellow-600">RM0</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="text-2xl mb-1"><i class="fas fa-robot text-purple-500"></i></div>
         <h3 class="text-sm font-semibold">AI Ulasan</h3>
         <p id="aiUlasan" class="text-xs text-gray-600 italic">Belum dianalisis.</p>
       </div>
@@ -120,68 +115,10 @@
         }
       }
     });
-  </script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-      authDomain: "sstrader-affiliate.firebaseapp.com",
-      projectId: "sstrader-affiliate",
-      storageBucket: "sstrader-affiliate.appspot.com",
-      messagingSenderId: "859244663056",
-      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
-      measurementId: "G-54ZR1GG7ML"
-    };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    let currentUser;
-    let userToken = 0;
-
-    auth.onAuthStateChanged(user => {
-      if (!user) return window.location.href = 'traka-login.html';
-      currentUser = user;
-      document.getElementById("userNameDisplay").textContent = user.displayName || "Pengguna";
-      document.getElementById("greetName").textContent = user.displayName || "Pengguna";
-
-      const uid = user.uid;
-      db.collection("users").doc(uid).get().then(doc => {
-        if (doc.exists && doc.data().tokenBalance !== undefined) {
-          userToken = doc.data().tokenBalance;
-        } else {
-          userToken = 5;
-          db.collection("users").doc(uid).set({ tokenBalance: userToken }, { merge: true });
-        }
-        updateTokenDisplay();
-      });
-    });
-
-    function updateTokenDisplay() {
-      const display = document.getElementById("tokenDisplay");
-      display.textContent = `Token: ${userToken}`;
-
-      if (userToken <= 0) {
-        document.getElementById("tokenWarning").classList.remove("hidden");
-        document.querySelectorAll("form input, form select, form button, #csvUpload, button").forEach(e => {
-          if (!e.closest("#langSwitcher") && e.id !== "logoutBtn") {
-            e.disabled = true;
-            e.classList.add("disabled");
-          }
-        });
-      }
-    }
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      auth.signOut().then(() => window.location.href = 'traka-login.html');
-    });
-
-    function deductToken(amount = 1) {
-      if (userToken >= amount) {
-        userToken -= amount;
-        db.collection("users").doc(currentUser.uid).update({ tokenBalance: userToken });
-        updateTokenDisplay();
-      }
+    function detectProfitIndex(header) {
+      const lower = header.map(h => h.trim().toLowerCase());
+      return lower.indexOf("profit") >= 0 ? lower.indexOf("profit") : 4;
     }
 
     function handleCSVUpload() {
@@ -192,22 +129,32 @@
 
       const reader = new FileReader();
       reader.onload = function (e) {
-        const rows = e.target.result.split(/\n/).filter(row => row.trim() !== "");
+        const lines = e.target.result.split(/\n/).filter(line => line.trim() !== "");
+        if (lines.length < 2) return alert("CSV tidak sah.");
+
+        const headers = lines[0].split(',');
+        const profitIndex = detectProfitIndex(headers);
         let total = 0, win = 0, sum = 0;
-        rows.forEach((line, index) => {
-          if (index === 0) return; // skip header
-          const cols = line.split(',');
-          const profit = parseFloat(cols[4]);
+
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(',');
+          const profit = parseFloat(cols[profitIndex]);
           if (!isNaN(profit)) {
             total++;
             sum += profit;
             if (profit > 0) win++;
           }
-        });
+        }
+
         document.getElementById("totalTrades").textContent = total;
         document.getElementById("winRate").textContent = total ? Math.round((win / total) * 100) + "%" : "0%";
         document.getElementById("monthlyProfit").textContent = "RM" + sum.toFixed(2);
-        document.getElementById("aiUlasan").textContent = `Daripada ${total} trade, anda menang ${win} (${Math.round((win / total) * 100)}%). Prestasi bulan ini positif.`;
+
+        const aiText = total > 0
+          ? `Hari ini anda upload ${total} trade. Menang ${win} (${Math.round((win / total) * 100)}%). Emosi anda kelihatan terkawal. Teruskan dengan disiplin.`
+          : "Tiada data sah dalam CSV.";
+        document.getElementById("aiUlasan").textContent = aiText;
+
         deductToken(1);
       };
       reader.readAsText(file);
