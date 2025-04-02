@@ -1,4 +1,4 @@
-<!-- Full updated HTML with CSV Detection, AI Review (Daily & Weekly), and Token System -->
+<!-- Full updated HTML with FontAwesome Icons & AI Review -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +7,7 @@
   <title>TRAKA Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -16,6 +17,7 @@
     .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
     .btn-primary:hover { background-color: #1e40af; }
     .disabled { opacity: 0.4; pointer-events: none; }
+    .icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 transition-colors duration-300">
@@ -44,20 +46,29 @@
       Token anda telah habis. Sila <a href="langgan.html" class="underline">langgan di sini</a> untuk akses penuh.
     </div>
 
-    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="icon text-blue-600"><i class="fas fa-chart-bar"></i></div>
         <h3 class="text-sm font-semibold">Jumlah Trade</h3>
         <p id="totalTrades" class="text-2xl font-bold text-blue-600">0</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="icon text-green-600"><i class="fas fa-bullseye"></i></div>
         <h3 class="text-sm font-semibold">Win Rate</h3>
         <p id="winRate" class="text-2xl font-bold text-green-600">0%</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="icon text-yellow-600"><i class="fas fa-coins"></i></div>
         <h3 class="text-sm font-semibold">Profit Bulanan</h3>
         <p id="monthlyProfit" class="text-2xl font-bold text-yellow-600">RM0</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="icon text-purple-600"><i class="fas fa-robot"></i></div>
+        <h3 class="text-sm font-semibold">AI Ulasan</h3>
+        <p class="text-sm italic text-gray-500">Belum dianalisis</p>
+      </div>
+      <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="icon text-indigo-600"><i class="fas fa-ticket-alt"></i></div>
         <h3 class="text-sm font-semibold">Token</h3>
         <p id="tokenCount" class="text-2xl font-bold text-purple-600">0</p>
       </div>
@@ -127,48 +138,6 @@
         }
       }
     });
-
-    function detectProfitIndex(header) {
-      const lower = header.map(h => h.trim().toLowerCase());
-      return lower.indexOf("profit") >= 0 ? lower.indexOf("profit") : 4;
-    }
-
-    function handleCSVUpload() {
-      if (typeof userToken !== 'undefined' && userToken <= 0) return;
-      const fileInput = document.getElementById("csvUpload");
-      const file = fileInput.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const lines = e.target.result.split(/\n/).filter(line => line.trim() !== "");
-        if (lines.length < 2) return alert("CSV tidak sah.");
-
-        const headers = lines[0].split(',');
-        const profitIndex = detectProfitIndex(headers);
-        let total = 0, win = 0, sum = 0;
-
-        for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(',');
-          const profit = parseFloat(cols[profitIndex]);
-          if (!isNaN(profit)) {
-            total++;
-            sum += profit;
-            if (profit > 0) win++;
-          }
-        }
-
-        document.getElementById("totalTrades").textContent = total;
-        document.getElementById("winRate").textContent = total ? Math.round((win / total) * 100) + "%" : "0%";
-        document.getElementById("monthlyProfit").textContent = "RM" + sum.toFixed(2);
-
-        document.getElementById("aiReviewDaily").textContent = `Hari ini anda upload ${total} trade. Menang ${win} (${Math.round((win / total) * 100)}%). Emosi anda kelihatan terkawal.`;
-        document.getElementById("aiReviewWeekly").textContent = `Prestasi mingguan anda menunjukkan ${win} kemenangan daripada ${total} trade. Teruskan dengan disiplin dan sabar.`;
-
-        if (typeof deductToken === 'function') deductToken(1);
-      };
-      reader.readAsText(file);
-    }
   </script>
 </body>
 </html>
