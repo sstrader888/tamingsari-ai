@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TRAKA Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn-primary {
+      background-color: #2563eb;
+      transition: background-color 0.3s;
+    }
+    .btn-primary:hover {
+      background-color: #1e40af;
+    }
+  </style>
   <script>
     function filterTable() {
       const setupFilter = document.getElementById("filterSetup").value.toLowerCase();
@@ -22,115 +36,183 @@
         }
       }
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.querySelector("form");
+      if (form) {
+        form.insertAdjacentHTML("beforeend", `
+          <input class="p-2 border rounded" type="file" accept="image/*" id="chartImage" />
+        `);
+      }
+    });
   </script>
 </head>
-<body class="bg-gray-100 font-sans">
-  <div class="max-w-4xl mx-auto mt-10">
-    <header class="bg-white shadow-md rounded-2xl p-6 mb-6">
-      <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
-      <p class="text-sm text-gray-500">Assalamualaikum, Cikgu Heri. Jejak perjalanan trading anda secara berdisiplin.</p>
+<body id="mainBody" class="bg-gray-100 text-gray-800 transition-colors duration-300">
+  <div class="flex justify-end items-center gap-4 p-4">
+    <button id="themeToggle" class="text-sm border rounded px-2 py-1">🌓 Toggle Theme</button>
+    <select id="langSwitcher" class="text-sm border rounded px-2 py-1">
+      <option value="ms">Bahasa Melayu</option>
+      <option value="en">English (UK)</option>
+    </select>
+  </div>
+  <div class="max-w-4xl mx-auto mt-10 px-4">
+    <header class="bg-white shadow-md rounded-2xl p-6 mb-6 flex items-center gap-4">
+      <div class="bg-blue-600 text-white font-bold rounded-full w-12 h-12 flex items-center justify-center text-xl">T</div>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
+        <p class="text-sm text-gray-500">Assalamualaikum, Cikgu Heri. Jejak perjalanan trading anda secara berdisiplin.</p>
+      </div>
     </header>
 
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h2 class="text-lg font-semibold">Jumlah Trade</h2>
-        <p class="text-2xl font-bold text-blue-600">52</p>
+    <section class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="text-3xl mb-2">📊</div>
+        <h2 class="text-sm font-semibold">Jumlah Trade</h2>
+        <p class="text-xl font-bold text-blue-600">52</p>
       </div>
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h2 class="text-lg font-semibold">Win Rate</h2>
-        <p class="text-2xl font-bold text-green-600">68%</p>
+      <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="text-3xl mb-2">🎯</div>
+        <h2 class="text-sm font-semibold">Win Rate</h2>
+        <p class="text-xl font-bold text-green-600">68%</p>
       </div>
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h2 class="text-lg font-semibold">Profit Bulanan</h2>
-        <p class="text-2xl font-bold text-yellow-600">RM3,200</p>
+      <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="text-3xl mb-2">💰</div>
+<h2 class="text-sm font-semibold flex items-center justify-center gap-2">Profit Bulanan
+  <select id="currencySelect" class="text-xs border rounded px-1 py-0.5">
+    <option value="RM">MYR</option>
+    <option value="$">USD</option>
+    <option value="€">EUR</option>
+    <option value="KY$">KYD</option>
+  </select>
+</h2>
+<p id="profitAmount" class="text-xl font-bold text-yellow-600">RM3,200</p>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const currencySelect = document.getElementById("currencySelect");
+    const profitText = document.getElementById("profitAmount");
+    let amount = 3200;
+
+    currencySelect.addEventListener("change", () => {
+      const symbol = currencySelect.value;
+      profitText.textContent = symbol + amount.toLocaleString();
+    });
+  });
+</script>
+      </div>
+      <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="text-3xl mb-2">📈</div>
+        <h2 class="text-sm font-semibold">Profit Factor</h2>
+        <p class="text-xl font-bold text-purple-600">1.75</p>
       </div>
     </section>
 
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Statistik Ikut Setup</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-gray-50 p-4 rounded-xl border">
-          <h3 class="text-md font-semibold">Dominan Candle</h3>
-          <p class="text-sm text-gray-500">Trade: 22</p>
-          <p class="text-sm text-green-600">Win Rate: 70%</p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-xl border">
-          <h3 class="text-md font-semibold">Breakout</h3>
-          <p class="text-sm text-gray-500">Trade: 18</p>
-          <p class="text-sm text-green-600">Win Rate: 61%</p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-xl border">
-          <h3 class="text-md font-semibold">Taming Sari</h3>
-          <p class="text-sm text-gray-500">Trade: 12</p>
-          <p class="text-sm text-green-600">Win Rate: 75%</p>
-        </div>
-      </div>
-    </section>
+  <h2 class="text-lg font-semibold mb-4">Graf Prestasi Harian</h2>
+  <canvas id="performanceChart" height="200"></canvas>
+  <script>
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu', 'Ahad'],
+        datasets: [{
+          label: 'Profit Harian (RM)',
+          data: [50, -20, 80, 100, -30, 40, 90],
+          borderColor: 'rgba(59, 130, 246, 1)',
+          backgroundColor: 'rgba(59, 130, 246, 0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+</section>
 
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Tambah Trade Baru</h2>
-      <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input class="p-2 border rounded" type="date" placeholder="Tarikh" required />
-        <input class="p-2 border rounded" type="text" placeholder="Pair (e.g. XAU/USD)" required />
-        <select class="p-2 border rounded" required>
-          <option value="">Pilih Setup</option>
-          <option value="Dominan Candle">Dominan Candle</option>
-          <option value="Breakout">Breakout</option>
-          <option value="Taming Sari">Taming Sari</option>
-        </select>
-        <input class="p-2 border rounded" type="number" placeholder="Profit/Loss (RM)" required />
-        <select class="p-2 border rounded" required>
-          <option value="">Emosi Sebelum Trade</option>
-          <option value="Tenang">Tenang</option>
-          <option value="Takut">Takut</option>
-          <option value="Tamak">Tamak</option>
-        </select>
-        <input class="p-2 border rounded" type="text" placeholder="Nota Ringkas (optional)" />
-        <button class="col-span-1 md:col-span-2 bg-blue-600 text-white py-2 rounded">Simpan Trade</button>
-      </form>
-    </section>
+<section class="bg-white p-6 rounded-2xl shadow mb-6">
+  <h2 class="text-lg font-semibold mb-4" id="aiDailyTitle">Ulasan AI Harian</h2>
+  <div class="bg-gray-50 p-4 rounded-xl border border-yellow-300">
+    <p id="aiDailyText" class="text-gray-800 italic">
+      "Hari ini anda membuat 3 trade, dua daripadanya menggunakan teknik Breakout. Emosi anda kelihatan lebih tenang berbanding semalam. Elakkan entry semasa news besar."
+    </p>
+  </div>
+  </div>
+</section>
 
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Log Trade Terkini</h2>
-        <select id="filterSetup" onchange="filterTable()" class="p-2 border rounded">
-          <option value="">Tapis mengikut Setup</option>
-          <option value="Dominan Candle">Dominan Candle</option>
-          <option value="Breakout">Breakout</option>
-          <option value="Taming Sari">Taming Sari</option>
-        </select>
-      </div>
-      <table id="tradeTable" class="w-full table-auto">
-        <thead>
-          <tr class="bg-gray-200 text-gray-700">
-            <th class="px-4 py-2 text-left">Tarikh</th>
-            <th class="px-4 py-2 text-left">Pair</th>
-            <th class="px-4 py-2 text-left">Setup</th>
-            <th class="px-4 py-2 text-left">Profit/Loss</th>
-            <th class="px-4 py-2 text-left">Emosi</th>
-            <th class="px-4 py-2 text-left">Nota</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="border-t">
-            <td class="px-4 py-2">2025-04-02</td>
-            <td class="px-4 py-2">XAU/USD</td>
-            <td class="px-4 py-2">Dominan Candle</td>
-            <td class="px-4 py-2 text-green-600 font-semibold">+RM150</td>
-            <td class="px-4 py-2">Tenang</td>
-            <td class="px-4 py-2">Entry ikut arah candle H4</td>
-          </tr>
-          <tr class="border-t">
-            <td class="px-4 py-2">2025-04-01</td>
-            <td class="px-4 py-2">GBP/JPY</td>
-            <td class="px-4 py-2">Breakout</td>
-            <td class="px-4 py-2 text-red-600 font-semibold">-RM70</td>
-            <td class="px-4 py-2">Tamak</td>
-            <td class="px-4 py-2">Entry terlalu awal sebelum break zone</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+<section class="bg-white p-6 rounded-2xl shadow mb-6">
+  <h2 class="text-lg font-semibold mb-4" id="aiWeeklyTitle">Ulasan AI Mingguan</h2>
+  <div class="bg-gray-50 p-4 rounded-xl border border-blue-200">
+    <p id="aiWeeklyText" class="text-gray-800 italic">
+      "Minggu ini anda lebih konsisten menggunakan teknik Taming Sari. Emosi tenang juga meningkat. Teruskan disiplin dan elakkan entry tergesa-gesa sebelum breakout sah."
+    </p>
+  </div>
+  </div>
+</section>
+
+<section class="bg-white p-6 rounded-2xl shadow mb-6">
+  <h2 class="text-lg font-semibold mb-4">Muat Naik CSV dari MT5</h2>
+  <div class="mb-4">
+    <input type="file" id="csvUpload" accept=".csv" class="p-2 border rounded" />
+  </div>
+  <button onclick="parseCSVFile()" class="btn-primary text-white px-4 py-2 rounded">Upload & Import</button>
+</section>
+
+
+  <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <input class="p-2 border rounded" type="date" required />
+    <input class="p-2 border rounded" type="text" placeholder="Pair (e.g. XAU/USD)" required />
+    <select class="p-2 border rounded" required>
+      <option value="">Pilih Setup</option>
+      <option value="Dominan Candle">Dominan Candle</option>
+      <option value="Breakout">Breakout</option>
+      <option value="Taming Sari">Taming Sari</option>
+    </select>
+    <input class="p-2 border rounded" type="number" placeholder="Profit/Loss (RM)" required />
+    <select class="p-2 border rounded" required>
+      <option value="">Emosi Sebelum Trade</option>
+      <option value="Tenang">Tenang</option>
+      <option value="Takut">Takut</option>
+      <option value="Tamak">Tamak</option>
+    </select>
+    <input class="p-2 border rounded" type="text" placeholder="Nota Ringkas (optional)" />
+    <input class="p-2 border rounded" type="file" accept="image/*" id="chartImage" />
+    <button class="col-span-1 md:col-span-2 btn-primary text-white py-2 rounded">Simpan Trade</button>
+  </form>
+</section>
+
+<section class="bg-white p-6 rounded-2xl shadow mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold">Log Trade Terkini</h2>
+    <select id="filterSetup" onchange="filterTable()" class="p-2 border rounded">
+      <option value="">Tapis mengikut Setup</option>
+      <option value="Dominan Candle">Dominan Candle</option>
+      <option value="Breakout">Breakout</option>
+      <option value="Taming Sari">Taming Sari</option>
+    </select>
+  </div>
+  <table id="tradeTable" class="w-full table-auto text-sm">
+    <thead>
+      <tr class="bg-gray-200 text-gray-700">
+        <th class="px-2 py-1 text-left">Tarikh</th>
+        <th class="px-2 py-1 text-left">Pair</th>
+        <th class="px-2 py-1 text-left">Setup</th>
+        <th class="px-2 py-1 text-left">Profit/Loss</th>
+        <th class="px-2 py-1 text-left">Emosi</th>
+        <th class="px-2 py-1 text-left">Nota</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data dari Firestore akan dimasukkan oleh traka.js -->
+    </tbody>
+  </table>
+</section>
 
     <footer class="text-center text-sm text-gray-400 mt-10">
       &copy; 2025 TRAKA by Cikgu Heri. All rights reserved.
@@ -145,26 +227,232 @@
   <!-- Konfigurasi & Fungsi TRAKA -->
   <script src="firebase-config.js"></script>
   <script src="traka.js"></script>
-
-// firebase-config.js
-
-// Konfigurasi Firebase dari Cikgu Heri
-const firebaseConfig = {
-  apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-  authDomain: "sstrader-affiliate.firebaseapp.com",
-  projectId: "sstrader-affiliate",
-  storageBucket: "sstrader-affiliate.firebasestorage.app",
-  messagingSenderId: "859244663056",
-  appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
-  measurementId: "G-54ZR1GG7ML"
+<script>
+  const langText = {
+  ms: {
+    dashboard: "TRAKA Dashboard",
+    greeting: "Assalamualaikum, Cikgu Heri. Jejak perjalanan trading anda secara berdisiplin.",
+    totalTrades: "Jumlah Trade",
+    winRate: "Win Rate",
+    monthlyProfit: "Profit Bulanan",
+    profitFactor: "Profit Factor",
+    chartTitle: "Graf Prestasi Harian",
+    aiDaily: "Ulasan AI Harian",
+    aiWeekly: "Ulasan AI Mingguan",
+    newTrade: "Tambah Trade Baru",
+    logTrade: "Log Trade Terkini",
+    saveTrade: "Simpan Trade",
+    aiDailyText: "Hari ini anda membuat 3 trade, dua daripadanya menggunakan teknik Breakout. Emosi anda kelihatan lebih tenang berbanding semalam. Elakkan entry semasa news besar.",
+    aiWeeklyText: "Minggu ini anda lebih konsisten menggunakan teknik Taming Sari. Emosi tenang juga meningkat. Teruskan disiplin dan elakkan entry tergesa-gesa sebelum breakout sah.",
+    setupOptions: ["Pilih Setup", "Dominan Candle", "Breakout", "Taming Sari"],
+    emotionOptions: ["Emosi Sebelum Trade", "Tenang", "Takut", "Tamak"],
+    placeholders: {
+      pair: "Pair (cth: XAU/USD)",
+      pl: "Profit/Rugi (RM)",
+      note: "Nota Ringkas (pilihan)"
+    },
+    tableHeaders: ["Tarikh", "Pair", "Setup", "Profit/Loss", "Emosi", "Nota"],
+    filterLabel: "Tapis mengikut Setup"
+  },
+  en: {
+    dashboard: "TRAKA Dashboard",
+    greeting: "Welcome, Cikgu Heri. Track your trading journey with discipline.",
+    totalTrades: "Total Trades",
+    winRate: "Win Rate",
+    monthlyProfit: "Monthly Profit",
+    profitFactor: "Profit Factor",
+    chartTitle: "Daily Performance Chart",
+    aiDaily: "AI Daily Review",
+    aiWeekly: "AI Weekly Review",
+    newTrade: "Add New Trade",
+    logTrade: "Latest Trade Log",
+    saveTrade: "Save Trade",
+    aiDailyText: "Today you made 3 trades, two of them using the Breakout technique. Your emotions appear calmer than yesterday. Avoid entering during major news.",
+    aiWeeklyText: "This week you were more consistent using the Taming Sari technique. Calm emotions also increased. Maintain discipline and avoid premature entries before confirmed breakouts.",
+    setupOptions: ["Select Setup", "Dominant Candle", "Breakout", "Taming Sari"],
+    emotionOptions: ["Emotion Before Trade", "Calm", "Fear", "Greedy"],
+    placeholders: {
+      pair: "Pair (e.g. XAU/USD)",
+      pl: "Profit/Loss ($)",
+      note: "Quick Notes (optional)"
+    },
+    tableHeaders: ["Date", "Pair", "Setup", "Profit/Loss", "Emotion", "Note"],
+    filterLabel: "Filter by Setup"
+  }
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+  document.getElementById("langSwitcher").addEventListener("change", function () {
+    const lang = this.value;
+    const t = langText[lang];
 
-// Firebase services
-const auth = firebase.auth();
-const db = firebase.firestore();
+    document.querySelector("h1").textContent = t.dashboard;
+    document.querySelector("header p").textContent = t.greeting;
+    document.querySelectorAll(".grid h2")[0].textContent = t.totalTrades;
+    document.querySelectorAll(".grid h2")[1].textContent = t.winRate;
+    document.querySelectorAll(".grid h2")[2].childNodes[0].nodeValue = t.monthlyProfit + ' ';
+    document.querySelectorAll(".grid h2")[3].textContent = t.profitFactor;
+    document.querySelector("#performanceChart").parentElement.querySelector("h2").textContent = t.chartTitle;
+    document.querySelector("#aiDailyTitle").textContent = t.aiDaily;
+    document.querySelector("#aiDailyText").textContent = lang === 'en' ? langText.en.aiDailyText : langText.ms.aiDailyText || document.querySelector("#aiDailyText").textContent;
+    document.querySelector("#aiWeeklyTitle").textContent = t.aiWeekly;
+    document.querySelector("#aiWeeklyText").textContent = lang === 'en' ? langText.en.aiWeeklyText : langText.ms.aiWeeklyText || document.querySelector("#aiWeeklyText").textContent;
+    document.querySelector("section:nth-of-type(5) h2").textContent = t.newTrade;
+    document.querySelector("section:nth-of-type(5) button").textContent = t.saveTrade;
+    document.querySelector("section:nth-of-type(6) h2").textContent = t.logTrade;
+
+    // Tukar placeholder dan dropdown dalam form
+    const formInputs = document.querySelectorAll("form input, form select");
+    formInputs[1].placeholder = t.placeholders.pair;
+    formInputs[3].placeholder = t.placeholders.pl;
+    formInputs[6].placeholder = t.placeholders.note;
+
+    const setupSelect = formInputs[2];
+    setupSelect.innerHTML = t.setupOptions.map(val => `<option>${val}</option>`).join('');
+
+    const emotionSelect = formInputs[4];
+    emotionSelect.innerHTML = t.emotionOptions.map(val => `<option>${val}</option>`).join('');
+
+    // Tukar table headers
+    const ths = document.querySelectorAll("#tradeTable thead th");
+    t.tableHeaders.forEach((val, i) => ths[i].textContent = val);
+
+    // Tukar filter label
+    const filter = document.getElementById("filterSetup");
+    filter.options[0].textContent = t.filterLabel;
+  });
+</script>
+<script>
+  // Dark mode toggle manual
+  document.addEventListener('DOMContentLoaded', function () {
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.getElementById('mainBody');
+    const storedTheme = localStorage.getItem('theme');
+
+    if (storedTheme === 'dark') {
+      applyDarkMode();
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = body.classList.contains('bg-gray-900');
+      if (isDark) {
+        applyLightMode();
+        localStorage.setItem('theme', 'light');
+      } else {
+        applyDarkMode();
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    function applyDarkMode() {
+      body.classList.remove('bg-gray-100', 'text-gray-800');
+      body.classList.add('bg-gray-900', 'text-white');
+
+      document.querySelectorAll('.bg-white').forEach(el => {
+        el.classList.remove('bg-white');
+        el.classList.add('bg-gray-800');
+      });
+
+      document.querySelectorAll('.text-gray-800').forEach(el => {
+        el.classList.remove('text-gray-800');
+        el.classList.add('text-white');
+      });
+
+      document.querySelectorAll('.text-gray-500').forEach(el => {
+        el.classList.remove('text-gray-500');
+        el.classList.add('text-gray-300');
+      });
+
+      document.querySelectorAll('.bg-gray-50').forEach(el => {
+        el.classList.remove('bg-gray-50');
+        el.classList.add('bg-gray-700');
+      });
+
+      document.querySelectorAll('.bg-gray-200').forEach(el => {
+        el.classList.remove('bg-gray-200');
+        el.classList.add('bg-gray-700');
+      });
+    }
+
+    function applyLightMode() {
+      body.classList.remove('bg-gray-900', 'text-white');
+      body.classList.add('bg-gray-100', 'text-gray-800');
+
+      document.querySelectorAll('.bg-gray-800').forEach(el => {
+        el.classList.remove('bg-gray-800');
+        el.classList.add('bg-white');
+      });
+
+      document.querySelectorAll('.text-white').forEach(el => {
+        el.classList.remove('text-white');
+        el.classList.add('text-gray-800');
+      });
+
+      document.querySelectorAll('.text-gray-300').forEach(el => {
+        el.classList.remove('text-gray-300');
+        el.classList.add('text-gray-500');
+      });
+
+      document.querySelectorAll('.bg-gray-700').forEach(el => {
+        el.classList.remove('bg-gray-700');
+        el.classList.add('bg-gray-50');
+      });
+
+      document.querySelectorAll('.bg-gray-700').forEach(el => {
+        el.classList.remove('bg-gray-700');
+        el.classList.add('bg-gray-200');
+      });
+    }
+  });
+  });
+
+  function parseCSVFile() {
+    const fileInput = document.getElementById('csvUpload');
+    const file = fileInput.files[0];
+    if (!file) return alert('Sila pilih fail CSV terlebih dahulu.');
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const text = e.target.result;
+      const rows = text.split(/
+?
+/).filter(row => row.trim() !== '');
+
+      const tbody = document.querySelector('#tradeTable tbody');
+      rows.forEach(row => {
+        const cols = row.split(',');
+        if (cols.length >= 10) {
+          const data = {
+            tarikh: cols[0],
+            pair: cols[4],
+            setup: cols[2],
+            profit: cols[9],
+            emosi: '-',
+            nota: '(Import CSV)'
+          };
+
+          db.collection("trades").add(data)
+            .then(() => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td class="px-2 py-1">${data.tarikh}</td>
+                <td class="px-2 py-1">${data.pair}</td>
+                <td class="px-2 py-1">${data.setup}</td>
+                <td class="px-2 py-1">${data.profit}</td>
+                <td class="px-2 py-1">${data.emosi}</td>
+                <td class="px-2 py-1">${data.nota}</td>
+              `;
+              tbody.appendChild(tr);
+            })
+            .catch(err => {
+              console.error("Gagal simpan ke Firestore:", err);
+            });
+        }
+      });
+
+      alert('Data berjaya dimuatkan dari CSV dan disimpan ke Firestore.');
+    };
+    reader.readAsText(file);
+  }
 
 </body>
 </html>
