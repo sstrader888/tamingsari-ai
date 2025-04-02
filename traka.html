@@ -25,7 +25,13 @@
     <div class="flex justify-between items-center py-4">
       <span id="userNameDisplay" class="text-sm font-medium text-blue-700">Cikgu Heri</span>
       <div class="flex gap-2 items-center">
-        <button id="logoutBtn" class="text-sm border rounded px-2 py-1 bg-red-600 text-white hover:bg-red-700">Logout</button>
+     <script>
+  document.getElementById('logoutBtn').addEventListener('click', function () {
+    // Terus redirect ke halaman login
+    window.location.href = 'traka-login.html';
+  });
+</script>
+
         <button id="themeToggle" class="text-sm border rounded px-2 py-1">🌓</button>
         <select id="langSwitcher" class="text-sm border rounded px-2 py-1">
           <option value="ms">Bahasa Melayu</option>
@@ -38,7 +44,7 @@
       <div class="bg-blue-600 text-white font-bold rounded-full w-12 h-12 flex items-center justify-center text-xl">T</div>
       <div>
         <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
-        <p class="text-sm text-gray-500" id="greetingText">Assalamualaikum, Cikgu Heri. Jejak perjalanan trading anda secara berdisiplin.</p>
+        <p class="text-sm text-gray-500" id="greetingText">Jejak perjalanan trading anda secara berdisiplin.</p>
       </div>
     </header>
 
@@ -71,46 +77,6 @@
         <p class="text-xl font-bold text-purple-600">1.75</p>
       </div>
     </section>
-
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Graf Prestasi Harian</h2>
-      <canvas id="performanceChart" height="200"></canvas>
-    </section>
-  </div>
-
-  <script>
-    document.getElementById('logoutBtn').addEventListener('click', function () {
-      window.location.href = 'traka-login.html';
-    });
-  </script>
-
-  <script>
-    const ctx = document.getElementById('performanceChart')?.getContext('2d');
-    if (ctx) {
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu', 'Ahad'],
-          datasets: [{
-            label: 'Profit Harian (RM)',
-            data: [50, -20, 80, 100, -30, 40, 90],
-            borderColor: 'rgba(59, 130, 246, 1)',
-            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-  </script>
 
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Graf Prestasi Harian</h2>
