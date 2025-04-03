@@ -196,6 +196,11 @@ import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/fir
 
 const provider = new GoogleAuthProvider();
 
+import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const provider = new GoogleAuthProvider();
+
 window.loginWithGoogle = async function () {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -220,7 +225,21 @@ window.loginWithGoogle = async function () {
       return;
     }
 
-    alert("Akaun belum didaftarkan dalam sistem kami. Sila hubungi admin.");
+    // Auto register as agen if not found in Firestore
+    await setDoc(agenRef, {
+      nama: user.displayName || "Pengguna Google",
+      email: user.email,
+      telefon: "-",
+      alamat: "-",
+      bank: "-",
+      akaun: "-",
+      role: "ejen",
+      createdAt: new Date().toISOString()
+    });
+
+    alert("Akaun Google anda telah didaftarkan sebagai Ejen. Anda akan dibawa ke dashboard.");
+    window.location.href = "dashboard-agen.html";
+
   } catch (error) {
     alert("Login dengan Google gagal: " + error.message);
   }
