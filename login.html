@@ -93,6 +93,9 @@
     <input type="password" id="password" placeholder="Kata Laluan">
     <button onclick="login()">Log Masuk</button>
     <div class="link">
+  Lupa kata laluan? <a href="#" onclick="resetPassword()">Klik sini</a>
+</div>
+    <div class="link">
       Belum ada akaun? <a href="register.html">Daftar di sini</a>
     </div>
   </div>
@@ -165,6 +168,25 @@
     }
   }
 };
+    window.resetPassword = async function () {
+  const email = document.getElementById("email").value;
+  if (!email) {
+    alert("Sila masukkan emel untuk reset kata laluan.");
+    return;
+  }
+
+  try {
+    await auth.sendPasswordResetEmail(email);
+    alert("Emel reset kata laluan telah dihantar ke " + email);
+  } catch (error) {
+    if (error.code === "auth/user-not-found") {
+      alert("Akaun tidak wujud.");
+    } else {
+      alert("Ralat: " + error.message);
+    }
+  }
+};
+
   </script>
 </body>
 </html>
