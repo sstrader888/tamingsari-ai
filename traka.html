@@ -103,11 +103,89 @@
       window.location.href = 'traka-login.html';
     });
 
-    // Token init if first time login
     if (!localStorage.getItem('tokens')) {
       localStorage.setItem('tokens', '5');
     }
     document.getElementById('tokenCount').innerText = localStorage.getItem('tokens');
+
+    function handleCSVUpload() {
+      const fileInput = document.getElementById('csvUpload');
+      const file = fileInput.files[0];
+      if (!file) return alert('Sila pilih fail CSV.');
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const lines = e.target.result.split('\n').slice(1);
+        const trades = lines.map(line => {
+          const [date, pair, setup, profit, emotion, note] = line.split(',');
+          return { date, pair, setup, profit: parseFloat(profit), emotion, note };
+        }).filter(t => t.date);
+
+        const tradeBody = document.getElementById('tradeBody');
+        tradeBody.innerHTML = '';
+
+        let totalProfit = 0, wins = 0;
+        const profitByDay = { Isnin: 0, Selasa: 0, Rabu: 0, Khamis: 0, Jumaat: 0, Sabtu: 0, Ahad: 0 };
+
+        trades.forEach(trade => {
+          totalProfit += trade.profit;
+          if (trade.profit > 0) wins++;
+          const row = `<tr><td class="px-2 py-1">${trade.date}</td><td>${trade.pair}</td><td>${trade.setup}</td><td>${trade.profit}</td><td>${trade.emotion}</td><td>${trade.note}</td></tr>`;
+          tradeBody.innerHTML += row;
+
+          const hari = getDayFromDate(trade.date);
+          profitByDay[hari] += trade.profit;
+        });
+
+        const total = trades.length;
+        document.getElementById('totalTrades').innerText = total;
+        document.getElementById('winRate').innerText = ((wins / total) * 100).toFixed(0) + '%';
+        document.getElementById('monthlyProfit').innerText = 'RM' + totalProfit.toFixed(2);
+
+        updateChart(profitByDay);
+        generateAIReviews(total, wins, totalProfit);
+
+        let token = parseInt(localStorage.getItem('tokens'));
+        localStorage.setItem('tokens', token - 1);
+        document.getElementById('tokenCount').innerText = token - 1;
+      };
+      reader.readAsText(file);
+    }
+
+    function getDayFromDate(dateStr) {
+      const dayMap = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
+      return dayMap[date.getDay()];
+    }
+
+    function updateChart(data) {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      if (window.chart) window.chart.destroy();
+      window.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            label: 'Profit Harian (RM)',
+            data: Object.values(data),
+            fill: true,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            tension: 0.4
+          }]
+        }
+      });
+    }
+
+    function generateAIReviews(total, wins, profit) {
+      let review = `Hari ini anda membuat ${total} trade. `;
+      review += `Win rate ${((wins / total) * 100).toFixed(0)}%. `;
+      review += profit >= 0 ? 'Prestasi positif.' : 'Prestasi negatif. Kawal emosi.';
+
+      document.getElementById('aiReviewDaily').innerText = review;
+      document.getElementById('aiReviewWeekly').innerText = `Mingguan: ${wins} win dari ${total} trade. Disiplin dan konsisten penting.`;
+    }
   </script>
 </body>
 </html>
