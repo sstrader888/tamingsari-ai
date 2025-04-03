@@ -12,6 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
     body { font-family: 'Poppins', sans-serif; }
     .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
@@ -109,31 +110,6 @@
     </section>
   </div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
-      authDomain: "sstrader-affiliate.firebaseapp.com",
-      projectId: "sstrader-affiliate",
-      storageBucket: "sstrader-affiliate.appspot.com",
-      messagingSenderId: "859244663056",
-      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
-      measurementId: "G-54ZR1GG7ML"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("welcomeText").textContent = `Selamat datang, ${user.displayName || user.email}`;
-      } else {
-        window.location.href = "traka-login.html";
-      }
-    });
-
-    function logout() {
-      auth.signOut().then(() => window.location.href = "traka-login.html");
-    }
-  </script>
+  <script src="/traka-script.js"></script>
 </body>
 </html>
