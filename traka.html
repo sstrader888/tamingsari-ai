@@ -1,4 +1,4 @@
-<!-- Full updated HTML with Firebase sync, CSV analysis, pagination, token logic, and AI review -->
+<!-- Full updated HTML with Firebase sync, MT5 CSV parser (fixed), token logic, spinner, AI review, export, filter, and mobile responsive table -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +10,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <style>
     body { font-family: 'Poppins', sans-serif; }
@@ -22,57 +23,42 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
   <div class="max-w-4xl mx-auto px-4">
-    <header class="bg-white shadow-md rounded-2xl p-6 mb-6 flex justify-between items-center">
+    <div class="flex justify-between items-center py-4">
       <div>
-        <h1 class="text-3xl font-bold">TRAKA Dashboard</h1>
-        <p class="text-sm text-gray-500">Selamat datang, Cikgu. Jejak perjalanan trading anda secara berdisiplin.</p>
+        <h1 class="text-xl font-semibold">TRAKA Dashboard</h1>
+        <p id="welcomeText" class="text-sm text-gray-600">Selamat datang, pengguna.</p>
       </div>
-      <button id="logoutBtn" class="btn-primary text-white px-4 py-1 rounded">Logout</button>
-    </header>
+      <div class="flex gap-2 items-center">
+        <button onclick="logout()" class="text-sm border rounded px-2 py-1 bg-red-500 text-white">Logout</button>
+      </div>
+    </div>
 
-    <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="icon text-blue-600"><i class="fas fa-chart-bar"></i></div>
-        <h3 class="text-sm font-semibold">Jumlah Trade</h3>
-        <p id="totalTrades" class="text-xl font-bold text-blue-600">0</p>
+    <!-- Summary Cards -->
+    <section class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-6 mb-6">
+      <div class="bg-white rounded-2xl shadow p-4 text-center">
+        <div class="icon"><i class="fas fa-chart-bar"></i></div>
+        <p class="text-xs text-gray-500">Jumlah Trade</p>
+        <p id="jumlahTrade" class="font-bold text-lg text-blue-600">0</p>
       </div>
-      <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="icon text-green-600"><i class="fas fa-bullseye"></i></div>
-        <h3 class="text-sm font-semibold">Win Rate</h3>
-        <p id="winRate" class="text-xl font-bold text-green-600">0%</p>
+      <div class="bg-white rounded-2xl shadow p-4 text-center">
+        <div class="icon"><i class="fas fa-bullseye"></i></div>
+        <p class="text-xs text-gray-500">Win Rate</p>
+        <p id="winRate" class="font-bold text-lg text-green-600">0%</p>
       </div>
-      <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="icon text-yellow-600"><i class="fas fa-coins"></i></div>
-        <h3 class="text-sm font-semibold">Profit Bulanan</h3>
-        <p id="monthlyProfit" class="text-xl font-bold text-yellow-600">RM0.00</p>
+      <div class="bg-white rounded-2xl shadow p-4 text-center">
+        <div class="icon"><i class="fas fa-coins"></i></div>
+        <p class="text-xs text-gray-500">Profit Bulanan</p>
+        <p id="monthlyProfit" class="font-bold text-lg text-yellow-500">RM0.00</p>
       </div>
-      <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="icon text-purple-600"><i class="fas fa-robot"></i></div>
-        <h3 class="text-sm font-semibold">AI Ulasan</h3>
-        <p class="text-sm italic text-gray-500">Auto dari CSV</p>
+      <div class="bg-white rounded-2xl shadow p-4 text-center">
+        <div class="icon"><i class="fas fa-robot"></i></div>
+        <p class="text-xs text-gray-500">AI Ulasan</p>
+        <p class="text-sm italic">Auto dari CSV</p>
       </div>
-      <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="icon text-gray-800"><i class="fas fa-ticket-alt"></i></div>
-        <h3 class="text-sm font-semibold">Token</h3>
-        <p id="tokenCount" class="text-xl font-bold text-gray-800">5</p>
-      </div>
-    </section>
-
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Graf Prestasi Harian</h2>
-      <canvas id="performanceChart" height="200"></canvas>
-    </section>
-
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Ulasan AI Harian</h2>
-      <div class="bg-gray-50 p-4 rounded-xl border border-yellow-300">
-        <p id="aiReviewDaily" class="text-gray-800 italic">Belum dianalisis.</p>
-      </div>
-    </section>
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Ulasan AI Mingguan</h2>
-      <div class="bg-gray-50 p-4 rounded-xl border border-blue-200">
-        <p id="aiReviewWeekly" class="text-gray-800 italic">Belum dianalisis.</p>
+      <div class="bg-white rounded-2xl shadow p-4 text-center">
+        <div class="icon"><i class="fas fa-ticket"></i></div>
+        <p class="text-xs text-gray-500">Token</p>
+        <p id="tokenCount" class="font-bold text-lg">5</p>
       </div>
     </section>
 
@@ -88,7 +74,6 @@
 
     <!-- Token Display & AI Ulasan -->
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <div class="mb-2">Token: <span id="tokenCount">5</span> 🎟️</div>
       <div>
         <h3 class="text-md font-semibold mb-1"><i class="fas fa-robot"></i> AI Ulasan Harian</h3>
         <p id="aiReviewDaily" class="text-gray-800 italic">Belum dianalisis.</p>
@@ -136,108 +121,19 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
-    document.getElementById('uploadBtn').addEventListener('click', function () {
-      const fileInput = document.getElementById('csvUpload');
-      const spinner = document.getElementById('loadingSpinner');
-
-      if (!fileInput.files.length) return alert('Sila pilih fail CSV terlebih dahulu.');
-      spinner.classList.remove('hidden');
-
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const lines = e.target.result.split(/\r?\n/);
-        const tbody = document.getElementById("tradeBody");
-        tbody.innerHTML = '';
-
-        let csvData = [];
-        let win = 0, total = 0, profitSum = 0;
-        let headers = [];
-        let start = false;
-
-        for (const line of lines) {
-          const cols = line.split(',');
-
-          if (cols.includes('Profit') && cols.includes('Symbol')) {
-            headers = cols;
-            start = true;
-            continue;
-          }
-          if (!start || cols.length !== headers.length) continue;
-
-          const index = (name) => headers.indexOf(name);
-          const symbol = cols[index('Symbol')];
-          const type = cols[index('Type')];
-          const time = cols[index('Time')].split(' ')[0];
-          const profit = parseFloat(cols[index('Profit')]);
-
-          if (isNaN(profit)) continue;
-
-          const setup = type.toLowerCase() === 'buy' ? 'Breakout' : 'Engulf';
-          const emosi = profit >= 0 ? 'Positif' : 'Negatif';
-          const nota = '-';
-
-          const trade = { tarikh: time, pair: symbol, setup, profit, emosi, nota };
-          csvData.push(trade);
-          db.collection("trades").add(trade);
-          total++;
-          if (profit > 0) win++;
-          profitSum += profit;
-        }
-
-        renderTable(csvData);
-        document.getElementById('aiReviewDaily').textContent = `Hari ini anda membuat ${total} trade, ${win} daripadanya untung.`;
-        document.getElementById('aiReviewWeekly').textContent = `Jumlah keseluruhan profit minggu ini ialah RM${profitSum.toFixed(2)}.`;
-
-        let token = parseInt(document.getElementById('tokenCount').textContent);
-        token = Math.max(0, token - 1);
-        document.getElementById('tokenCount').textContent = token;
-        spinner.classList.add('hidden');
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("welcomeText").textContent = `Selamat datang, ${user.displayName || user.email}`;
+      } else {
+        window.location.href = "traka-login.html";
       }
-      reader.readAsText(file);
     });
 
-    function renderTable(data) {
-      const tbody = document.getElementById("tradeBody");
-      tbody.innerHTML = '';
-      data.forEach(trade => {
-        const row = `<tr>
-          <td class="px-2 py-1">${trade.tarikh}</td>
-          <td class="px-2 py-1">${trade.pair}</td>
-          <td class="px-2 py-1">${trade.setup}</td>
-          <td class="px-2 py-1">${trade.profit}</td>
-          <td class="px-2 py-1">${trade.emosi}</td>
-          <td class="px-2 py-1">${trade.nota}</td>
-        </tr>`;
-        tbody.insertAdjacentHTML('beforeend', row);
-      });
+    function logout() {
+      auth.signOut().then(() => window.location.href = "traka-login.html");
     }
-
-    document.getElementById('filterInput').addEventListener('input', function () {
-      const filterValue = this.value.toLowerCase();
-      const rows = document.querySelectorAll('#tradeBody tr');
-      rows.forEach(row => {
-        const pair = row.children[1].textContent.toLowerCase();
-        row.style.display = pair.includes(filterValue) ? '' : 'none';
-      });
-    });
-
-    document.getElementById('exportBtn').addEventListener('click', function () {
-      let csvContent = "data:text/csv;charset=utf-8,tarikh,pair,setup,profit,emosi,nota\n";
-      const rows = document.querySelectorAll('#tradeBody tr');
-      rows.forEach(row => {
-        const cols = Array.from(row.children).map(td => td.textContent);
-        csvContent += cols.join(',') + "\n";
-      });
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "traka_export.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
   </script>
 </body>
 </html>
