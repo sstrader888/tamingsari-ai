@@ -74,6 +74,7 @@
       </div>
     </section>
 
+    <!-- CSV Upload -->
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Muat Naik Fail CSV dari MT5</h2>
       <input type="file" id="csvUpload" class="mb-4" accept=".csv" />
@@ -83,8 +84,28 @@
       </div>
     </section>
 
+    <!-- Token Display & AI Ulasan -->
+    <section class="bg-white p-6 rounded-2xl shadow mb-6">
+      <div class="mb-2">Token: <span id="tokenCount">5</span> 🎟️</div>
+      <div>
+        <h3 class="text-md font-semibold mb-1"><i class="fas fa-robot"></i> AI Ulasan Harian</h3>
+        <p id="aiReviewDaily" class="text-gray-800 italic">Belum dianalisis.</p>
+      </div>
+      <div class="mt-4">
+        <h3 class="text-md font-semibold mb-1"><i class="fas fa-robot"></i> AI Ulasan Mingguan</h3>
+        <p id="aiReviewWeekly" class="text-gray-800 italic">Belum dianalisis.</p>
+      </div>
+    </section>
+
+    <!-- Trade Table with Export and Filter -->
     <section class="bg-white p-6 rounded-2xl shadow mb-10 overflow-x-auto">
-      <h2 class="text-lg font-semibold mb-4">Log Trade Terkini</h2>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Log Trade Terkini</h2>
+        <div class="flex gap-2">
+          <input id="filterInput" type="text" placeholder="Cari Pair" class="border rounded px-2 py-1 text-sm" />
+          <button id="exportBtn" class="text-sm px-3 py-1 border rounded">Export CSV</button>
+        </div>
+      </div>
       <table id="tradeTable" class="w-full text-sm">
         <thead>
           <tr class="bg-gray-200 text-gray-700">
@@ -102,19 +123,118 @@
   </div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
+      authDomain: "sstrader-affiliate.firebaseapp.com",
+      projectId: "sstrader-affiliate",
+      storageBucket: "sstrader-affiliate.appspot.com",
+      messagingSenderId: "859244663056",
+      appId: "1:859244663056:web:f0dd31d2fc7c2bbd499595",
+      measurementId: "G-54ZR1GG7ML"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     document.getElementById('uploadBtn').addEventListener('click', function () {
       const fileInput = document.getElementById('csvUpload');
       const spinner = document.getElementById('loadingSpinner');
 
       if (!fileInput.files.length) return alert('Sila pilih fail CSV terlebih dahulu.');
-
       spinner.classList.remove('hidden');
 
-      setTimeout(() => {
-        // Simulasi proses analisis, boleh sambung dengan fungsi sebenar selepas ini
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const lines = e.target.result.split(/\r?\n/);
+        const tbody = document.getElementById("tradeBody");
+        tbody.innerHTML = '';
+
+        let csvData = [];
+        let win = 0, total = 0, profitSum = 0;
+        let headers = [];
+        let start = false;
+
+        for (const line of lines) {
+          const cols = line.split(',');
+
+          if (cols.includes('Profit') && cols.includes('Symbol')) {
+            headers = cols;
+            start = true;
+            continue;
+          }
+          if (!start || cols.length !== headers.length) continue;
+
+          const index = (name) => headers.indexOf(name);
+          const symbol = cols[index('Symbol')];
+          const type = cols[index('Type')];
+          const time = cols[index('Time')].split(' ')[0];
+          const profit = parseFloat(cols[index('Profit')]);
+
+          if (isNaN(profit)) continue;
+
+          const setup = type.toLowerCase() === 'buy' ? 'Breakout' : 'Engulf';
+          const emosi = profit >= 0 ? 'Positif' : 'Negatif';
+          const nota = '-';
+
+          const trade = { tarikh: time, pair: symbol, setup, profit, emosi, nota };
+          csvData.push(trade);
+          db.collection("trades").add(trade);
+          total++;
+          if (profit > 0) win++;
+          profitSum += profit;
+        }
+
+        renderTable(csvData);
+        document.getElementById('aiReviewDaily').textContent = `Hari ini anda membuat ${total} trade, ${win} daripadanya untung.`;
+        document.getElementById('aiReviewWeekly').textContent = `Jumlah keseluruhan profit minggu ini ialah RM${profitSum.toFixed(2)}.`;
+
+        let token = parseInt(document.getElementById('tokenCount').textContent);
+        token = Math.max(0, token - 1);
+        document.getElementById('tokenCount').textContent = token;
         spinner.classList.add('hidden');
-        alert('CSV berjaya dimuat dan dianalisis. (Simulasi)');
-      }, 2000);
+      }
+      reader.readAsText(file);
+    });
+
+    function renderTable(data) {
+      const tbody = document.getElementById("tradeBody");
+      tbody.innerHTML = '';
+      data.forEach(trade => {
+        const row = `<tr>
+          <td class="px-2 py-1">${trade.tarikh}</td>
+          <td class="px-2 py-1">${trade.pair}</td>
+          <td class="px-2 py-1">${trade.setup}</td>
+          <td class="px-2 py-1">${trade.profit}</td>
+          <td class="px-2 py-1">${trade.emosi}</td>
+          <td class="px-2 py-1">${trade.nota}</td>
+        </tr>`;
+        tbody.insertAdjacentHTML('beforeend', row);
+      });
+    }
+
+    document.getElementById('filterInput').addEventListener('input', function () {
+      const filterValue = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#tradeBody tr');
+      rows.forEach(row => {
+        const pair = row.children[1].textContent.toLowerCase();
+        row.style.display = pair.includes(filterValue) ? '' : 'none';
+      });
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', function () {
+      let csvContent = "data:text/csv;charset=utf-8,tarikh,pair,setup,profit,emosi,nota\n";
+      const rows = document.querySelectorAll('#tradeBody tr');
+      rows.forEach(row => {
+        const cols = Array.from(row.children).map(td => td.textContent);
+        csvContent += cols.join(',') + "\n";
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "traka_export.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     });
   </script>
 </body>
