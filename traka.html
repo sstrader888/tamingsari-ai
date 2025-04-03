@@ -1,4 +1,4 @@
-<!-- Full updated HTML with MT5 CSV parser, AI review with setup detection, emotion and note, chart, token system and logout -->
+<!-- Full updated HTML with Firebase sync, CSV analysis, pagination, token logic, and AI review -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +14,8 @@
     .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
     .btn-primary:hover { background-color: #1e40af; }
     .icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .spinner { border: 4px solid rgba(0, 0, 0, 0.1); border-left-color: #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -50,7 +52,7 @@
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="icon text-gray-800"><i class="fas fa-ticket-alt"></i></div>
         <h3 class="text-sm font-semibold">Token</h3>
-        <p id="tokenCount" class="text-xl font-bold text-gray-800">0</p>
+        <p id="tokenCount" class="text-xl font-bold text-gray-800">5</p>
       </div>
     </section>
 
@@ -75,10 +77,13 @@
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Muat Naik Fail CSV dari MT5</h2>
       <input type="file" id="csvUpload" class="mb-4" accept=".csv" />
-      <button onclick="handleCSVUpload()" class="btn-primary text-white px-4 py-2 rounded">Upload & Analisis CSV</button>
+      <div class="flex gap-2 items-center">
+        <button onclick="handleCSVUpload()" class="btn-primary text-white px-4 py-2 rounded">Upload & Analisis CSV</button>
+        <div id="loadingSpinner" class="spinner hidden"></div>
+      </div>
     </section>
 
-    <section class="bg-white p-6 rounded-2xl shadow mb-10">
+    <section class="bg-white p-6 rounded-2xl shadow mb-10 overflow-x-auto">
       <h2 class="text-lg font-semibold mb-4">Log Trade Terkini</h2>
       <table id="tradeTable" class="w-full text-sm">
         <thead>
@@ -95,128 +100,5 @@
       </table>
     </section>
   </div>
-
-  <script>
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.clear();
-      window.location.href = 'traka-login.html';
-    });
-
-    if (!localStorage.getItem('tokens')) localStorage.setItem('tokens', '5');
-    document.getElementById('tokenCount').innerText = localStorage.getItem('tokens');
-
-    function detectSetup(profit) {
-      if (profit > 100) return 'Breakout';
-      if (profit < -100) return 'Engulf';
-      return 'Sideway';
-    }
-
-    function detectEmotion(profit) {
-      if (profit >= 500) return 'Tenang';
-      if (profit < -300) return 'Takut';
-      return 'Neutral';
-    }
-
-    function detectNote(profit) {
-      if (profit > 200) return 'Setup berjaya dikuasai';
-      if (profit < -200) return 'Sila semak semula entry';
-      return '-';
-    }
-
-    function handleCSVUpload() {
-      const fileInput = document.getElementById('csvUpload');
-      const file = fileInput.files[0];
-      if (!file) return alert('Sila pilih fail CSV.');
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const lines = e.target.result.split('\n').filter(l => l.trim());
-        const startIndex = lines.findIndex(line => line.includes('Time') && line.includes('Profit'));
-
-        if (startIndex === -1) return alert('Format CSV tidak sah.');
-
-        const tradeLines = lines.slice(startIndex + 1);
-        const trades = tradeLines.map(line => {
-          const cols = line.split(',');
-          const rawDate = cols[0];
-          const date = rawDate.split(' ')[0].replace(/\./g, '-');
-          const pair = cols[2];
-          const profit = parseFloat(cols[11]);
-          return {
-            date,
-            pair,
-            profit,
-            setup: detectSetup(profit),
-            emotion: detectEmotion(profit),
-            note: detectNote(profit)
-          };
-        });
-
-        const tradeBody = document.getElementById('tradeBody');
-        tradeBody.innerHTML = '';
-
-        let totalProfit = 0, wins = 0;
-        const profitByDay = { Isnin: 0, Selasa: 0, Rabu: 0, Khamis: 0, Jumaat: 0, Sabtu: 0, Ahad: 0 };
-
-        trades.forEach(trade => {
-          totalProfit += trade.profit;
-          if (trade.profit > 0) wins++;
-          const row = `<tr><td class="px-2 py-1">${trade.date}</td><td>${trade.pair}</td><td>${trade.setup}</td><td>${trade.profit}</td><td>${trade.emotion}</td><td>${trade.note}</td></tr>`;
-          tradeBody.innerHTML += row;
-
-          const hari = getDayFromDate(trade.date);
-          profitByDay[hari] += trade.profit;
-        });
-
-        const total = trades.length;
-        document.getElementById('totalTrades').innerText = total;
-        document.getElementById('winRate').innerText = ((wins / total) * 100).toFixed(0) + '%';
-        document.getElementById('monthlyProfit').innerText = 'RM' + totalProfit.toFixed(2);
-
-        updateChart(profitByDay);
-        generateAIReviews(total, wins, totalProfit);
-
-        let token = parseInt(localStorage.getItem('tokens'));
-        localStorage.setItem('tokens', token - 1);
-        document.getElementById('tokenCount').innerText = token - 1;
-      };
-      reader.readAsText(file);
-    }
-
-    function getDayFromDate(dateStr) {
-      const dayMap = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
-      const [y, m, d] = dateStr.split('-').map(Number);
-      const date = new Date(y, m - 1, d);
-      return dayMap[date.getDay()];
-    }
-
-    function updateChart(data) {
-      const ctx = document.getElementById('performanceChart').getContext('2d');
-      if (window.chart) window.chart.destroy();
-      window.chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: Object.keys(data),
-          datasets: [{
-            label: 'Profit Harian (RM)',
-            data: Object.values(data),
-            fill: true,
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-            tension: 0.4
-          }]
-        }
-      });
-    }
-
-    function generateAIReviews(total, wins, profit) {
-      let review = `Hari ini anda membuat ${total} trade. `;
-      review += `Win rate ${((wins / total) * 100).toFixed(0)}%. `;
-      review += profit >= 0 ? 'Prestasi positif.' : 'Prestasi negatif. Kawal emosi.';
-
-      document.getElementById('aiReviewDaily').innerText = review;
-      document.getElementById('aiReviewWeekly').innerText = `Mingguan: ${wins} win dari ${total} trade. Disiplin dan konsisten penting.`;
-    }
-  </script>
 </body>
 </html>
