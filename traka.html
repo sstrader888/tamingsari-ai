@@ -78,7 +78,7 @@
       <h2 class="text-lg font-semibold mb-4">Muat Naik Fail CSV dari MT5</h2>
       <input type="file" id="csvUpload" class="mb-4" accept=".csv" />
       <div class="flex gap-2 items-center">
-        <button onclick="handleCSVUpload()" class="btn-primary text-white px-4 py-2 rounded">Upload & Analisis CSV</button>
+        <button id="uploadBtn" class="btn-primary text-white px-4 py-2 rounded">Upload & Analisis CSV</button>
         <div id="loadingSpinner" class="spinner hidden"></div>
       </div>
     </section>
@@ -100,5 +100,22 @@
       </table>
     </section>
   </div>
+
+  <script>
+    document.getElementById('uploadBtn').addEventListener('click', function () {
+      const fileInput = document.getElementById('csvUpload');
+      const spinner = document.getElementById('loadingSpinner');
+
+      if (!fileInput.files.length) return alert('Sila pilih fail CSV terlebih dahulu.');
+
+      spinner.classList.remove('hidden');
+
+      setTimeout(() => {
+        // Simulasi proses analisis, boleh sambung dengan fungsi sebenar selepas ini
+        spinner.classList.add('hidden');
+        alert('CSV berjaya dimuat dan dianalisis. (Simulasi)');
+      }, 2000);
+    });
+  </script>
 </body>
 </html>
