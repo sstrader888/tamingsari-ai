@@ -116,50 +116,55 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    window.login = async function () {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+   window.login = async function () {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-        const agenRef = doc(db, "agen", user.uid);
-        const agenSnap = await getDoc(agenRef);
-        if (agenSnap.exists()) {
-          const data = agenSnap.data();
-          if (data.role === "admin") {
-            window.location.href = "dashboard-admin.html";
-          } else {
-            window.location.href = "dashboard-agen.html";
-          }
-          return;
-        }
+  if (!email || !password) {
+    alert("Sila masukkan emel dan kata laluan.");
+    return;
+  }
 
-        const penggunaRef = doc(db, "pengguna", user.uid);
-        const penggunaSnap = await getDoc(penggunaRef);
-        if (penggunaSnap.exists()) {
-          window.location.href = "dashboard-pengguna.html";
-          return;
-        }
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-        alert("Pengguna tidak wujud dalam sistem. Sila daftar semula.");
-      } catch (error) {
-        alert("Ralat semasa login: " + error.message);
+    // Semak dalam koleksi "agen"
+    const agenRef = doc(db, "agen", user.uid);
+    const agenSnap = await getDoc(agenRef);
+    if (agenSnap.exists()) {
+      const data = agenSnap.data();
+      if (data.role === "admin") {
+        window.location.href = "dashboard-admin.html";
+      } else {
+        window.location.href = "dashboard-agen.html";
       }
-    };
-
-    window.logout = async function () {
-      try {
-        await signOut(auth);
-        window.location.href = "login.html";
-      } catch (error) {
-        alert("Ralat semasa log keluar: " + error.message);
-      }
-    };
-
-    window.getAuthInstance = function() {
-      return auth;
+      return;
     }
+
+    // Semak dalam koleksi "pengguna"
+    const penggunaRef = doc(db, "pengguna", user.uid);
+    const penggunaSnap = await getDoc(penggunaRef);
+    if (penggunaSnap.exists()) {
+      window.location.href = "dashboard-pengguna.html";
+      return;
+    }
+
+    // Jika tiada dalam kedua-dua koleksi
+    alert("Akaun anda tidak wujud dalam sistem. Sila daftar semula.");
+
+  } catch (error) {
+    if (error.code === 'auth/user-not-found') {
+      alert("Akaun tidak wujud. Sila daftar terlebih dahulu.");
+    } else if (error.code === 'auth/wrong-password') {
+      alert("Kata laluan salah. Sila cuba lagi.");
+    } else if (error.code === 'auth/invalid-email') {
+      alert("Format emel tidak sah.");
+    } else {
+      alert("Ralat semasa login: " + error.message);
+    }
+  }
+};
   </script>
 </body>
 </html>
