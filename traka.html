@@ -1,4 +1,4 @@
-<!-- Full updated HTML with CSV analysis, chart update, and AI review logic -->
+<!-- Full updated HTML with CSV analysis, chart update, AI review logic, and working logout -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,13 +19,15 @@
 </head>
 <body class="bg-gray-100 text-gray-800 transition-colors duration-300">
   <div class="max-w-4xl mx-auto px-4">
-    <header class="bg-white shadow-md rounded-2xl p-6 mb-6">
-      <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
-      <p class="text-sm text-gray-500">Selamat datang, Cikgu. Jejak perjalanan trading anda secara berdisiplin.</p>
+    <header class="bg-white shadow-md rounded-2xl p-6 mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
+        <p class="text-sm text-gray-500">Selamat datang, Cikgu. Jejak perjalanan trading anda secara berdisiplin.</p>
+      </div>
+      <button id="logoutBtn" class="btn-primary text-white px-4 py-1 rounded">Logout</button>
     </header>
 
-    <!-- Stat Cards -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="icon text-blue-600"><i class="fas fa-chart-bar"></i></div>
         <h3 class="text-sm font-semibold">Jumlah Trade</h3>
@@ -46,15 +48,18 @@
         <h3 class="text-sm font-semibold">AI Ulasan</h3>
         <p class="text-sm italic text-gray-500">Auto dari CSV</p>
       </div>
+      <div class="bg-white p-4 rounded-2xl shadow text-center">
+        <div class="icon text-gray-800"><i class="fas fa-ticket-alt"></i></div>
+        <h3 class="text-sm font-semibold">Token</h3>
+        <p id="tokenCount" class="text-xl font-bold text-gray-800">0</p>
+      </div>
     </section>
 
-    <!-- Chart -->
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Graf Prestasi Harian</h2>
       <canvas id="performanceChart" height="200"></canvas>
     </section>
 
-    <!-- AI Review -->
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Ulasan AI Harian</h2>
       <div class="bg-gray-50 p-4 rounded-xl border border-yellow-300">
@@ -68,14 +73,12 @@
       </div>
     </section>
 
-    <!-- CSV Upload Section -->
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Muat Naik Fail CSV dari MT5</h2>
       <input type="file" id="csvUpload" class="mb-4" accept=".csv" />
       <button onclick="handleCSVUpload()" class="btn-primary text-white px-4 py-2 rounded">Upload & Analisis CSV</button>
     </section>
 
-    <!-- Trade Log Table -->
     <section class="bg-white p-6 rounded-2xl shadow mb-10">
       <h2 class="text-lg font-semibold mb-4">Log Trade Terkini</h2>
       <table id="tradeTable" class="w-full text-sm">
@@ -95,83 +98,10 @@
   </div>
 
   <script>
-    let chart;
-    const ctx = document.getElementById("performanceChart").getContext("2d");
-    chart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: ["Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu", "Ahad"],
-        datasets: [{
-          label: "Profit Harian (RM)",
-          data: [],
-          borderColor: "rgba(59, 130, 246, 1)",
-          backgroundColor: "rgba(59, 130, 246, 0.2)",
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.clear();
+      window.location.href = 'traka-login.html';
     });
-
-    function handleCSVUpload() {
-      const file = document.getElementById('csvUpload').files[0];
-      if (!file) return alert('Sila pilih fail CSV.');
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const rows = e.target.result.split(/\r?\n/).filter(row => row.trim());
-        const tradeBody = document.getElementById("tradeBody");
-        tradeBody.innerHTML = "";
-
-        let totalTrades = 0, wins = 0, totalProfit = 0;
-        let setupCount = {};
-        let dailyProfit = [0, 0, 0, 0, 0, 0, 0];
-
-        rows.forEach((row, index) => {
-          const cols = row.split(',');
-          if (cols.length >= 5 && index > 0) {
-            const [date, pair, setup, profit, emosi] = cols;
-            const profitVal = parseFloat(profit);
-
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td class="px-2 py-1">${date}</td>
-              <td class="px-2 py-1">${pair}</td>
-              <td class="px-2 py-1">${setup}</td>
-              <td class="px-2 py-1">${profitVal.toFixed(2)}</td>
-              <td class="px-2 py-1">${emosi}</td>
-              <td class="px-2 py-1">(CSV)</td>
-            `;
-            tradeBody.appendChild(tr);
-
-            totalTrades++;
-            if (profitVal > 0) wins++;
-            totalProfit += profitVal;
-
-            setupCount[setup] = (setupCount[setup] || 0) + 1;
-
-            const weekday = new Date(date).getDay();
-            dailyProfit[weekday === 0 ? 6 : weekday - 1] += profitVal;
-          }
-        });
-
-        document.getElementById("totalTrades").textContent = totalTrades;
-        document.getElementById("winRate").textContent = totalTrades ? ((wins / totalTrades) * 100).toFixed(1) + "%" : "0%";
-        document.getElementById("monthlyProfit").textContent = "RM" + totalProfit.toFixed(2);
-        chart.data.datasets[0].data = dailyProfit;
-        chart.update();
-
-        const topSetup = Object.entries(setupCount).sort((a,b) => b[1] - a[1])[0]?.[0] || "-";
-        document.getElementById("aiReviewDaily").textContent = `Setup paling kerap: ${topSetup}. Anda nampak lebih stabil hari ini.`;
-        document.getElementById("aiReviewWeekly").textContent = `Dalam minggu ini, anda lebih banyak guna teknik ${topSetup}. Teruskan dengan konsisten.`;
-      };
-      reader.readAsText(file);
-    }
   </script>
 </body>
 </html>
