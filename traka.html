@@ -1,4 +1,4 @@
-<!-- Full updated HTML with FontAwesome Icons & AI Review -->
+<!-- Full updated HTML with CSV analysis, chart update, and AI review logic -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +9,6 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <style>
     body { font-family: 'Poppins', sans-serif; }
     .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
@@ -22,135 +19,54 @@
 </head>
 <body class="bg-gray-100 text-gray-800 transition-colors duration-300">
   <div class="max-w-4xl mx-auto px-4">
-    <div class="flex justify-between items-center py-4">
-      <span id="userNameDisplay" class="text-sm font-medium text-blue-700">Pengguna</span>
-      <div class="flex gap-2 items-center">
-        <span id="tokenDisplay" class="text-xs text-gray-500"></span>
-        <button id="logoutBtn" class="text-sm border rounded px-2 py-1 bg-red-600 text-white hover:bg-red-700">Logout</button>
-        <select id="langSwitcher" class="text-sm border rounded px-2 py-1">
-          <option value="ms">Bahasa Melayu</option>
-          <option value="en">English (UK)</option>
-        </select>
-      </div>
-    </div>
-
-    <header class="bg-white shadow-md rounded-2xl p-6 mb-6 flex items-center gap-4">
-      <div class="bg-blue-600 text-white font-bold rounded-full w-12 h-12 flex items-center justify-center text-xl">T</div>
-      <div>
-        <h1 class="text-3xl font-bold text-gray-800" id="dashboardTitle">TRAKA Dashboard</h1>
-        <p class="text-sm text-gray-500" id="greetingText">Assalamualaikum, <span id="greetName">Pengguna</span>. Jejak perjalanan trading anda secara berdisiplin.</p>
-      </div>
+    <header class="bg-white shadow-md rounded-2xl p-6 mb-6">
+      <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
+      <p class="text-sm text-gray-500">Selamat datang, Cikgu. Jejak perjalanan trading anda secara berdisiplin.</p>
     </header>
 
-    <div id="tokenWarning" class="hidden text-center text-red-600 font-semibold my-4">
-      Token anda telah habis. Sila <a href="langgan.html" class="underline">langgan di sini</a> untuk akses penuh.
-    </div>
-
-    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+    <!-- Stat Cards -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="icon text-blue-600"><i class="fas fa-chart-bar"></i></div>
         <h3 class="text-sm font-semibold">Jumlah Trade</h3>
-        <p id="totalTrades" class="text-2xl font-bold text-blue-600">0</p>
+        <p id="totalTrades" class="text-xl font-bold text-blue-600">0</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="icon text-green-600"><i class="fas fa-bullseye"></i></div>
         <h3 class="text-sm font-semibold">Win Rate</h3>
-        <p id="winRate" class="text-2xl font-bold text-green-600">0%</p>
+        <p id="winRate" class="text-xl font-bold text-green-600">0%</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="icon text-yellow-600"><i class="fas fa-coins"></i></div>
         <h3 class="text-sm font-semibold">Profit Bulanan</h3>
-        <p id="monthlyProfit" class="text-2xl font-bold text-yellow-600">RM0</p>
+        <p id="monthlyProfit" class="text-xl font-bold text-yellow-600">RM0.00</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="icon text-purple-600"><i class="fas fa-robot"></i></div>
         <h3 class="text-sm font-semibold">AI Ulasan</h3>
-        <p class="text-sm italic text-gray-500">Belum dianalisis</p>
-      </div>
-      <div class="bg-white p-4 rounded-2xl shadow text-center">
-        <div class="icon text-indigo-600"><i class="fas fa-ticket-alt"></i></div>
-        <h3 class="text-sm font-semibold">Token</h3>
-        <p id="tokenCount" class="text-2xl font-bold text-purple-600">0</p>
+        <p class="text-sm italic text-gray-500">Auto dari CSV</p>
       </div>
     </section>
 
+    <!-- Chart -->
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Graf Prestasi Harian</h2>
       <canvas id="performanceChart" height="200"></canvas>
     </section>
 
+    <!-- AI Review -->
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Ulasan AI Harian</h2>
       <div class="bg-gray-50 p-4 rounded-xl border border-yellow-300">
         <p id="aiReviewDaily" class="text-gray-800 italic">Belum dianalisis.</p>
       </div>
     </section>
-
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
       <h2 class="text-lg font-semibold mb-4">Ulasan AI Mingguan</h2>
       <div class="bg-gray-50 p-4 rounded-xl border border-blue-200">
         <p id="aiReviewWeekly" class="text-gray-800 italic">Belum dianalisis.</p>
       </div>
     </section>
-
-    <section class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-lg font-semibold mb-4">Muat Naik Fail CSV dari MT5</h2>
-      <input type="file" id="csvUpload" class="mb-4" />
-      <button onclick="handleCSVUpload()" class="btn-primary text-white px-4 py-2 rounded">Upload & Analisis CSV</button>
-    </section>
-
-    <section class="bg-white p-6 rounded-2xl shadow mb-10">
-      <h2 class="text-lg font-semibold mb-4">Log Trade Terkini</h2>
-      <table id="tradeTable" class="w-full text-sm">
-        <thead>
-          <tr class="bg-gray-200 text-gray-700">
-            <th class="px-2 py-1 text-left">Tarikh</th>
-            <th class="px-2 py-1 text-left">Pair</th>
-            <th class="px-2 py-1 text-left">Setup</th>
-            <th class="px-2 py-1 text-left">Profit/Loss</th>
-            <th class="px-2 py-1 text-left">Emosi</th>
-            <th class="px-2 py-1 text-left">Nota</th>
-          </tr>
-        </thead>
-        <tbody id="tradeBody"></tbody>
-      </table>
-    </section>
-  </div>
-  <script>
-    const ctx = document.getElementById("performanceChart").getContext("2d");
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: ["Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu", "Ahad"],
-        datasets: [{
-          label: "Profit Harian (RM)",
-          data: [50, -20, 80, 100, -30, 40, 90],
-          borderColor: "rgba(59, 130, 246, 1)",
-          backgroundColor: "rgba(59, 130, 246, 0.2)",
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-  </script>
-   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { font-family: 'Poppins', sans-serif; }
-    .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
-    .btn-primary:hover { background-color: #1e40af; }
-    .disabled { opacity: 0.4; pointer-events: none; }
-    .icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
-  </style>
-</head>
-<body class="bg-gray-100 text-gray-800 transition-colors duration-300">
-  <div class="max-w-4xl mx-auto px-4">
-    <!-- Header & Stat Cards omitted for brevity -->
 
     <!-- CSV Upload Section -->
     <section class="bg-white p-6 rounded-2xl shadow mb-6">
