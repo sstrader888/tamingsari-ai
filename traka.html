@@ -139,5 +139,123 @@
       }
     });
   </script>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
+    .btn-primary:hover { background-color: #1e40af; }
+    .disabled { opacity: 0.4; pointer-events: none; }
+    .icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 transition-colors duration-300">
+  <div class="max-w-4xl mx-auto px-4">
+    <!-- Header & Stat Cards omitted for brevity -->
+
+    <!-- CSV Upload Section -->
+    <section class="bg-white p-6 rounded-2xl shadow mb-6">
+      <h2 class="text-lg font-semibold mb-4">Muat Naik Fail CSV dari MT5</h2>
+      <input type="file" id="csvUpload" class="mb-4" accept=".csv" />
+      <button onclick="handleCSVUpload()" class="btn-primary text-white px-4 py-2 rounded">Upload & Analisis CSV</button>
+    </section>
+
+    <!-- Trade Log Table -->
+    <section class="bg-white p-6 rounded-2xl shadow mb-10">
+      <h2 class="text-lg font-semibold mb-4">Log Trade Terkini</h2>
+      <table id="tradeTable" class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-200 text-gray-700">
+            <th class="px-2 py-1 text-left">Tarikh</th>
+            <th class="px-2 py-1 text-left">Pair</th>
+            <th class="px-2 py-1 text-left">Setup</th>
+            <th class="px-2 py-1 text-left">Profit/Loss</th>
+            <th class="px-2 py-1 text-left">Emosi</th>
+            <th class="px-2 py-1 text-left">Nota</th>
+          </tr>
+        </thead>
+        <tbody id="tradeBody"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    let chart;
+    const ctx = document.getElementById("performanceChart").getContext("2d");
+    chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: ["Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu", "Ahad"],
+        datasets: [{
+          label: "Profit Harian (RM)",
+          data: [],
+          borderColor: "rgba(59, 130, 246, 1)",
+          backgroundColor: "rgba(59, 130, 246, 0.2)",
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    function handleCSVUpload() {
+      const file = document.getElementById('csvUpload').files[0];
+      if (!file) return alert('Sila pilih fail CSV.');
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const rows = e.target.result.split(/\r?\n/).filter(row => row.trim());
+        const tradeBody = document.getElementById("tradeBody");
+        tradeBody.innerHTML = "";
+
+        let totalTrades = 0, wins = 0, totalProfit = 0;
+        let setupCount = {};
+        let dailyProfit = [0, 0, 0, 0, 0, 0, 0];
+
+        rows.forEach((row, index) => {
+          const cols = row.split(',');
+          if (cols.length >= 5 && index > 0) {
+            const [date, pair, setup, profit, emosi] = cols;
+            const profitVal = parseFloat(profit);
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td class="px-2 py-1">${date}</td>
+              <td class="px-2 py-1">${pair}</td>
+              <td class="px-2 py-1">${setup}</td>
+              <td class="px-2 py-1">${profitVal.toFixed(2)}</td>
+              <td class="px-2 py-1">${emosi}</td>
+              <td class="px-2 py-1">(CSV)</td>
+            `;
+            tradeBody.appendChild(tr);
+
+            totalTrades++;
+            if (profitVal > 0) wins++;
+            totalProfit += profitVal;
+
+            setupCount[setup] = (setupCount[setup] || 0) + 1;
+
+            const weekday = new Date(date).getDay();
+            dailyProfit[weekday === 0 ? 6 : weekday - 1] += profitVal;
+          }
+        });
+
+        document.getElementById("totalTrades").textContent = totalTrades;
+        document.getElementById("winRate").textContent = totalTrades ? ((wins / totalTrades) * 100).toFixed(1) + "%" : "0%";
+        document.getElementById("monthlyProfit").textContent = "RM" + totalProfit.toFixed(2);
+        chart.data.datasets[0].data = dailyProfit;
+        chart.update();
+
+        const topSetup = Object.entries(setupCount).sort((a,b) => b[1] - a[1])[0]?.[0] || "-";
+        document.getElementById("aiReviewDaily").textContent = `Setup paling kerap: ${topSetup}. Anda nampak lebih stabil hari ini.`;
+        document.getElementById("aiReviewWeekly").textContent = `Dalam minggu ini, anda lebih banyak guna teknik ${topSetup}. Teruskan dengan konsisten.`;
+      };
+      reader.readAsText(file);
+    }
+  </script>
 </body>
 </html>
