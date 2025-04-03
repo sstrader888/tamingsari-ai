@@ -1,4 +1,4 @@
-<!-- Full updated HTML with CSV analysis, chart update, AI review logic, and working logout -->
+<!-- Full updated HTML with MT5 CSV parser, AI review, chart, token system and logout -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,15 +13,14 @@
     body { font-family: 'Poppins', sans-serif; }
     .btn-primary { background-color: #2563eb; transition: background-color 0.3s; }
     .btn-primary:hover { background-color: #1e40af; }
-    .disabled { opacity: 0.4; pointer-events: none; }
     .icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 transition-colors duration-300">
+<body class="bg-gray-100 text-gray-800">
   <div class="max-w-4xl mx-auto px-4">
     <header class="bg-white shadow-md rounded-2xl p-6 mb-6 flex justify-between items-center">
       <div>
-        <h1 class="text-3xl font-bold text-gray-800">TRAKA Dashboard</h1>
+        <h1 class="text-3xl font-bold">TRAKA Dashboard</h1>
         <p class="text-sm text-gray-500">Selamat datang, Cikgu. Jejak perjalanan trading anda secara berdisiplin.</p>
       </div>
       <button id="logoutBtn" class="btn-primary text-white px-4 py-1 rounded">Logout</button>
@@ -51,7 +50,7 @@
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="icon text-gray-800"><i class="fas fa-ticket-alt"></i></div>
         <h3 class="text-sm font-semibold">Token</h3>
-        <p id="tokenCount" class="text-xl font-bold text-gray-800">5</p>
+        <p id="tokenCount" class="text-xl font-bold text-gray-800">0</p>
       </div>
     </section>
 
@@ -103,9 +102,7 @@
       window.location.href = 'traka-login.html';
     });
 
-    if (!localStorage.getItem('tokens')) {
-      localStorage.setItem('tokens', '5');
-    }
+    if (!localStorage.getItem('tokens')) localStorage.setItem('tokens', '5');
     document.getElementById('tokenCount').innerText = localStorage.getItem('tokens');
 
     function handleCSVUpload() {
@@ -115,11 +112,20 @@
 
       const reader = new FileReader();
       reader.onload = function (e) {
-        const lines = e.target.result.split('\n').slice(1);
-        const trades = lines.map(line => {
-          const [date, pair, setup, profit, emotion, note] = line.split(',');
-          return { date, pair, setup, profit: parseFloat(profit), emotion, note };
-        }).filter(t => t.date);
+        const lines = e.target.result.split('\n').filter(l => l.trim());
+        const startIndex = lines.findIndex(line => line.includes('Time') && line.includes('Profit'));
+
+        if (startIndex === -1) return alert('Format CSV tidak sah.');
+
+        const tradeLines = lines.slice(startIndex + 1);
+        const trades = tradeLines.map(line => {
+          const cols = line.split(',');
+          const rawDate = cols[0];
+          const date = rawDate.split(' ')[0].replace(/\./g, '-');
+          const pair = cols[2];
+          const profit = parseFloat(cols[11]);
+          return { date, pair, setup: '-', profit, emotion: '-', note: '-' };
+        });
 
         const tradeBody = document.getElementById('tradeBody');
         tradeBody.innerHTML = '';
