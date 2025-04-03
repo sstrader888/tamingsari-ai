@@ -51,7 +51,7 @@
       <div class="bg-white p-4 rounded-2xl shadow text-center">
         <div class="icon text-gray-800"><i class="fas fa-ticket-alt"></i></div>
         <h3 class="text-sm font-semibold">Token</h3>
-        <p id="tokenCount" class="text-xl font-bold text-gray-800">0</p>
+        <p id="tokenCount" class="text-xl font-bold text-gray-800">5</p>
       </div>
     </section>
 
@@ -102,6 +102,12 @@
       localStorage.clear();
       window.location.href = 'traka-login.html';
     });
+
+    // Token init if first time login
+    if (!localStorage.getItem('tokens')) {
+      localStorage.setItem('tokens', '5');
+    }
+    document.getElementById('tokenCount').innerText = localStorage.getItem('tokens');
   </script>
 </body>
 </html>
