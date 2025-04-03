@@ -1,4 +1,4 @@
-<!-- Full updated HTML with MT5 CSV parser, AI review, chart, token system and logout -->
+<!-- Full updated HTML with MT5 CSV parser, AI review with setup detection, emotion and note, chart, token system and logout -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,6 +105,24 @@
     if (!localStorage.getItem('tokens')) localStorage.setItem('tokens', '5');
     document.getElementById('tokenCount').innerText = localStorage.getItem('tokens');
 
+    function detectSetup(profit) {
+      if (profit > 100) return 'Breakout';
+      if (profit < -100) return 'Engulf';
+      return 'Sideway';
+    }
+
+    function detectEmotion(profit) {
+      if (profit >= 500) return 'Tenang';
+      if (profit < -300) return 'Takut';
+      return 'Neutral';
+    }
+
+    function detectNote(profit) {
+      if (profit > 200) return 'Setup berjaya dikuasai';
+      if (profit < -200) return 'Sila semak semula entry';
+      return '-';
+    }
+
     function handleCSVUpload() {
       const fileInput = document.getElementById('csvUpload');
       const file = fileInput.files[0];
@@ -124,7 +142,14 @@
           const date = rawDate.split(' ')[0].replace(/\./g, '-');
           const pair = cols[2];
           const profit = parseFloat(cols[11]);
-          return { date, pair, setup: '-', profit, emotion: '-', note: '-' };
+          return {
+            date,
+            pair,
+            profit,
+            setup: detectSetup(profit),
+            emotion: detectEmotion(profit),
+            note: detectNote(profit)
+          };
         });
 
         const tradeBody = document.getElementById('tradeBody');
