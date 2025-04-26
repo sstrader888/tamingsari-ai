@@ -5,14 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wallet SSTrader - Login</title>
   <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/script.js" defer></script>
 </head>
 <body class="login-page">
   <div class="login-container">
     <h1>Wallet SSTrader</h1>
-    <input type="text" id="username" placeholder="Username">
+    <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <button id="loginBtn">Login</button>
+    <hr>
+    <button id="googleLoginBtn">Login dengan Google</button>
+    <p>Belum ada akaun? <a href="walletregister.html">Daftar sini</a></p>
   </div>
-<script src="js/script.js"></script>
 </body>
 </html>
