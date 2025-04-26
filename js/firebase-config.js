@@ -1,4 +1,3 @@
-// Ganti dengan Firebase config cikgu
 export const firebaseConfig = {
   apiKey: "AIzaSyDpOhB_wvp3DHbWMuROQDnHR8x8LTCNDng",
   authDomain: "sstrader-affiliate.firebaseapp.com",
