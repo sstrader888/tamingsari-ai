@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { firebaseConfig } from './firebase-config.js';
 
 const app = initializeApp(firebaseConfig);
@@ -61,7 +61,18 @@ if (googleLoginBtn) {
   googleLoginBtn.onclick = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const uid = result.user.uid;
+      const userDoc = await getDoc(doc(db, "wallet_users", uid));
+      if (!userDoc.exists()) {
+        await setDoc(doc(db, "wallet_users", uid), {
+          nama: result.user.displayName || "User",
+          email: result.user.email,
+          pakej: "",
+          modal: 0,
+          date_registered: new Date()
+        });
+      }
       window.location.href = 'dashboard.html';
     } catch (error) {
       alert(error.message);
@@ -86,9 +97,13 @@ if (modalAmount) {
       const userDoc = await getDoc(doc(db, "wallet_users", user.uid));
       if (userDoc.exists()) {
         const data = userDoc.data();
-        modalAmount.innerText = `RM${data.modal}`;
-        document.getElementById('pakejType').innerText = data.pakej;
-        generateTradeHistory();
+        if (data.pakej === "") {
+          showPakejSelection(user.uid);
+        } else {
+          modalAmount.innerText = `RM${data.modal}`;
+          document.getElementById('pakejType').innerText = data.pakej;
+          generateTradeHistory();
+        }
       } else {
         alert('Data pengguna tidak ditemui.');
         signOut(auth);
@@ -116,4 +131,33 @@ function generateTradeHistory() {
     row.innerHTML = `<td>${day.toISOString().split('T')[0]}</td><td>XAU/USD</td><td>+RM${profit}</td>`;
     tradeBody.appendChild(row);
   }
+}
+
+function showPakejSelection(uid) {
+  const balanceSection = document.querySelector('.balance-section');
+  balanceSection.innerHTML = `
+    <h3>Pilih Pakej Anda</h3>
+    <select id="choosePakej">
+      <option value="">-- Pilih Pakej --</option>
+      <option value="Pakej A">Pakej A (RM5000)</option>
+      <option value="Pakej B">Pakej B (RM15000)</option>
+      <option value="Pakej C">Pakej C (RM25000)</option>
+    </select>
+    <button onclick="savePakej('${uid}')">Simpan</button>
+  `;
+}
+
+async function savePakej(uid) {
+  const pakej = document.getElementById('choosePakej').value;
+  if (!pakej) {
+    alert('Sila pilih pakej dahulu.');
+    return;
+  }
+  const modal = pakej === 'Pakej A' ? 5000 : pakej === 'Pakej B' ? 15000 : 25000;
+  await updateDoc(doc(db, "wallet_users", uid), {
+    pakej: pakej,
+    modal: modal
+  });
+  alert('Pakej disimpan. Reloading...');
+  window.location.reload();
 }
