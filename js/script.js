@@ -63,22 +63,33 @@ if (googleLoginBtn) {
     try {
       const result = await signInWithPopup(auth, provider);
       const uid = result.user.uid;
-      const userDoc = await getDoc(doc(db, "wallet_users", uid));
+
+      // SEMAK jika wallet_users sudah ada
+      const userDocRef = doc(db, "wallet_users", uid);
+      const userDoc = await getDoc(userDocRef);
+
       if (!userDoc.exists()) {
-        await setDoc(doc(db, "wallet_users", uid), {
+        // Kalau tak ada, AUTO CREATE document dalam wallet_users
+        await setDoc(userDocRef, {
           nama: result.user.displayName || "User",
           email: result.user.email,
           pakej: "",
           modal: 0,
           date_registered: new Date()
         });
+        console.log('Wallet user baru berjaya direkod.');
+      } else {
+        console.log('Wallet user sudah wujud.');
       }
+
+      // Terus redirect ke dashboard
       window.location.href = 'dashboard.html';
     } catch (error) {
       alert(error.message);
     }
   }
 }
+
 
 // Logout
 const logoutBtn = document.getElementById('logoutBtn');
