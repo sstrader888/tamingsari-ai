@@ -1,105 +1,224 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rahsia Indikator Forex AI Taming Sari: Teknik Power Oleh Cikgu Heri</title>
-  <meta name="description" content="Kenali kelebihan Indikator Taming Sari+AI, teknik forex terbaik Malaysia oleh Cikgu Heri. Sesuai untuk pemula & trader berpengalaman. Signal BUY/SELL tepat.">
-  <meta name="keywords" content="indikator forex, taming sari, cikgu heri, teknik forex malaysia, indikator tradingview, indikator AI forex malaysia">
-  <meta name="author" content="Cikgu Heri | SStrader">
+  <!-- META SEO -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rangka Kerja Entry Bersebab Untuk Pemula — SStrader Academy</title>
+  <meta name="description" content="Belajar langkah demi langkah membina rangka kerja entry bersebab: struktur pasaran, zon minat, pengesahan, dan pengurusan risiko. Sesuai untuk pemula." />
+  <meta name="keywords" content="kelas trading, asas trading, price action, entry bersebab, pengurusan risiko, cikgu heri, sstrader" />
+  <meta name="author" content="SStrader Academy" />
+  <link rel="canonical" href="https://thesstrader.com/artikel1.html" />
+
+  <!-- Open Graph / WhatsApp -->
+  <meta property="og:title" content="Rangka Kerja Entry Bersebab Untuk Pemula — SStrader Academy" />
+  <meta property="og:description" content="Langkah praktikal membina entry yang bersebab dan berdisiplin. Fokus pada proses, bukan tekaan." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://thesstrader.com/artikel1.html" />
+  <meta property="og:image" content="https://i.imgur.com/qzYmSNR.jpeg" />
+
+  <!-- Fonts & Base Styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.7;
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-      background: #fefefe;
-      color: #222;
+    :root{
+      --bg:#0b0b0d; --card:#141418; --muted:#a9a9b2; --line:#23232a;
+      --brand:#ff7a1a; --brand-2:#ffd166; --accent:#00d1ff; --text:#fff;
     }
-    h1, h2 {
-      color: #ff6600;
-    }
-    a {
-      color: #0066cc;
-    }
-    .cta-btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 20px;
-      background: #ff6600;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-    .cta-btn:hover {
-      background: #cc5500;
-    }
-    footer {
-      margin-top: 40px;
-      font-size: 13px;
-      color: #888;
-      text-align: center;
-    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial;line-height:1.7}
+    a{color:var(--accent);text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+    .container{max-width:980px;margin:0 auto;padding:20px}
+    header{border-bottom:1px solid var(--line);background:rgba(20,20,24,.6);backdrop-filter:blur(6px)}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{height:34px;filter:grayscale(100%) contrast(110%)} /* logo kecil ~40% */
+    .brand strong{font-size:18px}
+    .cta{background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#0b0b0d;padding:8px 12px;border-radius:10px;font-weight:600}
+
+    .breadcrumb{font-size:13px;color:var(--muted);margin:14px 0}
+    .article{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:16px;padding:20px}
+    h1{font-size:clamp(26px,3vw,36px);margin:0 0 6px}
+    .meta{color:var(--muted);font-size:13px;margin-bottom:16px}
+
+    .toc{border:1px dashed var(--line);border-radius:12px;padding:12px;margin:16px 0;background:rgba(255,255,255,.02)}
+    .toc b{display:block;margin-bottom:6px}
+    .toc a{display:block;font-size:14px;margin:4px 0}
+
+    h2{margin:22px 0 8px;font-size:clamp(20px,2.2vw,26px)}
+    h3{margin:16px 0 6px}
+    .note{background:rgba(0,209,255,.08);border:1px solid #1b3b44;padding:12px;border-radius:10px}
+    .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+
+    .related{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    @media(max-width:760px){.related{grid-template-columns:1fr}}
+    .related .item{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(255,255,255,.02)}
+
+    footer{border-top:1px solid var(--line);color:var(--muted);font-size:14px;padding:20px 0;margin-top:24px}
   </style>
+
+  <!-- Schema.org (Article) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"Rangka Kerja Entry Bersebab Untuk Pemula",
+    "description":"Langkah praktikal membina entry yang bersebab dan berdisiplin untuk pemula.",
+    "author":{"@type":"Organization","name":"SStrader Academy"},
+    "publisher":{"@type":"Organization","name":"SStrader Academy","logo":{"@type":"ImageObject","url":"https://i.imgur.com/qzYmSNR.jpeg"}},
+    "datePublished":"2025-03-01",
+    "dateModified":"2025-03-01",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://thesstrader.com/artikel1.html"}
+  }
+  </script>
 </head>
 <body>
 
-  <h1>Rahsia Indikator Forex AI Taming Sari: Teknik Power Oleh Cikgu Heri</h1>
-  <p><em>Diterbitkan pada 22 Mac 2025</em></p>
+  <!-- NAV -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
+        <strong>SStrader Academy</strong>
+      </div>
+      <a class="cta" href="https://thesstrader.com">Laman Utama</a>
+    </div>
+  </header>
 
-  <p>Dalam dunia forex yang penuh cabaran, ramai trader Malaysia tercari-cari indikator yang betul-betul boleh membantu mereka buat keputusan entry dan exit yang tepat. Di sinilah lahirnya <strong>Taming Sari+AI</strong>, satu inovasi gabungan antara <strong>teknik teknikal sebenar</strong> dan <strong>teknologi kecerdasan buatan (AI)</strong> oleh <strong>Cikgu Heri</strong>, seorang chartist berpengalaman dari Taiping, Perak.</p>
+  <main class="container">
+    <nav class="breadcrumb">
+      <a href="index.html">Laman Utama</a> › Artikel
+    </nav>
 
-  <h2>Apa Itu Taming Sari+AI?</h2>
-  <p>Taming Sari+AI ialah indikator forex yang dibangunkan khas untuk platform <a href="https://tradingview.com" target="_blank">TradingView</a>. Ia menggabungkan:</p>
-  <ul>
-    <li>Teknik Dominan Candle</li>
-    <li>Candle Break (CB Candle)</li>
-    <li>Fibonacci Taming Sari (entry 0.50, TP 161.8)</li>
-    <li>Alert pintar daripada sistem AI</li>
-  </ul>
+    <article class="article">
+      <h1>Rangka Kerja “Entry Bersebab” Untuk Pemula</h1>
+      <div class="meta">Ditulis oleh SStrader Academy • Dikemas kini: 1 Mac 2025 • Bacaan 8 min</div>
 
-  <p>Dengan indikator ini, trader tidak perlu analisis dari kosong setiap hari. Sistem ini membantu <strong>highlight kawasan entry terbaik</strong> dengan risiko minimum.</p>
+      <div class="toc">
+        <b>Kandungan</b>
+        <a href="#kenapa-entry-bersebab">1. Kenapa “Entry Bersebab” penting</a>
+        <a href="#kerangka-4-langkah">2. Kerangka 4 Langkah</a>
+        <a href="#contoh-jurnal-ringkas">3. Contoh Jurnal Ringkas</a>
+        <a href="#kesilapan-lazim">4. Kesilapan Lazim Pemula</a>
+        <a href="#faq-ringkas">5. FAQ Ringkas</a>
+      </div>
 
-  <h2>Kenapa Trader Malaysia Pilih Taming Sari+AI?</h2>
-  <ul>
-    <li>✅ Signal BUY & SELL jelas dan mesra pemula</li>
-    <li>✅ Sesuai untuk intraday dan swing</li>
-    <li>✅ Lifetime License (RM1000 sekali bayar)</li>
-    <li>✅ Boleh dapatkan secara PERCUMA jika daftar dengan JustMarkets atau GMI</li>
-  </ul>
+      <p class="note"><strong>Peringatan:</strong> Artikel ini bersifat pendidikan. Tiada nasihat kewangan individu, tiada jaminan pulangan. Fokus kita ialah proses, disiplin dan pengurusan risiko.</p>
 
-  <h2>Teknik Entry Berasaskan AI</h2>
-  <p>Antara kekuatan utama indikator ini ialah gabungan analisis teknikal klasik dan logik kecerdasan buatan (AI). Sistem ini boleh:</p>
-  <ul>
-    <li>Kenal pasti reversal menggunakan dominan candle</li>
-    <li>Elak entry semasa sideways</li>
-    <li>Gunakan Fibonacci dengan logik AI (zon 0.50 dan TP 161.8)</li>
-    <li>Berikan alert terus ke telefon trader</li>
-  </ul>
+      <h2 id="kenapa-entry-bersebab">1) Kenapa “Entry Bersebab” penting</h2>
+      <p>
+        Ramai pemula “klik beli/jual” kerana rasa atau FOMO. Entry bersebab memaksa anda
+        untuk ada <em>struktur</em>: kenal konteks pasaran, lokasi masuk, pengesahan, dan risiko yang jelas.
+        Tujuan kita bukan “betul setiap kali”, tetapi <strong>konsisten ikut proses</strong>.
+      </p>
 
-  <h2>Cara Mendapatkan Indikator Ini</h2>
-  <p>Trader boleh dapatkan indikator ini dalam dua cara:</p>
-  <ol>
-    <li><strong>Beli terus dengan harga promosi RM1000</strong> – dapat akses seumur hidup</li>
-    <li><strong>Langgan secara PERCUMA</strong> dengan daftar dan deposit USD100 melalui:
+      <h2 id="kerangka-4-langkah">2) Kerangka 4 Langkah</h2>
+
+      <h3>Langkah 1 — Kenal Struktur</h3>
+      <div class="box">
+        <ul>
+          <li>Tentukan trend & “market condition” (naik, turun, atau sideway berjarak).</li>
+          <li>Kenal <strong>zon minat</strong> (support/resistance yang jelas, area reaksi berulang).</li>
+          <li>Letak rancangan awal: “Jika harga datang ke zon X, saya cari sebab untuk masuk.”</li>
+        </ul>
+      </div>
+
+      <h3>Langkah 2 — Rancang Lokasi</h3>
+      <p>
+        Lokasi yang baik lebih penting daripada “signal cantik”. Lokasi = tempat yang
+        meminimumkan risiko dan memaksimumkan potensi R:R (risk:reward).
+      </p>
+
+      <h3>Langkah 3 — Tunggu Pengesahan</h3>
+      <div class="box">
+        <ul>
+          <li>Contoh pengesahan: kelemahan lawan (candle rejection), pecahan kecil yang sah,
+              atau “dominant candle” ke arah rencana.</li>
+          <li>Masuk hanya bila <em>sebab</em> wujud — bukan kerana “rasa macam nak gerak”.</li>
+        </ul>
+      </div>
+
+      <h3>Langkah 4 — Risiko & Pelan Keluar</h3>
+      <p>
+        Tetapkan saiz posisi berdasarkan <strong>nilai RM yang anda sanggup rugi</strong> (cth: 0.5%–1% ekuiti).
+        Rancang juga lokasi keluar: di mana salah (cut) dan di mana ambil untung (TP bertahap).
+      </p>
+
+      <h2 id="contoh-jurnal-ringkas">3) Contoh Templat Jurnal Ringkas</h2>
+      <div class="box">
+        <pre style="white-space:pre-wrap;margin:0">
+Tarikh & Masa: __________________________
+Instrumen/TF: ___________________________
+Kondisi Pasaran: (naik/turun/sideway) ____ Sebab: ____________________________
+
+Zon Minat: _____________________________  Kenapa zon ini? _____________________
+Pengesahan: ____________________________  Bentuk (rejection/pecah/struktur) ___
+
+R:R Dirancang: ________  Risiko (RM/%): ________  Saiz Posisi: ________________
+
+Pelan Keluar:
+- Salah bila: __________________________ (Stop)
+- Ambil Untung: Tahap 1: ___ Tahap 2: ___  (Optional Trailing?)
+
+Hasil:
+- Keputusan: (Menang/Kalah/BE)
+- Apa yang betul? ___________________________________________
+- Apa perlu diperbaiki? ______________________________________
+        </pre>
+      </div>
+
+      <h2 id="kesilapan-lazim">4) Kesilapan Lazim Pemula</h2>
       <ul>
-        <li><a href="https://one.justmarkets.link/a/q4dvp07gaj" target="_blank">JustMarkets</a></li>
-        <li><a href="https://gmi-ma.biz/account/register?token=NWYyMWE4OGQzMzc1NDRjYzdlN2UzMWIyYjg1MWYxMWU%3D" target="_blank">GMI</a></li>
+        <li><strong>Masuk tanpa konteks struktur</strong> — hanya kerana candle cantik.</li>
+        <li><strong>Tiada had risiko</strong> — posisi terlalu besar, tiada pelan rugi.</li>
+        <li><strong>Langkau jurnal</strong> — susah untuk perbaiki diri tanpa data.</li>
+        <li><strong>Overtrade</strong> — terlalu banyak entry sehari tanpa sebab kukuh.</li>
       </ul>
-    </li>
-  </ol>
 
-  <h2>Kesimpulan</h2>
-  <p>Taming Sari+AI bukan sekadar indikator, ia adalah sistem lengkap yang terbukti membantu ramai trader Malaysia. Jika anda serius ingin tingkatkan disiplin dan konsisten dalam forex, ini adalah alat yang anda perlukan.</p>
+      <h2 id="faq-ringkas">5) FAQ Ringkas</h2>
+      <h3>Berapa banyak setup perlu diambil?</h3>
+      <p>Kurang tetapi berkualiti. 1–3 setup terbaik lebih bernilai daripada 10 yang rawak.</p>
 
-  <a class="cta-btn" href="https://api.whatsapp.com/send?phone=60194173200&text=Saya%20berminat%20dengan%20indikator%20Taming%20Sari+AI" target="_blank">
-    🚀 Dapatkan Sekarang di WhatsApp
-  </a>
+      <h3>Perlu indikator kompleks?</h3>
+      <p>Tidak wajib. Fokuskan pada struktur, lokasi, pengesahan, dan risiko. Alat hanyalah sokongan.</p>
+
+      <hr style="border-color:transparent;border-top:1px solid var(--line);margin:22px 0">
+
+      <p><strong>Mahukan bimbingan berstruktur?</strong>
+        Sertai kelas di HQ Taiping (penginapan disediakan). Hubungi Cikgu Heri:
+        <a href="https://api.whatsapp.com/send?phone=60132541233&text=Cikgu%2C%20saya%20nak%20tanya%20kelas%20dan%20slot.">+60 13-254 1233</a>.
+      </p>
+    </article>
+
+    <!-- Interlink / Artikel Berkaitan -->
+    <section class="section">
+      <h2>Teruskan Membaca</h2>
+      <div class="related">
+        <div class="item">
+          <a href="artikel2.html"><strong>Dominan Candle: Cara Kenal Momentum & Reaksi</strong></a>
+          <p class="muted">Guna bacaan candle untuk sahkan niat pasaran.</p>
+        </div>
+        <div class="item">
+          <a href="artikel3.html"><strong>Fibo Taming Sari — Rangka Take Profit Bertahap</strong></a>
+          <p class="muted">Struktur TP yang logik & konsisten.</p>
+        </div>
+        <div class="item">
+          <a href="artikel4.html"><strong>Money Management & Compounding Praktikal</strong></a>
+          <p class="muted">Ukuran posisi & disiplin risiko yang realistik.</p>
+        </div>
+        <div class="item">
+          <a href="index.html"><strong>Kembali ke Laman Utama</strong></a>
+          <p class="muted">Lihat pakej coaching dan silibus.</p>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer>
-    © 2025 Taming Sari+AI | Ditulis oleh Cikgu Heri | Semua hak cipta terpelihara
+    <div class="container" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div>© 2025 SStrader Academy</div>
+      <div>Hubungi: <a href="https://api.whatsapp.com/send?phone=60132541233">+60 13-254 1233</a></div>
+    </div>
   </footer>
 
 </body>
