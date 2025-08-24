@@ -292,6 +292,123 @@
     </div>
   </section>
 
+<!-- ============ PROMO VIDEO POPUP (SIDEBAR MINI) ============ -->
+<style>
+  #promoVideoWrap{
+    position: fixed; right: 16px; bottom: 90px; width: 320px; max-width: 90vw;
+    background: #ffffff; border: 1px solid #E5EEF9; border-radius: 14px;
+    box-shadow: 0 14px 28px rgba(3,70,148,.16); z-index: 9999; display: none; overflow: hidden;
+  }
+  #promoHead{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;
+    background: linear-gradient(90deg,#034694,#1E6FFF); color:#fff;font-weight:700;font-size:14px;}
+  #promoClose{all:unset;cursor:pointer;padding:6px 8px;border-radius:8px;font-weight:800;}
+  #promoClose:hover{background:rgba(255,255,255,.18);}
+  #promoBody{padding:8px;background:#fff;}
+  #promoCaption{font-size:12px;color:#5B718A;margin-top:6px;}
+  #promoToggle{
+    position: fixed; right: 16px; bottom: 90px; width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(90deg,#034694,#1E6FFF); color:#fff; display: none;
+    align-items: center; justify-content: center; font-weight: 800;
+    box-shadow: 0 8px 18px rgba(3,70,148,.28); z-index: 9998; cursor: pointer;
+  }
+  @media (max-width: 600px){ #promoVideoWrap{ width: 240px; right: 12px; bottom: 80px; } #promoToggle{ right:12px; bottom:80px; } }
+  .promo-frame{ width:100%; height:560px; border:0; border-radius:10px; background:#000; }
+  @media (max-width: 600px){ .promo-frame{ height:420px; } }
+  .promo-btn{display:inline-block;margin-top:8px;padding:8px 10px;border-radius:10px;font-size:12px;font-weight:700;color:#fff;
+    background:linear-gradient(90deg,#25D366,#128C7E);text-decoration:none;}
+</style>
+
+<div id="promoVideoWrap" aria-live="polite">
+  <div id="promoHead">
+    <span>🎥 Video Promosi</span>
+    <button id="promoClose" title="Tutup">✕</button>
+  </div>
+  <div id="promoBody">
+    <!-- PILIHAN A: TIKTOK EMBED (guna link cikgu) -->
+    <blockquote class="tiktok-embed"
+      cite="https://www.tiktok.com/@sstrader.taiping/video/7511746727502744850"
+      data-video-id="7511746727502744850"
+      data-url="https://www.tiktok.com/@sstrader.taiping/video/7511746727502744850"
+      style="max-width:100%;min-width:100%;">
+      <section>Loading…</section>
+    </blockquote>
+    <script async src="https://www.tiktok.com/embed.js"></script>
+
+    <!-- PILIHAN B (optional): MP4 AUTOPLAY (pastikan hostkan fail sendiri)
+    <video id="promoMP4" class="promo-frame" playsinline muted autoplay loop controlslist="nodownload noremoteplayback" disablepictureinpicture>
+      <source src="https://your-domain.com/video/promo.mp4" type="video/mp4" />
+    </video>
+    -->
+
+    <div id="promoCaption">
+      <strong>Tip:</strong> Fokus pada proses, bukan tekaan.  
+      <div style="margin-top:6px">
+        <a class="promo-btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Minat%20belajar%2C%20nak%20info%20kelas." target="_blank" rel="noopener">WhatsApp Cikgu</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="promoToggle" title="Buka Video">▶</div>
+
+<script>
+(function(){
+  const wrap   = document.getElementById('promoVideoWrap');
+  const toggle = document.getElementById('promoToggle');
+  const close  = document.getElementById('promoClose');
+
+  const SCROLL_TRIGGER_PX = 500;   // muncul selepas scroll 500px
+  const SUPPRESS_HOURS    = 6;     // senyap 6 jam selepas ditutup
+
+  function suppressed(){
+    try{
+      const t = localStorage.getItem('promo_suppress_until');
+      return t && Date.now() < parseInt(t,10);
+    }catch(e){ return false; }
+  }
+  function setSuppress(hours){
+    try{
+      localStorage.setItem('promo_suppress_until', String(Date.now() + hours*60*60*1000));
+    }catch(e){}
+  }
+
+  let shown = false;
+  function onScroll(){
+    if(shown || suppressed()) return;
+    if(window.scrollY > SCROLL_TRIGGER_PX){
+      wrap.style.display = 'block';
+      shown = true;
+      // Autoplay untuk MP4 jika gunakan pilihan B
+      const v = document.getElementById('promoMP4');
+      if(v){ v.muted = true; v.play().catch(()=>{}); }
+      window.removeEventListener('scroll', onScroll);
+    }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  // Jika reload & sudah melepasi threshold
+  if(window.scrollY > SCROLL_TRIGGER_PX && !suppressed()){
+    wrap.style.display = 'block';
+    shown = true;
+  }
+
+  // Tutup & buka semula
+  close.addEventListener('click',()=>{
+    wrap.style.display = 'none';
+    toggle.style.display = 'flex';
+    setSuppress(SUPPRESS_HOURS);
+  });
+  toggle.addEventListener('click',()=>{
+    wrap.style.display = 'block';
+    toggle.style.display = 'none';
+    const v = document.getElementById('promoMP4');
+    if(v){ v.play().catch(()=>{}); }
+  });
+})();
+</script>
+<!-- ============ /PROMO VIDEO POPUP ============ -->
+
+
   <!-- ARTIKEL TERKINI -->
   <section class="container section">
     <h2 class="reveal">Artikel Terkini</h2>
@@ -401,3 +518,4 @@
   </script>
 </body>
 </html>
+
