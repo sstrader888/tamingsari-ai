@@ -21,88 +21,192 @@
 
   <style>
     :root{
-      --bg:#0b0b0d; --card:#141418; --muted:#a9a9b2;
-      --brand:#ff7a1a; --brand-2:#ffd166; --line:#23232a;
-      --text:#fff; --accent:#00d1ff;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:radial-gradient(1200px 600px at 10% -10%,rgba(255,122,26,.12),transparent),
-                               radial-gradient(900px 500px at 100% 10%,rgba(0,209,255,.08),transparent),
-                               var(--bg); color:var(--text); font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial; line-height:1.6}
-    a{color:var(--accent);text-decoration:none}
-    img{max-width:100%;height:auto;display:block}
+      /* Chelsea-inspired blues */
+      --brand:#034694;         /* Chelsea blue */
+      --brand-2:#1E6FFF;       /* brighter accent blue */
+      --accent:#00B7FF;        /* cyan accent */
+      --gold:#FFD166;          /* soft gold accent (halus) */
 
-    .container{max-width:1200px;margin:0 auto;padding:18px 20px}
+      /* Light UI base */
+      --bg:#F6FAFF;
+      --card:#FFFFFF;
+      --line:#E5EEF9;
+      --text:#0A1A2B;
+      --muted:#5B718A;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; padding:0;
+      background:
+        radial-gradient(900px 500px at 100% -10%, rgba(0,183,255,.10), transparent),
+        radial-gradient(1100px 600px at -5% 20%, rgba(3,70,148,.08), transparent),
+        var(--bg);
+      color:var(--text);
+      font-family:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+    img{max-width:100%; height:auto; display:block}
+    a{color:var(--brand); text-decoration:none}
+    a:hover{color:var(--brand-2)}
+
+    /* Utility */
+    .container{max-width:1200px; margin:0 auto; padding:18px 20px}
+    .section{padding:32px 0}
+    .muted{color:var(--muted)}
+    .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease}
+    .reveal.show{opacity:1; transform:none}
+
+    /* Floating decorative orbs */
+    .orb{position:absolute; border-radius:50%; filter:blur(10px); opacity:.25; pointer-events:none}
+    .orb.b1{width:260px;height:260px; background:radial-gradient(circle at 30% 30%, var(--brand-2), transparent 60%);
+            top:-60px; left:-80px; animation:floatY 9s ease-in-out infinite}
+    .orb.b2{width:200px;height:200px; background:radial-gradient(circle at 70% 40%, var(--accent), transparent 60%);
+            bottom:-70px; right:-60px; animation:floatY 11s ease-in-out -2s infinite}
+
+    @keyframes floatY{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(16px)}
+    }
+
+    /* NAV */
     header.nav{
-      position:sticky; top:0; z-index:50; backdrop-filter: blur(8px);
-      background:rgba(11,11,13,.7); border-bottom:1px solid var(--line)
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background:rgba(255,255,255,.8);
+      border-bottom:1px solid var(--line)
     }
     .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
     .brand{display:flex;align-items:center;gap:10px}
-    .brand img{height:36px;filter:grayscale(100%) contrast(110%)} /* logo ~40% dari biasa */
-    .brand strong{font-size:18px;letter-spacing:.2px}
+    .brand img{height:34px; filter:grayscale(100%) contrast(115%)} /* ~40% dari asal: kecil, kemas */
+    .brand strong{font-size:18px; letter-spacing:.2px; color:var(--brand)}
     .cta-whatsapp{
-      background:linear-gradient(90deg,#25D366,#128C7E); padding:10px 14px;border-radius:10px;color:white;font-weight:600
+      background:linear-gradient(90deg, #25D366, #128C7E);
+      padding:10px 14px; border-radius:12px; color:white; font-weight:700;
+      box-shadow:0 6px 16px rgba(18,140,126,.25); transition:transform .2s ease;
+    }
+    .cta-whatsapp:hover{transform:translateY(-2px)}
+
+    /* HERO */
+    .hero{padding:68px 0 28px; text-align:center; position:relative; overflow:hidden}
+    .hero h1{font-size:clamp(28px,3.6vw,44px); margin:0 0 12px; color:var(--brand)}
+    .hero p{color:var(--muted); max-width:860px; margin:0 auto 24px}
+    .badges{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:18px 0 8px}
+    .badge{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, #fff, #f7fbff);
+      padding:8px 12px; border-radius:999px; font-size:13px; color:#1b2a3c;
+      box-shadow:0 2px 0 0 #e9f1fb inset;
+      animation:pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{box-shadow:0 2px 0 0 #e9f1fb inset}
+      50%{box-shadow:0 2px 0 0 #d8ebff inset}
     }
 
-    .hero{padding:60px 0 20px; text-align:center}
-    .hero h1{font-size:clamp(28px,3.6vw,44px);margin:0 0 10px}
-    .hero p{color:var(--muted);max-width:820px;margin:0 auto 22px}
-    .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0 6px}
-    .badge{border:1px solid var(--line);background:rgba(255,255,255,.03);padding:8px 12px;border-radius:999px;font-size:13px}
-
-    .section{padding:28px 0}
-    .section h2{font-size:clamp(22px,2.6vw,30px); margin:0 0 12px}
-    .muted{color:var(--muted)}
-
-    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    /* Cards pricing */
+    .cards{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-top:14px}
     @media (max-width:960px){.cards{grid-template-columns:1fr 1fr}}
     @media (max-width:640px){.cards{grid-template-columns:1fr}}
 
     .card{
-      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
-      border:1px solid var(--line); border-radius:16px; padding:18px; position:relative; overflow:hidden
+      background:
+        radial-gradient(120% 80% at 0% 0%, rgba(30,111,255,.06), transparent 50%),
+        var(--card);
+      border:1px solid var(--line); border-radius:16px; padding:18px; position:relative; overflow:hidden;
+      transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
-    .card h3{margin:0 0 6px}
-    .price{font-weight:700;color:var(--brand-2)}
-    .list{margin:10px 0 14px; padding-left:18px}
+    .card:hover{
+      transform:translateY(-4px);
+      border-color:#d6e7ff;
+      box-shadow:0 10px 26px rgba(3,70,148,.10);
+    }
+    .card h3{margin:0 0 6px; color:#0b2442}
+    .price{font-weight:800; color:var(--brand); margin-bottom:8px}
+    .list{margin:10px 0 16px; padding-left:18px}
     .list li{margin:6px 0}
-    .btn{
-      display:inline-block; padding:10px 14px; border-radius:10px; font-weight:600;
-      color:#0b0b0d; background:linear-gradient(90deg,var(--brand),var(--brand-2));
-      border:0; cursor:pointer
-    }
-    .btn.outline{color:#fff;background:transparent;border:1px solid var(--line)}
 
-    .grid-2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
-    @media (max-width:900px){.grid-2{grid-template-columns:1fr;}}
-    .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+    .btn{
+      display:inline-block; padding:10px 14px; border-radius:12px; font-weight:700;
+      color:#fff; background:linear-gradient(90deg, var(--brand), var(--brand-2));
+      border:0; cursor:pointer; box-shadow:0 8px 18px rgba(3,70,148,.22);
+      transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .btn:hover{transform:translateY(-2px); filter:saturate(1.05)}
+    .btn.outline{
+      color:var(--brand); background:#fff; border:1px solid var(--line);
+      box-shadow:none;
+    }
+    .btn.outline:hover{border-color:#cfe2ff; transform:translateY(-2px)}
+
+    /* Panel & grid */
+    .grid-2{display:grid; grid-template-columns:1.2fr .8fr; gap:18px}
+    @media (max-width:900px){.grid-2{grid-template-columns:1fr}}
+    .panel{
+      background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px;
+      box-shadow:0 4px 14px rgba(3,70,148,.06);
+    }
 
     /* Artikel */
-    .articles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .articles{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
     @media (max-width:880px){.articles{grid-template-columns:1fr}}
-    .article{border:1px solid var(--line);border-radius:14px;padding:14px;background:rgba(255,255,255,.02)}
-    .article a{font-weight:600}
+    .article{
+      border:1px solid var(--line); border-radius:14px; padding:14px; background:#fff;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .article a{font-weight:700; color:#0b2442}
+    .article:hover{transform:translateY(-2px); box-shadow:0 8px 18px rgba(3,70,148,.08)}
 
     /* FAQ */
-    .faq-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02);cursor:pointer}
-    .faq-q{font-weight:600}
-    .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,opacity .35s ease;opacity:.5}
-    .faq-item.active .faq-a{max-height:240px;opacity:1}
+    .faq-item{
+      border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:#fff; cursor:pointer;
+      transition:box-shadow .2s ease, border-color .2s ease;
+    }
+    .faq-item:hover{box-shadow:0 6px 16px rgba(3,70,148,.08); border-color:#d6e7ff}
+    .faq-q{font-weight:700; color:#0b2442}
+    .faq-a{max-height:0; overflow:hidden; transition:max-height .35s ease, opacity .35s ease; opacity:.6}
+    .faq-item.active .faq-a{max-height:260px; opacity:1}
 
     /* Footer */
-    footer{border-top:1px solid var(--line); padding:24px 0; color:var(--muted); font-size:14px}
+    footer{border-top:1px solid var(--line); background:#fff}
+    footer .container{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; color:var(--muted); font-size:14px}
 
-    /* Iklan pop kecil (optional) */
-    .ad-pop{position:fixed;right:16px;bottom:84px;background:var(--card);border:1px solid var(--line);
-            border-radius:12px;padding:10px;width:240px;z-index:40;display:none}
-    .ad-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-    .ad-trigger{position:fixed;right:16px;bottom:84px;width:40px;height:40px;border-radius:50%;
-                background:linear-gradient(90deg,var(--brand),var(--brand-2));display:none;align-items:center;justify-content:center;font-weight:700;color:#000;z-index:39}
+    /* Optional: small notice pop (blue style) */
+    .ad-pop{
+      position:fixed; right:16px; bottom:84px; width:260px;
+      background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px; z-index:40; display:none;
+      box-shadow:0 14px 28px rgba(3,70,148,.16)
+    }
+    .ad-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px}
+    .ad-head strong{font-size:14px; color:var(--brand)}
+    .ad-trigger{
+      position:fixed; right:16px; bottom:84px; width:42px; height:42px; border-radius:50%;
+      background:linear-gradient(90deg,var(--brand),var(--brand-2)); display:none; align-items:center; justify-content:center;
+      font-weight:800; color:#fff; z-index:39; box-shadow:0 8px 18px rgba(3,70,148,.28)
+    }
 
+    /* subtle moving underline for section titles */
+    .section h2{
+      position:relative; display:inline-block; padding-bottom:6px;
+      color:#0b2442;
+    }
+    .section h2:after{
+      content:""; position:absolute; left:0; bottom:0; height:3px; width:42%;
+      background:linear-gradient(90deg,var(--brand),var(--accent));
+      border-radius:4px; animation:barMove 2.8s ease-in-out infinite;
+    }
+    @keyframes barMove{
+      0%,100%{width:42%}
+      50%{width:62%}
+    }
   </style>
 </head>
 <body>
+
+  <!-- Decorative orbs -->
+  <div class="orb b1"></div>
+  <div class="orb b2"></div>
 
   <!-- NAV -->
   <header class="nav">
@@ -117,23 +221,22 @@
 
   <!-- HERO -->
   <section class="hero container">
-    <div class="badges">
+    <div class="badges reveal">
       <span class="badge">HQ Taiping, Perak</span>
       <span class="badge">Tempat tinggal disediakan</span>
       <span class="badge">Silibus berstruktur</span>
     </div>
-    <h1>Pembelajaran Trading Berfokus & Berdisiplin</h1>
-    <p>Latihan dari asas hingga lanjutan bersama <strong>Cikgu Heri</strong>. Sesuai untuk pemula yang mahu mula dengan betul dan trader intermediate yang perlukan struktur, disiplin dan pemahaman price action.</p>
+    <h1 class="reveal">Pembelajaran Trading Berfokus & Berdisiplin</h1>
+    <p class="reveal">Latihan dari asas hingga lanjutan bersama <strong>Cikgu Heri</strong>. Sesuai untuk pemula yang mahu mula dengan betul dan trader intermediate yang perlukan struktur, disiplin dan pemahaman price action.</p>
   </section>
 
-  <!-- PAKEJ (Open/Compliant) -->
+  <!-- PAKEJ -->
   <section class="container section">
-    <h2>Pilih Pakej Pembelajaran</h2>
-    <p class="muted">Semua sesi dijalankan di <strong>HQ SStrader, Taiping, Perak</strong>. Tempat tinggal disediakan untuk memudahkan pembelajaran intensif.</p>
+    <h2 class="reveal">Pilih Pakej Pembelajaran</h2>
+    <p class="muted reveal">Semua sesi dijalankan di <strong>HQ SStrader, Taiping, Perak</strong>. Tempat tinggal disediakan untuk memudahkan pembelajaran intensif.</p>
 
-    <div class="cards" style="margin-top:14px">
-      <!-- 1-to-1 -->
-      <div class="card">
+    <div class="cards">
+      <div class="card reveal">
         <h3>👨‍🏫 1-to-1 Coaching</h3>
         <div class="price">RM2,000</div>
         <ul class="list">
@@ -144,8 +247,7 @@
         <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20berminat%201-to-1%20coaching.">Daftar Minat</a>
       </div>
 
-      <!-- Group -->
-      <div class="card">
+      <div class="card reveal">
         <h3>👥 Group Coaching</h3>
         <div class="price">RM4,000 (min 4 orang)</div>
         <ul class="list">
@@ -156,8 +258,7 @@
         <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20berminat%20Group%20coaching%20(min%204).">Tempah Kumpulan</a>
       </div>
 
-      <!-- Premium -->
-      <div class="card">
+      <div class="card reveal">
         <h3>🌟 Pakej Premium</h3>
         <div class="price">Sebut harga khas</div>
         <ul class="list">
@@ -172,7 +273,7 @@
 
   <!-- SILIBUS + LOKASI -->
   <section class="container section grid-2">
-    <div class="panel">
+    <div class="panel reveal">
       <h2>Silibus Ringkas</h2>
       <ul class="list" style="margin-top:6px">
         <li>Asas pasaran & struktur pergerakan harga</li>
@@ -184,7 +285,7 @@
       </ul>
       <p class="muted">Nota: Tiada janji pulangan. Fokus pada proses & kemahiran.</p>
     </div>
-    <div class="panel">
+    <div class="panel reveal">
       <h2>Lokasi & Kemudahan</h2>
       <p>Semua program diadakan di <strong>HQ SStrader, Taiping, Perak</strong>. Penginapan disediakan untuk peserta luar kawasan (tertakluk kekosongan).</p>
       <a class="btn outline" href="https://api.whatsapp.com/send?phone=60132541233&text=Assalamualaikum%2C%20nak%20tanya%20slot%20dan%20penginapan%20di%20HQ%20SStrader.">Tanya Slot & Penginapan</a>
@@ -193,13 +294,13 @@
 
   <!-- ARTIKEL TERKINI -->
   <section class="container section">
-    <h2>Artikel Terkini</h2>
+    <h2 class="reveal">Artikel Terkini</h2>
     <div class="articles" style="margin-top:10px">
-      <div class="article">
+      <div class="article reveal">
         <a href="artikel1.html">Rahsia Rangka Kerja Entry Bersebab (Untuk Pemula)</a>
         <p class="muted" style="margin:6px 0 0">Cara melihat market secara struktur — bukan tekaan.</p>
       </div>
-      <div class="article">
+      <div class="article reveal">
         <a href="artikel4.html">Money Management & Compounding: Disiplin Diutamakan</a>
         <p class="muted" style="margin:6px 0 0">Formula risiko praktikal untuk jangka panjang.</p>
       </div>
@@ -208,21 +309,21 @@
 
   <!-- FAQ -->
   <section class="container section">
-    <h2>Soalan Lazim</h2>
+    <h2 class="reveal">Soalan Lazim</h2>
     <div class="faq" style="display:grid;gap:10px;margin-top:12px">
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <div class="faq-q">Adakah kelas sesuai untuk pemula?</div>
         <div class="faq-a">Ya. Silibus bermula dari asas pasaran, disusun agar pemula boleh ikut langkah demi langkah.</div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <div class="faq-q">Berapa lama tempoh sesi?</div>
         <div class="faq-a">Bergantung kepada pakej. 1-to-1 lebih fleksibel (beberapa sesi fokus). Group dijadualkan dengan modul bertahap.</div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <div class="faq-q">Ada jaminan keuntungan?</div>
         <div class="faq-a">Tiada. Program ini melatih kemahiran proses: analisis, risiko & disiplin. Keputusan bergantung pada usaha & pematuhan pelan.</div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal">
         <div class="faq-q">Bagaimana cara daftar?</div>
         <div class="faq-a">Klik mana-mana butang WhatsApp di laman ini untuk berbual terus dengan Cikgu Heri: <a href="https://api.whatsapp.com/send?phone=60132541233">+60 13-254 1233</a>.</div>
       </div>
@@ -231,7 +332,7 @@
 
   <!-- HUBUNGI -->
   <section class="container section">
-    <div class="panel" style="text-align:center">
+    <div class="panel reveal" style="text-align:center">
       <h2>Sedia Bermula?</h2>
       <p class="muted">Beritahu latar belakang anda (pemula/intermediate), masa sesuai, dan matlamat pembelajaran.</p>
       <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Cikgu%2C%20saya%20nak%20mula%20belajar.%20Ini%20latar%20belakang%20saya%3A">WhatsApp Cikgu Heri</a>
@@ -240,7 +341,7 @@
 
   <!-- DISCLAIMER / COMPLIANCE -->
   <section class="container section">
-    <div class="panel">
+    <div class="panel reveal">
       <h2>Penafian & Pematuhan</h2>
       <p class="muted" style="margin:6px 0 0">
         Laman ini bertujuan pendidikan. Tiada tawaran produk pelaburan terkawal, tiada nasihat kewangan individu, dan tiada ajakan untuk membuka akaun/berurus niaga.
@@ -251,19 +352,19 @@
 
   <!-- FOOTER -->
   <footer>
-    <div class="container" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div class="container">
       <div>© 2025 SStrader Academy. Semua hak cipta terpelihara.</div>
       <div>Hubungi: <a href="https://api.whatsapp.com/send?phone=60132541233">+60 13-254 1233</a></div>
     </div>
   </footer>
 
-  <!-- OPTIONAL: Iklan kecil (boleh buang jika tak perlu) -->
+  <!-- Optional: Blue notice pop -->
   <div id="adPop" class="ad-pop">
     <div class="ad-head">
-      <strong style="font-size:14px;color:var(--brand-2)">Notis</strong>
-      <button id="adClose" style="all:unset;cursor:pointer;color:#fff">✕</button>
+      <strong>Notis Slot Bulanan</strong>
+      <button id="adClose" style="all:unset;cursor:pointer;color:#577">✕</button>
     </div>
-    <div style="font-size:13px" class="muted">
+    <div class="muted" style="font-size:14px">
       Jadual slot baru dibuka setiap bulan. Klik WhatsApp untuk semak kekosongan.
     </div>
     <div style="margin-top:10px">
@@ -273,29 +374,30 @@
   <div id="adTrigger" class="ad-trigger">🔔</div>
 
   <script>
+    // Reveal on scroll
+    const revealEls = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); }
+      });
+    }, {threshold: .12});
+    revealEls.forEach(el=>io.observe(el));
+
     // FAQ toggle
     document.querySelectorAll('.faq-item').forEach(it=>{
       it.addEventListener('click',()=>it.classList.toggle('active'));
     });
 
-    // Iklan kecil: muncul sekali per sesi
+    // Notice pop (show once per session)
     const adPop = document.getElementById('adPop');
     const adTrigger = document.getElementById('adTrigger');
     const adClose = document.getElementById('adClose');
-
     const seen = sessionStorage.getItem('ad_seen');
     if(!seen){
       setTimeout(()=>{ adPop.style.display='block'; sessionStorage.setItem('ad_seen','1'); }, 1200);
     }
-
-    adClose.addEventListener('click',()=>{
-      adPop.style.display='none';
-      adTrigger.style.display='flex';
-    });
-    adTrigger.addEventListener('click',()=>{
-      adPop.style.display='block';
-      adTrigger.style.display='none';
-    });
+    adClose.addEventListener('click',()=>{ adPop.style.display='none'; adTrigger.style.display='flex'; });
+    adTrigger.addEventListener('click',()=>{ adPop.style.display='block'; adTrigger.style.display='none'; });
   </script>
 </body>
 </html>
