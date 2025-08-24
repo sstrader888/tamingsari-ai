@@ -1,612 +1,301 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SSTrader - Taming Sari + AI</title>
+  <!-- META SEO (OPEN/EDU FOCUS) -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>SStrader Academy – Coaching Taming Sari oleh Cikgu Heri</title>
+  <meta name="description" content="SStrader Academy oleh Cikgu Heri: Kelas asas hingga lanjutan, 1-to-1 coaching, group coaching dan pakej premium di HQ Taiping. Tempat tinggal disediakan." />
+  <meta name="keywords" content="kelas forex, coaching trading, taming sari, cikgu heri, kelas trader, asas trading, teknikal analisis" />
+  <meta name="author" content="SStrader Academy" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="SStrader Academy – Coaching Taming Sari oleh Cikgu Heri">
+  <meta property="og:description" content="Program pembelajaran trading berstruktur untuk pemula hingga lanjutan. 1-to-1, group dan pakej premium di HQ Taiping.">
+  <meta property="og:image" content="https://i.imgur.com/qzYmSNR.jpeg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thesstrader.com">
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" href="https://i.imgur.com/qzYmSNR.jpeg" type="image/jpeg">
-  <script src="https://unpkg.com/scrollreveal"></script>
+
   <style>
-    :root {
-      --primary: #00ff99;
-      --dark: #000;
-      --light: #fff;
-      --card: #111;
-      --accent: #ff9800;
-      --gray: #ccc;
+    :root{
+      --bg:#0b0b0d; --card:#141418; --muted:#a9a9b2;
+      --brand:#ff7a1a; --brand-2:#ffd166; --line:#23232a;
+      --text:#fff; --accent:#00d1ff;
     }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:radial-gradient(1200px 600px at 10% -10%,rgba(255,122,26,.12),transparent),
+                               radial-gradient(900px 500px at 100% 10%,rgba(0,209,255,.08),transparent),
+                               var(--bg); color:var(--text); font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial; line-height:1.6}
+    a{color:var(--accent);text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    .container{max-width:1200px;margin:0 auto;padding:18px 20px}
+    header.nav{
+      position:sticky; top:0; z-index:50; backdrop-filter: blur(8px);
+      background:rgba(11,11,13,.7); border-bottom:1px solid var(--line)
     }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--dark);
-      color: var(--light);
-      scroll-behavior: smooth;
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{height:36px;filter:grayscale(100%) contrast(110%)} /* logo ~40% dari biasa */
+    .brand strong{font-size:18px;letter-spacing:.2px}
+    .cta-whatsapp{
+      background:linear-gradient(90deg,#25D366,#128C7E); padding:10px 14px;border-radius:10px;color:white;font-weight:600
     }
-    header {
-      background: var(--card);
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+
+    .hero{padding:60px 0 20px; text-align:center}
+    .hero h1{font-size:clamp(28px,3.6vw,44px);margin:0 0 10px}
+    .hero p{color:var(--muted);max-width:820px;margin:0 auto 22px}
+    .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0 6px}
+    .badge{border:1px solid var(--line);background:rgba(255,255,255,.03);padding:8px 12px;border-radius:999px;font-size:13px}
+
+    .section{padding:28px 0}
+    .section h2{font-size:clamp(22px,2.6vw,30px); margin:0 0 12px}
+    .muted{color:var(--muted)}
+
+    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    @media (max-width:960px){.cards{grid-template-columns:1fr 1fr}}
+    @media (max-width:640px){.cards{grid-template-columns:1fr}}
+
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+      border:1px solid var(--line); border-radius:16px; padding:18px; position:relative; overflow:hidden
     }
-    .logo-section {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .card h3{margin:0 0 6px}
+    .price{font-weight:700;color:var(--brand-2)}
+    .list{margin:10px 0 14px; padding-left:18px}
+    .list li{margin:6px 0}
+    .btn{
+      display:inline-block; padding:10px 14px; border-radius:10px; font-weight:600;
+      color:#0b0b0d; background:linear-gradient(90deg,var(--brand),var(--brand-2));
+      border:0; cursor:pointer
     }
-    .logo-section img {
-      height: 38px;
-    }
-    .logo-section span {
-      font-weight: 600;
-      color: white;
-      font-size: 1.1rem;
-    }
-    nav {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    nav a {
-      color: var(--light);
-      text-decoration: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-    nav a.buy-btn {
-      background: var(--accent);
-      color: #000;
-    }
-    nav a:hover {
-      background: var(--primary);
-      color: #000;
-    }
-    .dropdown {
-      position: relative;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #222;
-      min-width: 160px;
-      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-      z-index: 1;
-      border-radius: 8px;
-    }
-    .dropdown-content a {
-      color: white;
-      padding: 10px 14px;
-      text-decoration: none;
-      display: block;
-    }
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      cursor: pointer;
-    }
-    .hamburger div {
-      width: 24px;
-      height: 3px;
-      background: white;
-      margin: 4px 0;
-    }
-    .mobile-menu {
-      display: none;
-      flex-direction: column;
-      background: var(--card);
-      padding: 10px 20px;
-    }
-    .mobile-menu a {
-      color: white;
-      padding: 8px 0;
-      text-decoration: none;
-      border-bottom: 1px solid #333;
-    }
-    .mobile-menu .sub-menu {
-      padding-left: 15px;
-      background-color: #111;
-      border-radius: 4px;
-      display: none;
-    }
-    .mobile-menu .sub-menu.active {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 8px 0 8px 15px;
-    }
-    .hero {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .hero img {
-      max-width: 90%;
-      width: 320px;
-    }
-    .hero h1 {
-      font-size: 2rem;
-      color: var(--primary);
-      margin-top: 20px;
-    }
-    .hero p {
-      font-size: 1rem;
-      color: var(--gray);
-      margin: 15px auto;
-    }
-    .hero a {
-      display: inline-block;
-      margin-top: 20px;
-      background: var(--accent);
-      color: black;
-      padding: 10px 20px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    @media (max-width: 768px) {
-      nav.desktop-nav {
-        display: none;
-      }
-      .hamburger {
-        display: flex;
-      }
-      .mobile-menu.active {
-        display: flex;
-      }
-      .hero h1 {
-        font-size: 1.5rem;
-      }
-      .hero p {
-        font-size: 0.95rem;
-      }
-    }
+    .btn.outline{color:#fff;background:transparent;border:1px solid var(--line)}
+
+    .grid-2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+    @media (max-width:900px){.grid-2{grid-template-columns:1fr;}}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+
+    /* Artikel */
+    .articles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    @media (max-width:880px){.articles{grid-template-columns:1fr}}
+    .article{border:1px solid var(--line);border-radius:14px;padding:14px;background:rgba(255,255,255,.02)}
+    .article a{font-weight:600}
+
+    /* FAQ */
+    .faq-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02);cursor:pointer}
+    .faq-q{font-weight:600}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,opacity .35s ease;opacity:.5}
+    .faq-item.active .faq-a{max-height:240px;opacity:1}
+
+    /* Footer */
+    footer{border-top:1px solid var(--line); padding:24px 0; color:var(--muted); font-size:14px}
+
+    /* Iklan pop kecil (optional) */
+    .ad-pop{position:fixed;right:16px;bottom:84px;background:var(--card);border:1px solid var(--line);
+            border-radius:12px;padding:10px;width:240px;z-index:40;display:none}
+    .ad-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .ad-trigger{position:fixed;right:16px;bottom:84px;width:40px;height:40px;border-radius:50%;
+                background:linear-gradient(90deg,var(--brand),var(--brand-2));display:none;align-items:center;justify-content:center;font-weight:700;color:#000;z-index:39}
+
   </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
+        <strong>SStrader Academy</strong>
+      </div>
+      <a class="cta-whatsapp" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20nak%20tanya%20program%20coaching.">Hubungi Cikgu Heri</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero container">
+    <div class="badges">
+      <span class="badge">HQ Taiping, Perak</span>
+      <span class="badge">Tempat tinggal disediakan</span>
+      <span class="badge">Silibus berstruktur</span>
+    </div>
+    <h1>Pembelajaran Trading Berfokus & Berdisiplin</h1>
+    <p>Latihan dari asas hingga lanjutan bersama <strong>Cikgu Heri</strong>. Sesuai untuk pemula yang mahu mula dengan betul dan trader intermediate yang perlukan struktur, disiplin dan pemahaman price action.</p>
+  </section>
+
+  <!-- PAKEJ (Open/Compliant) -->
+  <section class="container section">
+    <h2>Pilih Pakej Pembelajaran</h2>
+    <p class="muted">Semua sesi dijalankan di <strong>HQ SStrader, Taiping, Perak</strong>. Tempat tinggal disediakan untuk memudahkan pembelajaran intensif.</p>
+
+    <div class="cards" style="margin-top:14px">
+      <!-- 1-to-1 -->
+      <div class="card">
+        <h3>👨‍🏫 1-to-1 Coaching</h3>
+        <div class="price">RM2,000</div>
+        <ul class="list">
+          <li>Fokus penuh pada kekuatan & kelemahan individu</li>
+          <li>Drill teknikal & latihan rekod jurnal</li>
+          <li>Jadual fleksibel (ikut slot Cikgu)</li>
+        </ul>
+        <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20berminat%201-to-1%20coaching.">Daftar Minat</a>
+      </div>
+
+      <!-- Group -->
+      <div class="card">
+        <h3>👥 Group Coaching</h3>
+        <div class="price">RM4,000 (min 4 orang)</div>
+        <ul class="list">
+          <li>Belajar dalam kumpulan kecil, interaktif</li>
+          <li>Latihan praktikal & pembentangan setup</li>
+          <li>Nota modul & tugasan mingguan</li>
+        </ul>
+        <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20berminat%20Group%20coaching%20(min%204).">Tempah Kumpulan</a>
+      </div>
+
+      <!-- Premium -->
+      <div class="card">
+        <h3>🌟 Pakej Premium</h3>
+        <div class="price">Sebut harga khas</div>
+        <ul class="list">
+          <li>Silibus penuh + mentoring lanjutan</li>
+          <li>Sesi praktikal intensif di HQ (dengan penginapan)</li>
+          <li>Pemeriksaan jurnal & pelan pembelajaran individu</li>
+        </ul>
+        <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20mohon%20maklumat%20Pakej%20Premium.">Minta Sebut Harga</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SILIBUS + LOKASI -->
+  <section class="container section grid-2">
+    <div class="panel">
+      <h2>Silibus Ringkas</h2>
+      <ul class="list" style="margin-top:6px">
+        <li>Asas pasaran & struktur pergerakan harga</li>
+        <li>Price Action: zon minat, candle behavior, momentum</li>
+        <li>Rangka kerja “Entry bersebab” & timing</li>
+        <li>Pengurusan risiko & ukuran posisi (risk budgeting)</li>
+        <li>Jurnal & review: bina sistem yang berulang</li>
+        <li>Psikologi: rutin, disiplin, expectation management</li>
+      </ul>
+      <p class="muted">Nota: Tiada janji pulangan. Fokus pada proses & kemahiran.</p>
+    </div>
+    <div class="panel">
+      <h2>Lokasi & Kemudahan</h2>
+      <p>Semua program diadakan di <strong>HQ SStrader, Taiping, Perak</strong>. Penginapan disediakan untuk peserta luar kawasan (tertakluk kekosongan).</p>
+      <a class="btn outline" href="https://api.whatsapp.com/send?phone=60132541233&text=Assalamualaikum%2C%20nak%20tanya%20slot%20dan%20penginapan%20di%20HQ%20SStrader.">Tanya Slot & Penginapan</a>
+    </div>
+  </section>
+
+  <!-- ARTIKEL TERKINI -->
+  <section class="container section">
+    <h2>Artikel Terkini</h2>
+    <div class="articles" style="margin-top:10px">
+      <div class="article">
+        <a href="artikel1.html">Rahsia Rangka Kerja Entry Bersebab (Untuk Pemula)</a>
+        <p class="muted" style="margin:6px 0 0">Cara melihat market secara struktur — bukan tekaan.</p>
+      </div>
+      <div class="article">
+        <a href="artikel4.html">Money Management & Compounding: Disiplin Diutamakan</a>
+        <p class="muted" style="margin:6px 0 0">Formula risiko praktikal untuk jangka panjang.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="container section">
+    <h2>Soalan Lazim</h2>
+    <div class="faq" style="display:grid;gap:10px;margin-top:12px">
+      <div class="faq-item">
+        <div class="faq-q">Adakah kelas sesuai untuk pemula?</div>
+        <div class="faq-a">Ya. Silibus bermula dari asas pasaran, disusun agar pemula boleh ikut langkah demi langkah.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Berapa lama tempoh sesi?</div>
+        <div class="faq-a">Bergantung kepada pakej. 1-to-1 lebih fleksibel (beberapa sesi fokus). Group dijadualkan dengan modul bertahap.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Ada jaminan keuntungan?</div>
+        <div class="faq-a">Tiada. Program ini melatih kemahiran proses: analisis, risiko & disiplin. Keputusan bergantung pada usaha & pematuhan pelan.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Bagaimana cara daftar?</div>
+        <div class="faq-a">Klik mana-mana butang WhatsApp di laman ini untuk berbual terus dengan Cikgu Heri: <a href="https://api.whatsapp.com/send?phone=60132541233">+60 13-254 1233</a>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HUBUNGI -->
+  <section class="container section">
+    <div class="panel" style="text-align:center">
+      <h2>Sedia Bermula?</h2>
+      <p class="muted">Beritahu latar belakang anda (pemula/intermediate), masa sesuai, dan matlamat pembelajaran.</p>
+      <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Cikgu%2C%20saya%20nak%20mula%20belajar.%20Ini%20latar%20belakang%20saya%3A">WhatsApp Cikgu Heri</a>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER / COMPLIANCE -->
+  <section class="container section">
+    <div class="panel">
+      <h2>Penafian & Pematuhan</h2>
+      <p class="muted" style="margin:6px 0 0">
+        Laman ini bertujuan pendidikan. Tiada tawaran produk pelaburan terkawal, tiada nasihat kewangan individu, dan tiada ajakan untuk membuka akaun/berurus niaga.
+        Contoh dan kajian kes adalah untuk tujuan pembelajaran sahaja. Prestasi lampau bukan jaminan keputusan masa hadapan.
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div>© 2025 SStrader Academy. Semua hak cipta terpelihara.</div>
+      <div>Hubungi: <a href="https://api.whatsapp.com/send?phone=60132541233">+60 13-254 1233</a></div>
+    </div>
+  </footer>
+
+  <!-- OPTIONAL: Iklan kecil (boleh buang jika tak perlu) -->
+  <div id="adPop" class="ad-pop">
+    <div class="ad-head">
+      <strong style="font-size:14px;color:var(--brand-2)">Notis</strong>
+      <button id="adClose" style="all:unset;cursor:pointer;color:#fff">✕</button>
+    </div>
+    <div style="font-size:13px" class="muted">
+      Jadual slot baru dibuka setiap bulan. Klik WhatsApp untuk semak kekosongan.
+    </div>
+    <div style="margin-top:10px">
+      <a class="btn" style="width:100%;text-align:center" href="https://api.whatsapp.com/send?phone=60132541233&text=Cikgu%2C%20nak%20tanya%20slot%20bulan%20ini.">Tanya Slot</a>
+    </div>
+  </div>
+  <div id="adTrigger" class="ad-trigger">🔔</div>
+
   <script>
-    function openReferralLink(product) {
-      const ref = localStorage.getItem('referralId') || '';
-      const phone = '60194173200';
-      const base = `https://api.whatsapp.com/send?phone=${phone}&text=`;
-      let msg = `Saya berminat dengan ${product}`;
-      if (ref) msg += `&ref=${ref}`;
-      window.open(base + encodeURIComponent(msg), '_blank');
+    // FAQ toggle
+    document.querySelectorAll('.faq-item').forEach(it=>{
+      it.addEventListener('click',()=>it.classList.toggle('active'));
+    });
+
+    // Iklan kecil: muncul sekali per sesi
+    const adPop = document.getElementById('adPop');
+    const adTrigger = document.getElementById('adTrigger');
+    const adClose = document.getElementById('adClose');
+
+    const seen = sessionStorage.getItem('ad_seen');
+    if(!seen){
+      setTimeout(()=>{ adPop.style.display='block'; sessionStorage.setItem('ad_seen','1'); }, 1200);
     }
 
-    function toggleMobileMenu() {
-      document.getElementById('mobileMenu').classList.toggle('active');
-    }
-
-    function toggleSubMenu() {
-      const submenu = document.getElementById("produkSubMenu");
-      const toggleText = document.getElementById("produkToggle");
-      submenu.classList.toggle("active");
-      toggleText.textContent = submenu.classList.contains("active") ? "Produk ▴" : "Produk ▾";
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      ScrollReveal().reveal('.hero img', { duration: 1000, origin: 'bottom', distance: '40px' });
-      ScrollReveal().reveal('.hero h1', { duration: 1200, origin: 'bottom', distance: '30px', delay: 200 });
-      ScrollReveal().reveal('.hero p', { duration: 1400, origin: 'bottom', distance: '30px', delay: 400 });
-      ScrollReveal().reveal('.hero a', { duration: 1600, origin: 'bottom', distance: '30px', delay: 600 });
-
-      const ref = localStorage.getItem("referralId") || "";
-      const produkLinks = ["link-buku", "link-indicator", "link-coaching", "link-copytrade"];
-      produkLinks.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.href += ref;
-        }
-      });
+    adClose.addEventListener('click',()=>{
+      adPop.style.display='none';
+      adTrigger.style.display='flex';
+    });
+    adTrigger.addEventListener('click',()=>{
+      adPop.style.display='block';
+      adTrigger.style.display='none';
     });
   </script>
-</head>
-<body>
-
-<header>
-  <div class="logo-section">
-    <a href="/" style="text-decoration: none; color: white; font-size: 1.8rem;"><img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SSTrader" style="height: 48px; vertical-align: middle; margin-right: 12px;"><strong>SSTrader</strong></a>
-  </div>
-
-  <div class="hamburger" onclick="toggleMobileMenu()">
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
-
-  <nav class="desktop-nav">
-    <a href="login.html">Login</a>
-    <a href="artikel.html">Artikel</a>
-    <div class="dropdown">
-      <a href="#">Produk ▾</a>
-      <div class="dropdown-content">
-        <a href="order.html?produk=Buku%20Teknik%20Taming%20Sari">Buku</a>
-        <a href="order.html?produk=Indicator%20Taming%20Sari+AI%20(Lifetime)">Indicator</a>
-        <a href="order.html?produk=Coaching%201%20on%201">Coaching</a>
-    <a href="#about">Tentang Kami</a>
-    <a href="#hubungi">Hubungi</a>
-  </nav>
-</header>
-
-<div id="mobileMenu" class="mobile-menu">
-  <a href="login.html">Login</a>
-  <a href="artikel.html">Artikel</a>
-  <div onclick="toggleSubMenu()" style="cursor: pointer;">
-    <span id="produkToggle">Produk ▾</span>
-    <div class="sub-menu" id="produkSubMenu">
-      <a href="order.html?produk=Buku%20Teknik%20Taming%20Sari">Buku</a>
-      <a href="order.html?produk=Indicator%20Taming%20Sari+AI%20(Lifetime)">Indicator</a>
-      <a href="order.html?produk=Coaching%201%20on%201">Coaching</a>
-  <a href="#about">Tentang Kami</a>
-  <a href="#hubungi">Hubungi</a>
-</div>
-
-<section class="hero">
-  <img src="https://i.imgur.com/ooU8RLW.png" alt="Indicator Screenshot">
-  <h1>Teknik AI Taming Sari untuk Entry Penuh Keyakinan.</h1>
-  <p>Kuasai teknik entry menggunakan indikator AI eksklusif kami di TradingView.</p>
-    <a href="https://toyyibpay.com/Indicator-Taming-Sari-AI" class="btn-orange" target="_blank" rel="noopener noreferrer">Beli Sekarang</a>
-  </section>
-<style> 
-  .scroll-marquee {
-    margin-top: 20px;
-    color: #ffcc00;
-    font-weight: bold;
-    font-size: 1.1rem;
-    overflow: hidden;
-    white-space: nowrap;
-    box-sizing: border-box;
-    position: relative;
-    height: 30px;
-    background-color: transparent;
-  }
-  .scroll-marquee span {
-    display: inline-block;
-    white-space: nowrap;
-    position: absolute;
-    will-change: transform;
-    animation: marquee 15s linear infinite;
-  }
-  @keyframes marquee {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-  }
-</style>
-
-<!-- Animated Hero Scrolling Text -->
-<div class="scroll-marquee">
-  <span>✨ HARGA PROMOSI LIFETIME TAMING SARI AI: RM1000 SAHAJA ✨ JANGAN LEPASKAN PELUANG INI! ✨ HARGA PROMOSI LIFETIME TAMING SARI AI: RM1000 SAHAJA ✨ JANGAN LEPASKAN PELUANG INI!</span>
-</div>
-  
-  <!-- Redirect Message (Mesej Selepas Pembelian) -->
-  <section id="thankyou" style="display:none;">
-    <h2>Terima Kasih!</h2>
-    <p>Pembayaran anda telah berjaya. Sila hubungi kami di WhatsApp:</p>
-    <ul>
-      <li><a href="https://wa.me/60135372558" target="_blank">Encik Nizam (013-5372558)</a></li>
-      <li><a href="https://wa.me/60135107551" target="_blank">Encik Hasril (013-5107551)</a></li>
-      <li><a href="https://wa.me/60194173200" target="_blank">Cikgu Heri (019-4173200)</a></li>
-    </ul>
-    <p>Atau emelkan kepada <a href="mailto:sstraderteguh@gmail.com">sstraderteguh@gmail.com</a></p>
-  </section>
-
-  </section>  <!-- Harga Semasa XAU/USD --><section class="section" id="xauusd" style="padding: 60px 20px; text-align: center;">
-  <h2 style="color: var(--primary); margin-bottom: 20px;">💰 Harga Semasa XAU/USD</h2>
-  <div style="overflow:hidden; width:100%; height:400px;">
-    <iframe src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_63de0&symbol=OANDA%3AXAUUSD&interval=1&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=Asia%2FKuala_Lumpur&withdateranges=1&hidevolume=1&hideideas=1&hidelegend=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=ms" width="100%" height="100%" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
-  </div>
-</section>  <!-- Tentang Kami --><section class="section" id="about" style="padding: 60px 20px; max-width: 900px; margin: auto;">
-  <h2 style="color: var(--primary); margin-bottom: 20px; text-align: center;">🏢 Tentang Kami</h2>
-  <p style="font-size: 1.1rem; line-height: 1.8; color: var(--light); text-align: center;">
-    SSTrader merupakan komuniti trader yang berpangkalan di <strong>HQ Trading House Taiping, Perak</strong>.
-    Kami menyediakan solusi lengkap untuk trader termasuk indikator AI, sesi coaching intensif,
-    program copytrade, dan bahan pembelajaran premium.
-    <br><br>
-    Diterajui oleh <strong>Cikgu Heri</strong> bersama pasukan berpengalaman, kami komited dalam membimbing trader
-    mencapai kefahaman dalam market melalui pendekatan yang tersusun dan memberi kesan baik kepada para trader pemula sebelum berdagang.
-  </p>
-  
- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/scrollreveal"></script>
-  <style>
-    :root {
-      --primary: #00ff99;
-      --dark: #000;
-      --light: #fff;
-      --card: #111;
-      --accent: #ff9800;
-      --gray: #ccc;
-    }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--dark);
-      color: var(--light);
-      scroll-behavior: smooth;
-      margin: 0;
-      padding: 0;
-    }
-    .section {
-      padding: 60px 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    .section h2 {
-      color: var(--primary);
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2.2rem;
-      font-weight: 700;
-    }
-    .testimoni-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    .testimoni-card {
-      background: var(--card);
-      border-radius: 10px;
-      padding: 24px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-      transition: transform 0.3s;
-    }
-    .testimoni-card:hover {
-      transform: translateY(-5px);
-    }
-    .testimoni-card span {
-      color: gold;
-      font-size: 1.3rem;
-      display: block;
-      margin-bottom: 10px;
-    }
-    .testimoni-card p {
-      font-size: 1rem;
-      color: var(--gray);
-      margin-bottom: 10px;
-    }
-    .testimoni-card h4 {
-      margin: 0;
-      font-size: 1rem;
-      color: var(--light);
-      font-weight: 500;
-    }
-  </style>
-</head>
-<body>
-
-<section class="section" id="testimoni">
-  <h2>⭐ Testimoni Pelanggan</h2>
-  <div class="testimoni-grid">
-    <div class="testimoni-card" data-sr>
-      <span>★★★★★</span>
-      <p>“Saya tak pernah profit konsisten sebelum jumpa teknik Taming Sari AI.”</p>
-      <h4>- Afiq, Johor Bahru</h4>
-    </div>
-    <div class="testimoni-card" data-sr>
-      <span>★★★★☆</span>
-      <p>“Coaching sangat membantu, banyak pencerahan.”</p>
-      <h4>- Siti, Shah Alam</h4>
-    </div>
-    <div class="testimoni-card" data-sr>
-      <span>★★★★★</span>
-      <p>“Indicator ni sangat jelas dan mudah difahami.”</p>
-      <h4>- Haris, Kota Bharu</h4>
-    </div>
-    <div class="testimoni-card" data-sr>
-      <span>★★★★☆</span>
-      <p>“Saya mula dengan akaun kecil, sekarang profit makin stabil.”</p>
-      <h4>- Daniel, Ipoh</h4>
-    </div>
-    <div class="testimoni-card" data-sr>
-      <span>★★★★★</span>
-      <p>“Sangat berbaloi daftar coaching, siap ada follow up.”</p>
-      <h4>- Amir, Kuala Terengganu</h4>
-    </div>
-    <div class="testimoni-card" data-sr>
-      <span>★★★★☆</span>
-      <p>“Pasukan SSTrader sangat responsif dan supportive.”</p>
-      <h4>- Hana, Sungai Petani</h4>
-    </div>
-    <div class="testimoni-card" data-sr>
-      <span>★★★★★</span>
-      <p>“Indicator ini mengubah cara saya melihat market.”</p>
-      <h4>- Faizal, Melaka</h4>
-    </div>
-    <div class="testimoni-card" data-sr>
-      <span>★★★★★</span>
-      <p>“Saya dah cuba macam-macam sebelum ini, ini paling senang faham.”</p>
-      <h4>- Ika, Kuching</h4>
-    </div>
-    <div class="testimoni-card" data-sr>
-      <span>★★★★★</span>
-      <p>“Thank you dan terima kasih team yang kasihi.Tanpa Ai mungkin saya tak dapat trade”</p>
-      <h4>- Nisan, Penang</h4>
-    </div>
-  </div>
-</section>
-
-<script>
-  ScrollReveal().reveal('[data-sr]', {
-    distance: '30px',
-    duration: 1000,
-    easing: 'ease-in-out',
-    origin: 'bottom',
-    interval: 100
-  });
-</script>
-
-  </div>
-</section><!-- Coaching Section --><section class="section" id="coaching" style="padding: 60px 20px; max-width: 1000px; margin: auto;">
-  <h2 style="color: var(--primary); margin-bottom: 30px; text-align: center;">👨‍🏫 Pakej Coaching</h2>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-    <div style="background: #111; padding: 20px; border-radius: 10px;">
-      <h3 style="color: var(--accent);">1-on-1 Personal Coaching</h3>
-      <div style="background: #222; padding: 15px; border-radius: 8px; margin-top: 10px;">
-        <p><strong>Harga:</strong> RM2500</p>
-        <ul style="padding-left: 20px; line-height: 1.8;">
-          <li>🔹 Sesi peribadi bersama Cikgu Heri</li>
-          <li>🔹 Bimbingan khas dan follow-up sepanjang masa</li>
-          <li>🔹 Sesi live trading dan kajian pasaran sebenar</li>
-          <li>🔹 Akses kepada kumpulan support eksklusif</li>
-        </ul>
-        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Minat%20coaching%201+1" style="display: inline-block; margin-top: 10px; background: var(--primary); color: black; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">Daftar Sekarang</a>
-      </div>
-    </div>
-    <div style="background: #111; padding: 20px; border-radius: 10px;">
-      <h3 style="color: var(--accent);">Group Coaching</h3>
-      <div style="background: #222; padding: 15px; border-radius: 8px; margin-top: 10px;">
-        <p><strong>Harga:</strong> RM2000/pax</p>
-        <ul style="padding-left: 20px; line-height: 1.8;">
-          <li>🔹 Minimum 4- maximum 6 peserta per kumpulan</li>
-          <li>🔹 Latihan secara intensif selama 2 hari</li>
-          <li>🔹 Penerangan mendalam tentang strategi Taming Sari AI</li>
-          <li>🔹 Akses komuniti telegram eksklusif</li>
-        </ul>
-        <a href="https://api.whatsapp.com/send?phone=60194173200&text=Minat%20coaching%20berkumpulan" style="display: inline-block; margin-top: 10px; background: var(--primary); color: black; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">Daftar Sekarang</a>
-      </div>
-    </div>
-  <div style="margin-top: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
-    <img src="https://i.imgur.com/yPllXC7.jpeg" alt="Coaching 1" style="width: 45%; border-radius: 10px;">
-    <img src="https://i.imgur.com/tP41zon.jpeg" alt="Coaching 2" style="width: 45%; border-radius: 10px;">
-    <img src="https://i.imgur.com/UqmHOtC.jpeg" alt="Coaching 3" style="width: 45%; border-radius: 10px;">
-    <img src="https://i.imgur.com/cj0F9ew.jpeg" alt="Coaching 4" style="width: 45%; border-radius: 10px;">
-  </div>
-  <section id="hubungi" style="background-color:#0d0d0d; color:white; padding:50px 20px; font-family:'Poppins', sans-serif;">
-  <div style="max-width:800px; margin:0 auto; text-align:center;">
-    <h2 style="color:#00ff99; font-size:32px; margin-bottom:20px;">Hubungi Kami</h2>
-    <p style="font-size:18px; margin-bottom:10px;"><strong>Encik Nizam:</strong> <a href="https://wa.me/60135372558" style="color:#00ff99; text-decoration:none;" target="_blank">013-5372558</a></p>
-    <p style="font-size:18px; margin-bottom:10px;"><strong>Encik Hasril:</strong> <a href="https://wa.me/60135107551" style="color:#00ff99; text-decoration:none;" target="_blank">013-5107551</a></p>
-    <p style="font-size:18px; margin-bottom:10px;"><strong>Cikgu Heri:</strong> <a href="https://wa.me/60194173200" style="color:#00ff99; text-decoration:none;" target="_blank">019-4173200</a></p>
-    <p style="font-size:18px; margin-bottom:10px;"><strong>Email:</strong> <a href="mailto:sstraderteguh@gmail.com" style="color:#00ff99; text-decoration:none;">sstraderteguh@gmail.com</a></p>
-    <p style="font-size:18px;"><strong>Alamat:</strong> Taiping, Perak</p>
-  </div>
-</section>
-</section><!-- Soalan Lazim (FAQ) --><section class="section" id="faq" style="padding: 60px 20px; max-width: 900px; margin: auto;">
-  <h2 style="color: var(--primary); margin-bottom: 30px; text-align: center;">❓ Soalan Lazim</h2>
-  <div style="background: #111; padding: 25px; border-radius: 10px; line-height: 1.8;">
-    <p><strong style="color: var(--primary);">S: Adakah saya perlu tahu teknikal analisis sebelum guna indikator?</strong><br>J: Tidak perlu, indikator ini mudah dan direka khas untuk semua peringkat trader.</p>
-    <p><strong style="color: var(--primary);">S: Platform apa yang digunakan?</strong><br>J: TradingView – platform charting terkemuka dunia dan mesra pengguna.</p>
-    <p><strong style="color: var(--primary);">S: Adakah boleh support live trading?</strong><br>J: Ya, termasuk sesi live trading semasa coaching dan sokongan komuniti.</p>
-    <p><strong style="color: var(--primary);">S: Bolehkah dapatkan indikator secara percuma?</strong><br>J: Ya! Jika anda mendaftar dan membuat deposit minimum USD100 melalui broker pilihan SSTrader, anda layak menerima akses percuma ke indikator Taming Sari + AI.</p>
-  </div>
-</section>
-  
-  <section class="section" style="background-color: #0a0a0a; padding: 40px 20px; text-align: center;">
-  <div style="max-width: 700px; margin: auto; font-size: 14px; color: #cccccc;">
-    ⚠️ Risiko: Dagangan CFD melibatkan risiko kerugian besar dan mungkin tidak sesuai untuk semua pelabur.<br>
-    Dapatkan nasihat daripada penasihat kewangan bebas sebelum membuat keputusan pelaburan.
-  </div>
-
-  <div style="margin-top: 15px; font-size: 13px; color: #cccccc;">
-    © 2025 SSTrader. Semua Hak Cipta Terpelihara.
-  </div>
-</section>
-  </body>
-  
-<!-- Rakan Niaga Popup -->
-<style>
-  #popup-rakan-niaga {
-    position: fixed;
-    top: 20%;
-    right: -400px;
-    background: #111;
-    color: white;
-    padding: 20px;
-    border-radius: 8px 0 0 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.6);
-    transition: right 0.5s ease-in-out;
-    width: 320px;
-    z-index: 9999;
-  }
-  #popup-rakan-niaga.show {
-    right: 0;
-  }
-  #popup-rakan-niaga h3 {
-    color: #00ff99;
-    margin-bottom: 16px;
-    font-size: 1.2rem;
-  }
-  #popup-rakan-niaga .partner {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-    background: #1a1a1a;
-    padding: 10px;
-    border-radius: 6px;
-  }
-  #popup-rakan-niaga .partner img {
-    height: 40px;
-    width: 40px;
-    object-fit: contain;
-    border-radius: 6px;
-  }
-  #popup-rakan-niaga .partner-info {
-    display: flex;
-    flex-direction: column;
-  }
-  #popup-rakan-niaga .partner-info a {
-    color: #ff9800;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  #popup-rakan-niaga .partner-info span {
-    font-size: 0.85rem;
-    color: #ccc;
-  }
-  #popup-rakan-niaga .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    color: #ff9800;
-    font-size: 1.2rem;
-    cursor: pointer;
-  }
-</style>
-
-<div id="popup-rakan-niaga">
-  <button class="close-btn" onclick="document.getElementById('popup-rakan-niaga').style.display='none'">&times;</button>
-  <h3>🤝 Rakan Niaga</h3>
-
-  <div class="partner">
-    <img src="https://i.imgur.com/WXlNs4o.jpeg" alt="Iron Gamers">
-    <div class="partner-info">
-      <a href="https://www.facebook.com/profile.php?id=61566999705522" target="_blank">Iron Gamers</a>
-      <span>Baiki konsol seluruh Malaysia</span>
-    </div>
-  </div>
-
-  <div class="partner">
-    <img src="https://i.imgur.com/7gYATX1.jpeg" alt="Big John">
-    <div class="partner-info">
-      <a href="https://bigjohnhouseofrotijohn.orderla.my" target="_blank">Big John</a>
-      <span>Roti John Kamunting</span>
-    </div>
-  </div>
-<script>
-  window.addEventListener('scroll', function () {
-    const popup = document.getElementById('popup-rakan-niaga');
-    const scrollPosition = window.scrollY + window.innerHeight;
-    const pageHeight = document.body.offsetHeight;
-
-    if ((scrollPosition / pageHeight) > 0.7) {
-      popup.classList.add('show');
-    }
-  });
-</script>
-
-</section><!-- WhatsApp Floating Button --><a href="https://api.whatsapp.com/send?phone=60194173200" target="_blank" style="position: fixed; bottom: 20px; right: 20px; background-color: #25D366; color: white; padding: 14px 16px; border-radius: 50%; text-align: center; font-size: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none;">
-  💬</a>
-  
-  
-
-
-
+</body>
+</html>
