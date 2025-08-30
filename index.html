@@ -136,24 +136,6 @@
     /* Footer */
     footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:14px;background:#fff}
 
-    /* Floating Promo Video (auto popup) */
-    .promo-wrap{
-      position:fixed; right:16px; bottom:84px; width:300px; max-width:86vw;
-      background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:0 20px 36px rgba(3,70,148,.22);
-      z-index:70; display:none; overflow:hidden;
-    }
-    .promo-head{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--line)}
-    .promo-title{font-weight:700;color:var(--blue);font-size:14px}
-    .promo-ctrl{display:flex;gap:8px;align-items:center}
-    .promo-btn{all:unset;cursor:pointer;font-weight:700;color:var(--blue)}
-    .promo-video{width:100%;display:block;background:#000}
-    /* Tiny trigger button after close */
-    .promo-trigger{
-      position:fixed; right:16px; bottom:84px; width:44px;height:44px;border-radius:50%;
-      background:linear-gradient(90deg,var(--blue),var(--blue-3)); color:#fff; display:none;align-items:center;justify-content:center;
-      font-weight:800; z-index:69; box-shadow:0 12px 24px rgba(3,70,148,.3); cursor:pointer;
-    }
-
     /* WhatsApp floating button */
     .wa-float{
       position:fixed; right:16px; bottom:20px; background:linear-gradient(90deg,#25D366,#128C7E); color:#fff;
@@ -320,23 +302,6 @@
   <!-- Floating WhatsApp -->
   <a class="wa-float" href="https://api.whatsapp.com/send?phone=60132541233&text=Cikgu%2C%20saya%20nak%20mula%20belajar.%20Ini%20latar%20belakang%20saya%3A">WhatsApp Cikgu</a>
 
-  <!-- Floating Promo Video -->
-  <div class="promo-wrap" id="promoWrap" aria-label="Video promosi">
-    <div class="promo-head">
-      <span class="promo-title">Video Promosi</span>
-      <div class="promo-ctrl">
-        <button id="muteBtn" class="promo-btn" title="Bunyi">🔊</button>
-        <button id="closePromo" class="promo-btn" title="Tutup">✕</button>
-      </div>
-    </div>
-    <!-- GUNA fail: /promo.mp4 di root repo -->
-    <video id="promoVideo" class="promo-video" playsinline muted preload="metadata">
-      <source src="promo.mp4" type="video/mp4">
-      Browser anda tidak menyokong video.
-    </video>
-  </div>
-  <div class="promo-trigger" id="promoTrigger" title="Buka video">▶</div>
-
   <script>
     // NAV toggle
     document.getElementById('hamburger').addEventListener('click', ()=>{
@@ -348,67 +313,6 @@
       it.addEventListener('click',()=>it.classList.toggle('active'));
     });
 
-    // ===== Promo Video Popup =====
-    const promoWrap = document.getElementById('promoWrap');
-    const promoTrigger = document.getElementById('promoTrigger');
-    const video = document.getElementById('promoVideo');
-    const closeBtn = document.getElementById('closePromo');
-    const muteBtn = document.getElementById('muteBtn');
-
-    // Tunjuk sekali setiap sesi bila scroll > 40% halaman
-    const sessionKey = 'promo_seen_v1';
-    const seen = sessionStorage.getItem(sessionKey);
-
-    function showPromo(){
-      promoWrap.style.display='block';
-      // Autoplay (mobile kebanyakannya perlukan 'muted')
-      video.muted = true;
-      muteBtn.textContent = '🔇';
-      video.play().catch(()=>{}); // ignore autoplay block
-    }
-
-    if(!seen){
-      window.addEventListener('scroll', ()=>{
-        const pos = (window.scrollY + window.innerHeight) / document.body.scrollHeight;
-        if(pos > 0.40){
-          showPromo();
-          sessionStorage.setItem(sessionKey,'1');
-          // remove listener selepas muncul
-          window.removeEventListener('scroll', arguments.callee);
-        }
-      });
-    }
-
-    // Tutup -> tukar ke butang kecil
-    closeBtn.addEventListener('click', ()=>{
-      promoWrap.style.display='none';
-      promoTrigger.style.display='flex';
-      video.pause();
-    });
-
-    // Klik butang kecil -> buka semula
-    promoTrigger.addEventListener('click', ()=>{
-      promoTrigger.style.display='none';
-      showPromo();
-    });
-
-    // Mute / Unmute
-    muteBtn.addEventListener('click', ()=>{
-      video.muted = !video.muted;
-      muteBtn.textContent = video.muted ? '🔇' : '🔊';
-      if(!video.paused){ video.play().catch(()=>{}); }
-    });
-
-    // Pastikan responsive height (ikut nisbah tiktok-ish)
-    function fixVideoHeight(){
-      const w = promoWrap.clientWidth;
-      video.style.height = (w*16/9) + 'px'; // 16:9
-    }
-    window.addEventListener('resize', fixVideoHeight);
-    const obs = new ResizeObserver(fixVideoHeight);
-    obs.observe(promoWrap);
-    // jika user terus ke bawah tanpa scroll, masih boleh buka manual dgn trigger
-    setTimeout(()=>{ if(!seen) promoTrigger.style.display='flex'; }, 3000);
-  </script>
 </body>
 </html>
+
