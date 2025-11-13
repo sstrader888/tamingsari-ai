@@ -1,11 +1,803 @@
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <title>IronTune Test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IronTune — Controller Calibration Hub</title>
+
+  <!-- Tailwind CDN untuk styling (neon dark) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", Roboto, sans-serif;
+    }
+    /* Stick dot helpers */
+    .stick-surface {
+      position: relative;
+      overflow: hidden;
+    }
+    .stick-dot {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.95);
+      transform: translate(-50%, -50%);
+    }
+  </style>
 </head>
-<body style="background:#111; color:white; font-family:sans-serif; padding:40px;">
-  <h1>IronTune — Controller Calibration Hub</h1>
-  <p>Route /irontune/ berfungsi. UI sedang disediakan.</p>
-</body>
-</html>
+<body class="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 text-zinc-100 p-6">
+
+  <main class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-cyan-300 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]">
+          IronTune <span class="text-zinc-400">— Controller Calibration Hub</span>
+        </h1>
+        <p class="text-zinc-400 mt-1">
+          by <span class="font-medium">Iron Gamers</span> • Web-based tester & calibration
+          (DualSense / DualShock / Xbox / Pro Controller)
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <button id="btnNewProfile"
+          class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-sm">
+          Profil Baharu
+        </button>
+        <button id="btnSaveProfile"
+          class="px-3 py-2 rounded-xl bg-white text-zinc-900 hover:opacity-90 text-sm">
+          Simpan Profil
+        </button>
+      </div>
+    </header>
+
+    <!-- Top Controls -->
+    <section class="grid md:grid-cols-3 gap-4 mb-6">
+
+      <!-- Gamepad Status -->
+      <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/60">
+        <div class="text-sm text-zinc-400">Gamepad</div>
+        <div id="padName" class="mt-1 text-lg font-medium">Tiada controller dikesan</div>
+        <div id="padStatus" class="text-xs text-zinc-500">Status: —</div>
+        <div class="mt-3 flex gap-2 flex-wrap">
+          <button id="btnDetect"
+            class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-sm">
+            Detect Controller
+          </button>
+          <button id="btnConnectHID"
+            class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-sm">
+            Advanced (WebHID Raw)
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/60">
+        <div class="text-sm text-zinc-400">Profil Aktif</div>
+        <select id="profileSelect"
+          class="mt-2 w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm"></select>
+        <div class="mt-2 flex gap-2 flex-wrap">
+          <button id="btnSaveAs"
+            class="px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-sm">
+            Save As
+          </button>
+          <button id="btnDeleteProfile"
+            class="px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-sm">
+            Padam
+          </button>
+        </div>
+      </div>
+
+      <!-- Import / Export -->
+      <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/60">
+        <div class="text-sm text-zinc-400">Import / Export</div>
+        <div class="flex gap-2 mt-2 flex-wrap">
+          <button id="btnExport"
+            class="px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-sm">
+            Export JSON
+          </button>
+          <label
+            class="px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 cursor-pointer text-sm">
+            Import JSON
+            <input id="fileImport" type="file" accept="application/json" class="hidden" />
+          </label>
+        </div>
+        <div class="text-[11px] text-zinc-500 mt-2">
+          Profil disimpan di browser (localStorage). Sesuai untuk kegunaan kedai servis & gamer.
+        </div>
+      </div>
+    </section>
+
+    <!-- Calibration + Visuals -->
+    <section class="grid lg:grid-cols-2 gap-6">
+
+      <!-- Left: Controller Tester -->
+      <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/60">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-cyan-300 drop-shadow-[0_0_8px_rgba(34,211,238,0.7)]">
+            Controller Tester
+          </h2>
+          <div class="text-xs text-zinc-500">Polling via Gamepad API</div>
+        </div>
+
+        <!-- Layout badge -->
+        <div class="flex items-center justify-between text-xs text-zinc-400 mb-2">
+          <span id="padIdShort" class="truncate max-w-[65%]">Tiada controller dikesan</span>
+          <span id="layoutBadge"
+            class="px-2 py-0.5 rounded-full border border-cyan-500/40 text-[10px] uppercase tracking-wide">
+            Generic Layout
+          </span>
+        </div>
+
+        <!-- Visual layout -->
+        <div id="layoutPS"
+          class="relative w-full max-w-xl mx-auto h-80 rounded-[2.2rem] border border-cyan-500/30 bg-zinc-950 shadow-[0_0_40px_rgba(34,211,238,0.25)] overflow-hidden">
+          <!-- Top triggers + bumpers -->
+          <div class="absolute inset-x-6 top-3 flex justify-between text-[10px] text-cyan-200">
+            <div class="flex flex-col gap-1 items-start w-32">
+              <div class="w-full">
+                <div class="flex justify-between text-xs text-zinc-300 mb-0.5">
+                  <span>L2</span><span id="lblL2Pct">0%</span>
+                </div>
+                <div class="h-2 rounded bg-zinc-800 overflow-hidden">
+                  <div id="barL2" class="h-full bg-white/90" style="width:0%"></div>
+                </div>
+              </div>
+              <div
+                id="lampL1"
+                class="px-2 py-1 rounded text-[10px] border border-zinc-700 text-zinc-400 inline-block">
+                L1
+              </div>
+            </div>
+            <div class="flex flex-col gap-1 items-end w-32">
+              <div class="w-full">
+                <div class="flex justify-between text-xs text-zinc-300 mb-0.5">
+                  <span>R2</span><span id="lblR2Pct">0%</span>
+                </div>
+                <div class="h-2 rounded bg-zinc-800 overflow-hidden">
+                  <div id="barR2" class="h-full bg-white/90" style="width:0%"></div>
+                </div>
+              </div>
+              <div
+                id="lampR1"
+                class="px-2 py-1 rounded text-[10px] border border-zinc-700 text-zinc-400 inline-block">
+                R1
+              </div>
+            </div>
+          </div>
+
+          <!-- Touchpad -->
+          <div
+            id="touchpad"
+            class="absolute left-1/2 top-[32%] -translate-x-1/2 w-40 h-16 rounded-2xl border border-zinc-700 bg-zinc-900/80">
+          </div>
+
+          <!-- Share / Options -->
+          <div class="absolute left-1/2 top-[23%] -translate-x-1/2 flex gap-3 text-[10px]">
+            <div id="lampShare"
+              class="px-2 py-1 rounded text-[10px] border border-zinc-700 text-zinc-400">
+              Share
+            </div>
+            <div id="lampOptions"
+              class="px-2 py-1 rounded text-[10px] border border-zinc-700 text-zinc-400">
+              Options
+            </div>
+          </div>
+
+          <!-- Left D-pad + stick -->
+          <div class="absolute left-[10%] top-[38%] -translate-y-1/2">
+            <!-- D-pad -->
+            <div class="grid grid-cols-3 grid-rows-3 gap-1 mb-4">
+              <div></div>
+              <div id="dpadUp" class="w-6 h-6 rounded bg-zinc-800"></div>
+              <div></div>
+              <div id="dpadLeft" class="w-6 h-6 rounded bg-zinc-800"></div>
+              <div class="w-6 h-6"></div>
+              <div id="dpadRight" class="w-6 h-6 rounded bg-zinc-800"></div>
+              <div></div>
+              <div id="dpadDown" class="w-6 h-6 rounded bg-zinc-800"></div>
+              <div></div>
+            </div>
+            <!-- Stick L -->
+            <div class="mt-2 flex flex-col items-center">
+              <div class="text-xs uppercase tracking-wider text-zinc-400 mb-1">L</div>
+              <div class="stick-surface rounded-2xl shadow border border-zinc-800 bg-zinc-900"
+                   style="width:110px;height:110px;">
+                <div class="absolute inset-3 rounded-full border border-zinc-700"></div>
+                <div class="absolute left-1/2 top-[12px] w-px h-[82px] bg-zinc-800"></div>
+                <div class="absolute top-1/2 left-[12px] h-px w-[82px] bg-zinc-800"></div>
+                <div id="stickL" class="stick-dot" style="top:50%;left:50%;"></div>
+              </div>
+              <div id="lblLXY" class="mt-1 text-xs text-zinc-500">
+                X: 0.000 • Y: 0.000
+              </div>
+            </div>
+          </div>
+
+          <!-- Right buttons + stick -->
+          <div class="absolute right-[10%] top-[38%] -translate-y-1/2 flex flex-col items-center gap-4">
+            <!-- Face buttons -->
+            <div class="grid grid-cols-3 grid-rows-3 gap-2 place-items-center">
+              <div></div>
+              <div id="btnTri" class="w-6 h-6 rounded-full bg-zinc-800"></div>
+              <div></div>
+              <div id="btnSquare" class="w-6 h-6 rounded-full bg-zinc-800"></div>
+              <div id="btnCircle" class="w-6 h-6 rounded-full bg-zinc-800"></div>
+              <div></div>
+              <div></div>
+              <div id="btnCross" class="w-6 h-6 rounded-full bg-zinc-800"></div>
+              <div></div>
+            </div>
+            <!-- Stick R -->
+            <div class="flex flex-col items-center">
+              <div class="text-xs uppercase tracking-wider text-zinc-400 mb-1">R</div>
+              <div class="stick-surface rounded-2xl shadow border border-zinc-800 bg-zinc-900"
+                   style="width:110px;height:110px;">
+                <div class="absolute inset-3 rounded-full border border-zinc-700"></div>
+                <div class="absolute left-1/2 top-[12px] w-px h-[82px] bg-zinc-800"></div>
+                <div class="absolute top-1/2 left-[12px] h-px w-[82px] bg-zinc-800"></div>
+                <div id="stickR" class="stick-dot" style="top:50%;left:50%;"></div>
+              </div>
+              <div id="lblRXY" class="mt-1 text-xs text-zinc-500">
+                X: 0.000 • Y: 0.000
+              </div>
+            </div>
+          </div>
+
+          <!-- PS / Guide -->
+          <div class="absolute left-1/2 bottom-4 -translate-x-1/2 flex flex-col items-center gap-1">
+            <div id="btnHome"
+              class="w-7 h-7 rounded-full border border-zinc-600 bg-zinc-900 text-zinc-300 flex items-center justify-center text-[10px]">
+              PS
+            </div>
+            <div class="flex gap-2 text-[10px] text-zinc-400">
+              <span id="lblL3">L3: OFF</span>
+              <span id="lblR3">R3: OFF</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Xbox layout note -->
+        <p class="mt-3 text-[11px] text-zinc-500">
+          Jika controller Xbox dikesan, indikator butang akan ikut susunan A/B/X/Y dan LT/RT/LB/RB.
+        </p>
+      </div>
+
+      <!-- Right: Calibration -->
+      <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/60">
+        <h2 class="text-xl font-semibold mb-4">Calibration</h2>
+
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div>
+            <div class="text-sm text-zinc-400">
+              Left Stick Deadzone: <span id="valLeftDZ">0.07</span>
+            </div>
+            <input id="inputLeftDZ" type="range" min="0" max="0.3" step="0.005"
+              class="w-full mt-1" />
+            <div class="mt-2 text-sm text-zinc-400">Left Stick Curve</div>
+            <select id="inputLeftCurve"
+              class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm">
+              <option value="linear">Linear</option>
+              <option value="expo">Expo</option>
+              <option value="soft">Soft</option>
+            </select>
+          </div>
+          <div>
+            <div class="text-sm text-zinc-400">
+              Right Stick Deadzone: <span id="valRightDZ">0.05</span>
+            </div>
+            <input id="inputRightDZ" type="range" min="0" max="0.3" step="0.005"
+              class="w-full mt-1" />
+            <div class="mt-2 text-sm text-zinc-400">Right Stick Curve</div>
+            <select id="inputRightCurve"
+              class="mt-1 w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm">
+              <option value="linear">Linear</option>
+              <option value="expo">Expo</option>
+              <option value="soft">Soft</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-6 grid sm:grid-cols-2 gap-6">
+          <div>
+            <div class="text-sm text-zinc-400">L2 Min / Max</div>
+            <div class="flex items-center gap-2 mt-1">
+              <input id="inputL2Min" type="number" step="0.01" min="0" max="1"
+                class="w-24 bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-1 text-sm" />
+              <input id="inputL2Max" type="number" step="0.01" min="0" max="1"
+                class="w-24 bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-1 text-sm" />
+            </div>
+          </div>
+          <div>
+            <div class="text-sm text-zinc-400">R2 Min / Max</div>
+            <div class="flex items-center gap-2 mt-1">
+              <input id="inputR2Min" type="number" step="0.01" min="0" max="1"
+                class="w-24 bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-1 text-sm" />
+              <input id="inputR2Max" type="number" step="0.01" min="0" max="1"
+                class="w-24 bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-1 text-sm" />
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex gap-2 flex-wrap">
+          <button id="btnSaveChanges"
+            class="px-3 py-2 rounded-xl bg-white text-zinc-900 hover:opacity-90 text-sm">
+            Simpan Perubahan
+          </button>
+          <button id="btnReset"
+            class="px-3 py-2 rounded-xl bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-sm">
+            Reset
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced WebHID Raw Monitor -->
+    <section class="mt-6 p-4 rounded-2xl border border-zinc-800 bg-zinc-900/60">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold">Advanced • WebHID Raw Monitor</h3>
+        <div class="text-xs text-zinc-500">
+          Untuk teknikal: debug report HID (Sony / Microsoft / Nintendo)
+        </div>
+      </div>
+      <div id="hidUnsupported" class="mt-3 text-sm text-zinc-400 hidden">
+        Browser ini tidak menyokong WebHID. Guna Chrome/Edge terkini untuk fungsi ini.
+      </div>
+      <div id="hidLogBox"
+        class="mt-3 h-48 overflow-auto bg-black/40 rounded-xl p-3 font-mono text-xs border border-zinc-800">
+        <div class="text-zinc-500">
+          Tiada data lagi. Klik "Advanced (WebHID Raw)" di atas dan pilih peranti.
+        </div>
+      </div>
+    </section>
+
+    <!-- Toast -->
+    <div id="toast"
+      class="hidden fixed bottom-4 right-4 px-4 py-2 rounded-xl bg-white text-zinc-900 shadow-lg border border-zinc-200 text-sm">
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-xs text-zinc-500 flex items-center justify-between flex-wrap gap-2">
+      <div>© <span id="year"></span> Iron Gamers • IronTune (MVP) — Untuk kegunaan kedai / beta dalaman.</div>
+      <div>Kosmetik UI: Tailwind • Engine: Gamepad API + WebHID (optional)</div>
+    </footer>
+
+  </main>
+
+  <script>
+    // ---------- Utility ----------
+    function clamp01(n) {
+      return Math.max(0, Math.min(1, n));
+    }
+    function applyCurve(value, curve) {
+      const v = Math.max(-1, Math.min(1, value));
+      switch (curve) {
+        case "expo": {
+          const sign = Math.sign(v);
+          const x = Math.abs(v);
+          return sign * Math.pow(x, 1.7);
+        }
+        case "soft": {
+          return Math.tanh(1.2 * v);
+        }
+        default:
+          return v;
+      }
+    }
+    function applyDeadzone(x, y, dz) {
+      const r = Math.hypot(x, y);
+      if (r < dz) return { x: 0, y: 0 };
+      const scale = (r - dz) / (1 - dz);
+      const nx = (x / r) * scale;
+      const ny = (y / r) * scale;
+      return { x: nx, y: ny };
+    }
+
+    const DEFAULT_PROFILE = {
+      name: "Default",
+      createdAt: new Date().toISOString(),
+      settings: {
+        left: { deadzone: 0.07, curve: "linear" },
+        right: { deadzone: 0.05, curve: "linear" },
+        triggers: { l2Min: 0, l2Max: 1, r2Min: 0, r2Max: 1 },
+      },
+    };
+
+    function loadProfiles() {
+      try {
+        const raw = localStorage.getItem("irontune_profiles_v1");
+        if (!raw) return [DEFAULT_PROFILE];
+        const arr = JSON.parse(raw);
+        if (!Array.isArray(arr) || arr.length === 0) return [DEFAULT_PROFILE];
+        return arr;
+      } catch (e) {
+        return [DEFAULT_PROFILE];
+      }
+    }
+    function saveProfiles(list) {
+      localStorage.setItem("irontune_profiles_v1", JSON.stringify(list));
+    }
+
+    function getControllerKind(pad) {
+      if (!pad) return "generic";
+      const id = pad.id.toLowerCase();
+      if (id.includes("xbox") || id.includes("xinput") || id.includes("microsoft")) return "xbox";
+      if (id.includes("edge")) return "dualsense_edge";
+      if (id.includes("dualshock") || id.includes("ps4")) return "ds4";
+      if (
+        id.includes("dualsense") ||
+        id.includes("playstation") ||
+        (id.includes("wireless controller") && !id.includes("xbox"))
+      ) return "dualsense";
+      if (id.includes("switch") || id.includes("joy-con") || id.includes("pro controller")) return "switch";
+      return "generic";
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+      setTimeout(() => el.classList.add("hidden"), 2000);
+    }
+
+    // ---------- State ----------
+    let profiles = loadProfiles();
+    let activeProfileName = profiles[0].name;
+    let settings = JSON.parse(JSON.stringify(profiles[0].settings));
+    let currentPad = null;
+    let hidDevice = null;
+    let rawHIDLog = [];
+
+    // ---------- DOM refs ----------
+    const yearEl = document.getElementById("year");
+    const padNameEl = document.getElementById("padName");
+    const padStatusEl = document.getElementById("padStatus");
+    const padIdShortEl = document.getElementById("padIdShort");
+    const layoutBadgeEl = document.getElementById("layoutBadge");
+
+    const barL2 = document.getElementById("barL2");
+    const barR2 = document.getElementById("barR2");
+    const lblL2Pct = document.getElementById("lblL2Pct");
+    const lblR2Pct = document.getElementById("lblR2Pct");
+    const lampL1 = document.getElementById("lampL1");
+    const lampR1 = document.getElementById("lampR1");
+    const lampShare = document.getElementById("lampShare");
+    const lampOptions = document.getElementById("lampOptions");
+    const touchpad = document.getElementById("touchpad");
+    const dpadUp = document.getElementById("dpadUp");
+    const dpadDown = document.getElementById("dpadDown");
+    const dpadLeft = document.getElementById("dpadLeft");
+    const dpadRight = document.getElementById("dpadRight");
+    const btnTri = document.getElementById("btnTri");
+    const btnSquare = document.getElementById("btnSquare");
+    const btnCircle = document.getElementById("btnCircle");
+    const btnCross = document.getElementById("btnCross");
+    const stickL = document.getElementById("stickL");
+    const stickR = document.getElementById("stickR");
+    const lblLXY = document.getElementById("lblLXY");
+    const lblRXY = document.getElementById("lblRXY");
+    const btnHome = document.getElementById("btnHome");
+    const lblL3 = document.getElementById("lblL3");
+    const lblR3 = document.getElementById("lblR3");
+
+    const inputLeftDZ = document.getElementById("inputLeftDZ");
+    const inputRightDZ = document.getElementById("inputRightDZ");
+    const valLeftDZ = document.getElementById("valLeftDZ");
+    const valRightDZ = document.getElementById("valRightDZ");
+    const inputLeftCurve = document.getElementById("inputLeftCurve");
+    const inputRightCurve = document.getElementById("inputRightCurve");
+    const inputL2Min = document.getElementById("inputL2Min");
+    const inputL2Max = document.getElementById("inputL2Max");
+    const inputR2Min = document.getElementById("inputR2Min");
+    const inputR2Max = document.getElementById("inputR2Max");
+
+    const profileSelect = document.getElementById("profileSelect");
+    const btnNewProfile = document.getElementById("btnNewProfile");
+    const btnSaveProfile = document.getElementById("btnSaveProfile");
+    const btnDeleteProfile = document.getElementById("btnDeleteProfile");
+    const btnSaveAs = document.getElementById("btnSaveAs");
+    const btnExport = document.getElementById("btnExport");
+    const fileImport = document.getElementById("fileImport");
+    const btnDetect = document.getElementById("btnDetect");
+    const btnConnectHID = document.getElementById("btnConnectHID");
+    const btnSaveChanges = document.getElementById("btnSaveChanges");
+    const btnReset = document.getElementById("btnReset");
+
+    const hidUnsupported = document.getElementById("hidUnsupported");
+    const hidLogBox = document.getElementById("hidLogBox");
+
+    yearEl.textContent = new Date().getFullYear();
+
+    if (!("hid" in navigator)) {
+      hidUnsupported.classList.remove("hidden");
+    }
+
+    // ---------- Profile UI ----------
+    function refreshProfileSelect() {
+      profileSelect.innerHTML = "";
+      profiles.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.name;
+        opt.textContent = p.name;
+        profileSelect.appendChild(opt);
+      });
+      profileSelect.value = activeProfileName;
+    }
+
+    function applySettingsToInputs() {
+      inputLeftDZ.value = settings.left.deadzone;
+      inputRightDZ.value = settings.right.deadzone;
+      valLeftDZ.textContent = settings.left.deadzone.toFixed(2);
+      valRightDZ.textContent = settings.right.deadzone.toFixed(2);
+      inputLeftCurve.value = settings.left.curve;
+      inputRightCurve.value = settings.right.curve;
+      inputL2Min.value = settings.triggers.l2Min;
+      inputL2Max.value = settings.triggers.l2Max;
+      inputR2Min.value = settings.triggers.r2Min;
+      inputR2Max.value = settings.triggers.r2Max;
+    }
+
+    function loadActiveProfileSettings() {
+      const p = profiles.find(p => p.name === activeProfileName) || profiles[0];
+      settings = JSON.parse(JSON.stringify(p.settings));
+      applySettingsToInputs();
+    }
+
+    refreshProfileSelect();
+    loadActiveProfileSettings();
+
+    inputLeftDZ.addEventListener("input", () => {
+      settings.left.deadzone = parseFloat(inputLeftDZ.value);
+      valLeftDZ.textContent = settings.left.deadzone.toFixed(2);
+    });
+    inputRightDZ.addEventListener("input", () => {
+      settings.right.deadzone = parseFloat(inputRightDZ.value);
+      valRightDZ.textContent = settings.right.deadzone.toFixed(2);
+    });
+    inputLeftCurve.addEventListener("change", () => {
+      settings.left.curve = inputLeftCurve.value;
+    });
+    inputRightCurve.addEventListener("change", () => {
+      settings.right.curve = inputRightCurve.value;
+    });
+    inputL2Min.addEventListener("input", () => {
+      settings.triggers.l2Min = parseFloat(inputL2Min.value || "0");
+    });
+    inputL2Max.addEventListener("input", () => {
+      settings.triggers.l2Max = parseFloat(inputL2Max.value || "1");
+    });
+    inputR2Min.addEventListener("input", () => {
+      settings.triggers.r2Min = parseFloat(inputR2Min.value || "0");
+    });
+    inputR2Max.addEventListener("input", () => {
+      settings.triggers.r2Max = parseFloat(inputR2Max.value || "1");
+    });
+
+    profileSelect.addEventListener("change", () => {
+      activeProfileName = profileSelect.value;
+      loadActiveProfileSettings();
+    });
+
+    btnNewProfile.addEventListener("click", () => {
+      const base = "Profile " + (profiles.length + 1);
+      const name = prompt("Nama profil baharu:", base) || base;
+      const p = {
+        name,
+        createdAt: new Date().toISOString(),
+        settings: JSON.parse(JSON.stringify(DEFAULT_PROFILE.settings)),
+      };
+      profiles = [p, ...profiles.filter(x => x.name !== name)];
+      activeProfileName = name;
+      saveProfiles(profiles);
+      refreshProfileSelect();
+      loadActiveProfileSettings();
+      showToast('Profil "' + name + '" dicipta');
+    });
+
+    function saveCurrentProfile(asName) {
+      const name = (asName || activeProfileName).trim();
+      let baseProfile =
+        profiles.find(p => p.name === activeProfileName) || profiles[0] || DEFAULT_PROFILE;
+      const updated = {
+        name,
+        createdAt: baseProfile.createdAt || new Date().toISOString(),
+        settings: JSON.parse(JSON.stringify(settings)),
+      };
+      let list = profiles.filter(p => p.name !== name);
+      list = [updated, ...list];
+      profiles = list;
+      activeProfileName = name;
+      saveProfiles(list);
+      refreshProfileSelect();
+      showToast('Profil "' + name + '" berjaya disimpan ✔');
+    }
+
+    btnSaveProfile.addEventListener("click", () => saveCurrentProfile());
+    btnSaveAs.addEventListener("click", () => {
+      const name = prompt("Simpan sebagai (Save As):", activeProfileName + " Copy");
+      if (name) saveCurrentProfile(name);
+    });
+
+    btnDeleteProfile.addEventListener("click", () => {
+      if (!confirm('Padam profil "' + activeProfileName + '"?')) return;
+      profiles = profiles.filter(p => p.name !== activeProfileName);
+      if (profiles.length === 0) profiles = [DEFAULT_PROFILE];
+      activeProfileName = profiles[0].name;
+      saveProfiles(profiles);
+      refreshProfileSelect();
+      loadActiveProfileSettings();
+      showToast("Profil dipadam");
+    });
+
+    btnExport.addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(profiles, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "IronTune_Profiles.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    fileImport.addEventListener("change", e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const arr = JSON.parse(String(reader.result));
+          if (!Array.isArray(arr)) throw new Error("Fail bukan senarai profil");
+          profiles = arr;
+          activeProfileName = arr[0]?.name || "Default";
+          saveProfiles(arr);
+          refreshProfileSelect();
+          loadActiveProfileSettings();
+          showToast("Profil berjaya diimport");
+        } catch (err) {
+          alert("Gagal import: " + err.message);
+        }
+      };
+      reader.readAsText(f);
+    });
+
+    btnReset.addEventListener("click", () => {
+      settings = JSON.parse(JSON.stringify(DEFAULT_PROFILE.settings));
+      applySettingsToInputs();
+      showToast("Calibration direset ke Default");
+    });
+
+    btnSaveChanges.addEventListener("click", () => saveCurrentProfile());
+
+    // ---------- Gamepad ----------
+    btnDetect.addEventListener("click", () => {
+      alert("Tip: Tekan sebarang butang pada controller untuk trigger event Gamepad API.");
+    });
+
+    window.addEventListener("gamepadconnected", e => {
+      currentPad = e.gamepad;
+      showToast("Controller dikesan: " + e.gamepad.id);
+    });
+    window.addEventListener("gamepaddisconnected", () => {
+      currentPad = null;
+      showToast("Controller terputus");
+    });
+
+    function updateLayoutForPad(pad) {
+      const kind = getControllerKind(pad);
+      if (!pad) {
+        layoutBadgeEl.textContent = "Generic Layout";
+        return;
+      }
+      switch (kind) {
+        case "xbox":
+          layoutBadgeEl.textContent = "Xbox Layout";
+          break;
+        case "dualsense_edge":
+          layoutBadgeEl.textContent = "DualSense Edge Layout";
+          break;
+        case "ds4":
+          layoutBadgeEl.textContent = "DualShock 4 Layout";
+          break;
+        case "dualsense":
+          layoutBadgeEl.textContent = "DualSense Layout";
+          break;
+        case "switch":
+          layoutBadgeEl.textContent = "Switch / Pro Layout";
+          break;
+        default:
+          layoutBadgeEl.textContent = "Generic Layout";
+      }
+    }
+
+    function setLamp(el, on, activeClass) {
+      if (on) {
+        el.classList.remove("border-zinc-700", "text-zinc-400", "bg-zinc-800");
+        el.classList.add("bg-cyan-300", "text-zinc-900", "border-cyan-300");
+      } else {
+        el.classList.add("border-zinc-700", "text-zinc-400");
+        el.classList.remove("bg-cyan-300", "text-zinc-900", "border-cyan-300");
+      }
+    }
+
+    function setSquare(el, pressed, color) {
+      if (pressed) {
+        el.style.backgroundColor = color || "#67e8f9";
+      } else {
+        el.style.backgroundColor = "#27272a";
+      }
+    }
+
+    function updateGamepadUI() {
+      const pads = navigator.getGamepads
+        ? Array.from(navigator.getGamepads()).filter(Boolean)
+        : [];
+      if (!currentPad) currentPad = pads[0] || null;
+
+      const pad = currentPad || pads[0] || null;
+
+      if (!pad) {
+        padNameEl.textContent = "Tiada controller dikesan";
+        padStatusEl.textContent = "Status: —";
+        padIdShortEl.textContent = "Tiada controller dikesan";
+        updateLayoutForPad(null);
+        requestAnimationFrame(updateGamepadUI);
+        return;
+      }
+
+      padNameEl.textContent = pad.id;
+      padStatusEl.textContent = "Status: " + (pad.connected ? "Connected" : "Disconnected");
+      padIdShortEl.textContent = pad.id;
+      updateLayoutForPad(pad);
+
+      const ax = pad.axes || [];
+      let lx = ax[0] || 0;
+      let ly = ax[1] || 0;
+      let rx = ax[2] || 0;
+      let ry = ax[3] || 0;
+
+      const L = applyDeadzone(lx, ly, settings.left.deadzone);
+      const R = applyDeadzone(rx, ry, settings.right.deadzone);
+
+      const lx2 = applyCurve(L.x, settings.left.curve);
+      const ly2 = applyCurve(L.y, settings.left.curve);
+      const rx2 = applyCurve(R.x, settings.right.curve);
+      const ry2 = applyCurve(R.y, settings.right.curve);
+
+      // update sticks (convert -1..1 to position)
+      const radius = 40;
+      stickL.style.left = 50 + lx2 * radius + "%";
+      stickL.style.top = 50 + (-ly2) * radius + "%";
+      stickR.style.left = 50 + rx2 * radius + "%";
+      stickR.style.top = 50 + (-ry2) * radius + "%";
+      lblLXY.textContent = "X: " + lx2.toFixed(3) + " • Y: " + ly2.toFixed(3);
+      lblRXY.textContent = "X: " + rx2.toFixed(3) + " • Y: " + ry2.toFixed(3);
+
+      // triggers & bumpers
+      const buttons = pad.buttons || [];
+      const ltRaw = buttons[6] ? buttons[6].value : 0;
+      const rtRaw = buttons[7] ? buttons[7].value : 0;
+
+      const norm = (v, min, max) =>
+        clamp01((v - min) / Math.max(0.0001, max - min));
+
+      const lt = norm(ltRaw, settings.triggers.l2Min, settings.triggers.l2Max);
+      const rt = norm(rtRaw, settings.triggers.r2Min, settings.triggers.r2Max);
+
+      barL2.style.width = Math.round(lt * 100) + "%";
+      barR2.style.width = Math.round(rt * 100) + "%";
+      lblL2Pct.textContent = Math.round(lt * 100) + "%";
+      lblR2Pct.textContent = Math.round(rt * 100) + "%";
+
+      setLamp(lampL1, buttons[4] && buttons[4].pressed);
+      setLamp(lampR1, buttons[5] && buttons[5].pressed);
+      setLamp(lampShare, buttons[8] && buttons[8].pressed);
+      setLamp(lampOptions, buttons[9] && buttons[9].pressed);
+
+      // D-pad
+      setSquare(dpadUp, buttons[12] && buttons[12].pressed);
+      setSquare(dpadDown, buttons[13] && buttons[13].pressed
