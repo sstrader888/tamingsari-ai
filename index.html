@@ -141,6 +141,86 @@
       position:fixed; right:16px; bottom:20px; background:linear-gradient(90deg,#25D366,#128C7E); color:#fff;
       padding:10px 14px; border-radius:999px; font-weight:800; z-index:50
     }
+
+    /* IronTune promo section */
+    .irontune-panel{
+      background:radial-gradient(circle at 0% 0%, rgba(3,70,148,.25), transparent),
+                 radial-gradient(circle at 100% 100%, rgba(26,140,255,.18), transparent),
+                 #050816;
+      color:#e5e7eb;
+      border-radius:22px;
+      padding:22px 20px;
+      border:1px solid rgba(15,23,42,.8);
+      box-shadow:0 20px 40px rgba(3,70,148,.35);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+    .irontune-text{flex:1 1 260px}
+    .irontune-tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:11px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.7);
+      background:rgba(15,23,42,.7);
+      color:#cbd5f5;
+      margin-bottom:6px;
+    }
+    .irontune-panel h2{
+      margin:4px 0 6px;
+      font-size:clamp(20px,2.5vw,26px);
+      color:#f9fafb;
+    }
+    .irontune-panel h2 span{
+      color:var(--blue-3);
+    }
+    .irontune-panel p{
+      margin:4px 0;
+      font-size:14px;
+      color:#cbd5f5;
+    }
+    .irontune-list{
+      margin:8px 0 0;
+      padding-left:18px;
+      font-size:13px;
+      color:#d1d5db;
+    }
+    .irontune-list li{margin:4px 0}
+    .irontune-cta{
+      min-width:220px;
+    }
+    .btn-neon{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:linear-gradient(90deg,#06b6d4,#3b82f6);
+      color:#fff;
+      border-radius:999px;
+      padding:11px 18px;
+      font-weight:700;
+      font-size:14px;
+      border:0;
+    }
+    .btn-neon span.arrow{font-size:18px;line-height:0}
+    .irontune-note{
+      margin-top:6px;
+      font-size:11px;
+      color:#a5b4fc;
+    }
+    @media(max-width:768px){
+      .irontune-panel{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .irontune-cta{
+        width:100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -155,6 +235,7 @@
       <nav class="nav-links" id="navLinks">
         <a href="#paket">Pakej</a>
         <a href="#silibus">Silibus</a>
+        <a href="#irontune">Tools</a>
         <a href="#artikel">Artikel</a>
         <a href="#hubungi">Hubungi</a>
         <a class="cta-wa" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20nak%20tanya%20program%20coaching.">WhatsApp Cikgu</a>
@@ -242,6 +323,36 @@
     </div>
   </section>
 
+  <!-- IRONTUNE SECTION -->
+  <section id="irontune" class="container section">
+    <div class="irontune-panel">
+      <div class="irontune-text">
+        <div class="irontune-tag">
+          <span>Baru</span>
+          <span>Untuk kedai console & gamer</span>
+        </div>
+        <h2>IronTune — <span>Controller Calibration Hub</span></h2>
+        <p>by <strong>Iron Gamers</strong>. Web-based tester & calibration untuk <strong>DualSense</strong>, <strong>DualShock 4</strong> dan <strong>Xbox Controller</strong>. Direka khas untuk kegunaan kedai servis console serta gamer yang nak pastikan semua butang & analog respons dengan tepat.</p>
+        <ul class="irontune-list">
+          <li>Visual tester: stick, trigger, D-Pad & butang dengan neon layout.</li>
+          <li>Calibrate deadzone & curve ikut keperluan pemain.</li>
+          <li>Simpan profil controller (localStorage) dan export/import JSON.</li>
+          <li>Advanced WebHID monitor untuk debugging teknikal.</li>
+        </ul>
+      </div>
+      <div class="irontune-cta">
+        <!-- Tukar /irontune/ kepada path sebenar IronTune bila Cikgu dah upload -->
+        <a href="/irontune/" class="btn-neon">
+          Buka IronTune
+          <span class="arrow">↗</span>
+        </a>
+        <p class="irontune-note">
+          Berjalan terus dalam browser (Chrome / Edge) • Sokongan Gamepad API & WebHID.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- ARTIKEL TERKINI -->
   <section id="artikel" class="container section">
     <h2>Artikel Terkini</h2>
@@ -312,7 +423,7 @@
     document.querySelectorAll('.faq-item').forEach(it=>{
       it.addEventListener('click',()=>it.classList.toggle('active'));
     });
+  </script>
 
 </body>
 </html>
-
