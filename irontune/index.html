@@ -367,437 +367,544 @@
 
   </main>
 
-  <script>
-    // ---------- Utility ----------
-    function clamp01(n) {
-      return Math.max(0, Math.min(1, n));
-    }
-    function applyCurve(value, curve) {
-      const v = Math.max(-1, Math.min(1, value));
-      switch (curve) {
-        case "expo": {
-          const sign = Math.sign(v);
-          const x = Math.abs(v);
-          return sign * Math.pow(x, 1.7);
-        }
-        case "soft": {
-          return Math.tanh(1.2 * v);
-        }
-        default:
-          return v;
-      }
-    }
-    function applyDeadzone(x, y, dz) {
-      const r = Math.hypot(x, y);
-      if (r < dz) return { x: 0, y: 0 };
-      const scale = (r - dz) / (1 - dz);
-      const nx = (x / r) * scale;
-      const ny = (y / r) * scale;
-      return { x: nx, y: ny };
-    }
+ <script>
+  // ---------- Utility ----------
+  function clamp01(n) {
+    return Math.max(0, Math.min(1, n));
+  }
 
-    const DEFAULT_PROFILE = {
-      name: "Default",
+  function applyCurve(value, curve) {
+    const v = Math.max(-1, Math.min(1, value));
+    switch (curve) {
+      case "expo": {
+        const sign = Math.sign(v);
+        const x = Math.abs(v);
+        return sign * Math.pow(x, 1.7);
+      }
+      case "soft": {
+        return Math.tanh(1.2 * v);
+      }
+      default:
+        return v;
+    }
+  }
+
+  function applyDeadzone(x, y, dz) {
+    const r = Math.hypot(x, y);
+    if (r < dz) return { x: 0, y: 0 };
+    const scale = (r - dz) / (1 - dz);
+    const nx = (x / r) * scale;
+    const ny = (y / r) * scale;
+    return { x: nx, y: ny };
+  }
+
+  const DEFAULT_PROFILE = {
+    name: "Default",
+    createdAt: new Date().toISOString(),
+    settings: {
+      left: { deadzone: 0.07, curve: "linear" },
+      right: { deadzone: 0.05, curve: "linear" },
+      triggers: { l2Min: 0, l2Max: 1, r2Min: 0, r2Max: 1 },
+    },
+  };
+
+  function loadProfiles() {
+    try {
+      const raw = localStorage.getItem("irontune_profiles_v1");
+      if (!raw) return [DEFAULT_PROFILE];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr) || arr.length === 0) return [DEFAULT_PROFILE];
+      return arr;
+    } catch {
+      return [DEFAULT_PROFILE];
+    }
+  }
+
+  function saveProfiles(list) {
+    localStorage.setItem("irontune_profiles_v1", JSON.stringify(list));
+  }
+
+  function getControllerKind(pad) {
+    if (!pad) return "generic";
+    const id = pad.id.toLowerCase();
+    if (id.includes("xbox") || id.includes("xinput") || id.includes("microsoft"))
+      return "xbox";
+    if (id.includes("edge")) return "dualsense_edge";
+    if (id.includes("dualshock") || id.includes("ps4")) return "ds4";
+    if (
+      id.includes("dualsense") ||
+      id.includes("playstation") ||
+      (id.includes("wireless controller") && !id.includes("xbox"))
+    )
+      return "dualsense";
+    if (id.includes("switch") || id.includes("joy-con") || id.includes("pro controller"))
+      return "switch";
+    return "generic";
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.remove("hidden");
+    setTimeout(() => el.classList.add("hidden"), 2000);
+  }
+
+  // ---------- Global State ----------
+  let profiles = loadProfiles();
+  let activeProfileName = profiles[0].name;
+  let settings = JSON.parse(JSON.stringify(profiles[0].settings));
+  let currentPad = null;
+  let hidDevice = null;
+  let rawHIDLog = [];
+
+  // ---------- DOM refs ----------
+  const yearEl = document.getElementById("year");
+  const padNameEl = document.getElementById("padName");
+  const padStatusEl = document.getElementById("padStatus");
+  const padIdShortEl = document.getElementById("padIdShort");
+  const layoutBadgeEl = document.getElementById("layoutBadge");
+
+  const barL2 = document.getElementById("barL2");
+  const barR2 = document.getElementById("barR2");
+  const lblL2Pct = document.getElementById("lblL2Pct");
+  const lblR2Pct = document.getElementById("lblR2Pct");
+  const lampL1 = document.getElementById("lampL1");
+  const lampR1 = document.getElementById("lampR1");
+  const lampShare = document.getElementById("lampShare");
+  const lampOptions = document.getElementById("lampOptions");
+  const touchpad = document.getElementById("touchpad");
+  const dpadUp = document.getElementById("dpadUp");
+  const dpadDown = document.getElementById("dpadDown");
+  const dpadLeft = document.getElementById("dpadLeft");
+  const dpadRight = document.getElementById("dpadRight");
+  const btnTri = document.getElementById("btnTri");
+  const btnSquare = document.getElementById("btnSquare");
+  const btnCircle = document.getElementById("btnCircle");
+  const btnCross = document.getElementById("btnCross");
+  const stickL = document.getElementById("stickL");
+  const stickR = document.getElementById("stickR");
+  const lblLXY = document.getElementById("lblLXY");
+  const lblRXY = document.getElementById("lblRXY");
+  const btnHome = document.getElementById("btnHome");
+  const lblL3 = document.getElementById("lblL3");
+  const lblR3 = document.getElementById("lblR3");
+
+  const inputLeftDZ = document.getElementById("inputLeftDZ");
+  const inputRightDZ = document.getElementById("inputRightDZ");
+  const valLeftDZ = document.getElementById("valLeftDZ");
+  const valRightDZ = document.getElementById("valRightDZ");
+  const inputLeftCurve = document.getElementById("inputLeftCurve");
+  const inputRightCurve = document.getElementById("inputRightCurve");
+  const inputL2Min = document.getElementById("inputL2Min");
+  const inputL2Max = document.getElementById("inputL2Max");
+  const inputR2Min = document.getElementById("inputR2Min");
+  const inputR2Max = document.getElementById("inputR2Max");
+
+  const profileSelect = document.getElementById("profileSelect");
+  const btnNewProfile = document.getElementById("btnNewProfile");
+  const btnSaveProfile = document.getElementById("btnSaveProfile");
+  const btnDeleteProfile = document.getElementById("btnDeleteProfile");
+  const btnSaveAs = document.getElementById("btnSaveAs");
+  const btnExport = document.getElementById("btnExport");
+  const fileImport = document.getElementById("fileImport");
+  const btnDetect = document.getElementById("btnDetect");
+  const btnConnectHID = document.getElementById("btnConnectHID");
+  const btnSaveChanges = document.getElementById("btnSaveChanges");
+  const btnReset = document.getElementById("btnReset");
+
+  const hidUnsupported = document.getElementById("hidUnsupported");
+  const hidLogBox = document.getElementById("hidLogBox");
+
+  yearEl.textContent = new Date().getFullYear();
+
+  if (!("hid" in navigator)) {
+    hidUnsupported.classList.remove("hidden");
+  }
+
+  // ---------- Profile UI ----------
+  function refreshProfileSelect() {
+    profileSelect.innerHTML = "";
+    profiles.forEach((p) => {
+      const opt = document.createElement("option");
+      opt.value = p.name;
+      opt.textContent = p.name;
+      profileSelect.appendChild(opt);
+    });
+    profileSelect.value = activeProfileName;
+  }
+
+  function applySettingsToInputs() {
+    inputLeftDZ.value = settings.left.deadzone;
+    inputRightDZ.value = settings.right.deadzone;
+    valLeftDZ.textContent = settings.left.deadzone.toFixed(2);
+    valRightDZ.textContent = settings.right.deadzone.toFixed(2);
+    inputLeftCurve.value = settings.left.curve;
+    inputRightCurve.value = settings.right.curve;
+    inputL2Min.value = settings.triggers.l2Min;
+    inputL2Max.value = settings.triggers.l2Max;
+    inputR2Min.value = settings.triggers.r2Min;
+    inputR2Max.value = settings.triggers.r2Max;
+  }
+
+  function loadActiveProfileSettings() {
+    const p =
+      profiles.find((p) => p.name === activeProfileName) || profiles[0] || DEFAULT_PROFILE;
+    settings = JSON.parse(JSON.stringify(p.settings));
+    applySettingsToInputs();
+  }
+
+  refreshProfileSelect();
+  loadActiveProfileSettings();
+
+  inputLeftDZ.addEventListener("input", () => {
+    settings.left.deadzone = parseFloat(inputLeftDZ.value);
+    valLeftDZ.textContent = settings.left.deadzone.toFixed(2);
+  });
+  inputRightDZ.addEventListener("input", () => {
+    settings.right.deadzone = parseFloat(inputRightDZ.value);
+    valRightDZ.textContent = settings.right.deadzone.toFixed(2);
+  });
+  inputLeftCurve.addEventListener("change", () => {
+    settings.left.curve = inputLeftCurve.value;
+  });
+  inputRightCurve.addEventListener("change", () => {
+    settings.right.curve = inputRightCurve.value;
+  });
+  inputL2Min.addEventListener("input", () => {
+    settings.triggers.l2Min = parseFloat(inputL2Min.value || "0");
+  });
+  inputL2Max.addEventListener("input", () => {
+    settings.triggers.l2Max = parseFloat(inputL2Max.value || "1");
+  });
+  inputR2Min.addEventListener("input", () => {
+    settings.triggers.r2Min = parseFloat(inputR2Min.value || "0");
+  });
+  inputR2Max.addEventListener("input", () => {
+    settings.triggers.r2Max = parseFloat(inputR2Max.value || "1");
+  });
+
+  profileSelect.addEventListener("change", () => {
+    activeProfileName = profileSelect.value;
+    loadActiveProfileSettings();
+    showToast("Profil ditukar ke " + activeProfileName);
+  });
+
+  btnNewProfile.addEventListener("click", () => {
+    const base = "Profile " + (profiles.length + 1);
+    const name = prompt("Nama profil baharu:", base) || base;
+    const p = {
+      name,
       createdAt: new Date().toISOString(),
-      settings: {
-        left: { deadzone: 0.07, curve: "linear" },
-        right: { deadzone: 0.05, curve: "linear" },
-        triggers: { l2Min: 0, l2Max: 1, r2Min: 0, r2Max: 1 },
-      },
+      settings: JSON.parse(JSON.stringify(DEFAULT_PROFILE.settings)),
     };
-
-    function loadProfiles() {
-      try {
-        const raw = localStorage.getItem("irontune_profiles_v1");
-        if (!raw) return [DEFAULT_PROFILE];
-        const arr = JSON.parse(raw);
-        if (!Array.isArray(arr) || arr.length === 0) return [DEFAULT_PROFILE];
-        return arr;
-      } catch (e) {
-        return [DEFAULT_PROFILE];
-      }
-    }
-    function saveProfiles(list) {
-      localStorage.setItem("irontune_profiles_v1", JSON.stringify(list));
-    }
-
-    function getControllerKind(pad) {
-      if (!pad) return "generic";
-      const id = pad.id.toLowerCase();
-      if (id.includes("xbox") || id.includes("xinput") || id.includes("microsoft")) return "xbox";
-      if (id.includes("edge")) return "dualsense_edge";
-      if (id.includes("dualshock") || id.includes("ps4")) return "ds4";
-      if (
-        id.includes("dualsense") ||
-        id.includes("playstation") ||
-        (id.includes("wireless controller") && !id.includes("xbox"))
-      ) return "dualsense";
-      if (id.includes("switch") || id.includes("joy-con") || id.includes("pro controller")) return "switch";
-      return "generic";
-    }
-
-    function showToast(msg) {
-      const el = document.getElementById("toast");
-      el.textContent = msg;
-      el.classList.remove("hidden");
-      setTimeout(() => el.classList.add("hidden"), 2000);
-    }
-
-    // ---------- State ----------
-    let profiles = loadProfiles();
-    let activeProfileName = profiles[0].name;
-    let settings = JSON.parse(JSON.stringify(profiles[0].settings));
-    let currentPad = null;
-    let hidDevice = null;
-    let rawHIDLog = [];
-
-    // ---------- DOM refs ----------
-    const yearEl = document.getElementById("year");
-    const padNameEl = document.getElementById("padName");
-    const padStatusEl = document.getElementById("padStatus");
-    const padIdShortEl = document.getElementById("padIdShort");
-    const layoutBadgeEl = document.getElementById("layoutBadge");
-
-    const barL2 = document.getElementById("barL2");
-    const barR2 = document.getElementById("barR2");
-    const lblL2Pct = document.getElementById("lblL2Pct");
-    const lblR2Pct = document.getElementById("lblR2Pct");
-    const lampL1 = document.getElementById("lampL1");
-    const lampR1 = document.getElementById("lampR1");
-    const lampShare = document.getElementById("lampShare");
-    const lampOptions = document.getElementById("lampOptions");
-    const touchpad = document.getElementById("touchpad");
-    const dpadUp = document.getElementById("dpadUp");
-    const dpadDown = document.getElementById("dpadDown");
-    const dpadLeft = document.getElementById("dpadLeft");
-    const dpadRight = document.getElementById("dpadRight");
-    const btnTri = document.getElementById("btnTri");
-    const btnSquare = document.getElementById("btnSquare");
-    const btnCircle = document.getElementById("btnCircle");
-    const btnCross = document.getElementById("btnCross");
-    const stickL = document.getElementById("stickL");
-    const stickR = document.getElementById("stickR");
-    const lblLXY = document.getElementById("lblLXY");
-    const lblRXY = document.getElementById("lblRXY");
-    const btnHome = document.getElementById("btnHome");
-    const lblL3 = document.getElementById("lblL3");
-    const lblR3 = document.getElementById("lblR3");
-
-    const inputLeftDZ = document.getElementById("inputLeftDZ");
-    const inputRightDZ = document.getElementById("inputRightDZ");
-    const valLeftDZ = document.getElementById("valLeftDZ");
-    const valRightDZ = document.getElementById("valRightDZ");
-    const inputLeftCurve = document.getElementById("inputLeftCurve");
-    const inputRightCurve = document.getElementById("inputRightCurve");
-    const inputL2Min = document.getElementById("inputL2Min");
-    const inputL2Max = document.getElementById("inputL2Max");
-    const inputR2Min = document.getElementById("inputR2Min");
-    const inputR2Max = document.getElementById("inputR2Max");
-
-    const profileSelect = document.getElementById("profileSelect");
-    const btnNewProfile = document.getElementById("btnNewProfile");
-    const btnSaveProfile = document.getElementById("btnSaveProfile");
-    const btnDeleteProfile = document.getElementById("btnDeleteProfile");
-    const btnSaveAs = document.getElementById("btnSaveAs");
-    const btnExport = document.getElementById("btnExport");
-    const fileImport = document.getElementById("fileImport");
-    const btnDetect = document.getElementById("btnDetect");
-    const btnConnectHID = document.getElementById("btnConnectHID");
-    const btnSaveChanges = document.getElementById("btnSaveChanges");
-    const btnReset = document.getElementById("btnReset");
-
-    const hidUnsupported = document.getElementById("hidUnsupported");
-    const hidLogBox = document.getElementById("hidLogBox");
-
-    yearEl.textContent = new Date().getFullYear();
-
-    if (!("hid" in navigator)) {
-      hidUnsupported.classList.remove("hidden");
-    }
-
-    // ---------- Profile UI ----------
-    function refreshProfileSelect() {
-      profileSelect.innerHTML = "";
-      profiles.forEach(p => {
-        const opt = document.createElement("option");
-        opt.value = p.name;
-        opt.textContent = p.name;
-        profileSelect.appendChild(opt);
-      });
-      profileSelect.value = activeProfileName;
-    }
-
-    function applySettingsToInputs() {
-      inputLeftDZ.value = settings.left.deadzone;
-      inputRightDZ.value = settings.right.deadzone;
-      valLeftDZ.textContent = settings.left.deadzone.toFixed(2);
-      valRightDZ.textContent = settings.right.deadzone.toFixed(2);
-      inputLeftCurve.value = settings.left.curve;
-      inputRightCurve.value = settings.right.curve;
-      inputL2Min.value = settings.triggers.l2Min;
-      inputL2Max.value = settings.triggers.l2Max;
-      inputR2Min.value = settings.triggers.r2Min;
-      inputR2Max.value = settings.triggers.r2Max;
-    }
-
-    function loadActiveProfileSettings() {
-      const p = profiles.find(p => p.name === activeProfileName) || profiles[0];
-      settings = JSON.parse(JSON.stringify(p.settings));
-      applySettingsToInputs();
-    }
-
+    profiles = [p, ...profiles.filter((x) => x.name !== name)];
+    activeProfileName = name;
+    saveProfiles(profiles);
     refreshProfileSelect();
     loadActiveProfileSettings();
+    showToast('Profil "' + name + '" dicipta');
+  });
 
-    inputLeftDZ.addEventListener("input", () => {
-      settings.left.deadzone = parseFloat(inputLeftDZ.value);
-      valLeftDZ.textContent = settings.left.deadzone.toFixed(2);
-    });
-    inputRightDZ.addEventListener("input", () => {
-      settings.right.deadzone = parseFloat(inputRightDZ.value);
-      valRightDZ.textContent = settings.right.deadzone.toFixed(2);
-    });
-    inputLeftCurve.addEventListener("change", () => {
-      settings.left.curve = inputLeftCurve.value;
-    });
-    inputRightCurve.addEventListener("change", () => {
-      settings.right.curve = inputRightCurve.value;
-    });
-    inputL2Min.addEventListener("input", () => {
-      settings.triggers.l2Min = parseFloat(inputL2Min.value || "0");
-    });
-    inputL2Max.addEventListener("input", () => {
-      settings.triggers.l2Max = parseFloat(inputL2Max.value || "1");
-    });
-    inputR2Min.addEventListener("input", () => {
-      settings.triggers.r2Min = parseFloat(inputR2Min.value || "0");
-    });
-    inputR2Max.addEventListener("input", () => {
-      settings.triggers.r2Max = parseFloat(inputR2Max.value || "1");
-    });
+  function saveCurrentProfile(asName) {
+    const name = (asName || activeProfileName).trim();
+    const baseProfile =
+      profiles.find((p) => p.name === name) ||
+      profiles.find((p) => p.name === activeProfileName) ||
+      profiles[0] ||
+      DEFAULT_PROFILE;
+    const updated = {
+      name,
+      createdAt: baseProfile.createdAt || new Date().toISOString(),
+      settings: JSON.parse(JSON.stringify(settings)),
+    };
+    let list = profiles.filter((p) => p.name !== name);
+    list = [updated, ...list];
+    profiles = list;
+    activeProfileName = name;
+    saveProfiles(list);
+    refreshProfileSelect();
+    showToast('Profil "' + name + '" berjaya disimpan ✔');
+  }
 
-    profileSelect.addEventListener("change", () => {
-      activeProfileName = profileSelect.value;
-      loadActiveProfileSettings();
-    });
+  btnSaveProfile.addEventListener("click", () => saveCurrentProfile());
+  btnSaveChanges.addEventListener("click", () => saveCurrentProfile());
+  btnSaveAs.addEventListener("click", () => {
+    const name = prompt("Simpan sebagai (Save As):", activeProfileName + " Copy");
+    if (name) saveCurrentProfile(name);
+  });
 
-    btnNewProfile.addEventListener("click", () => {
-      const base = "Profile " + (profiles.length + 1);
-      const name = prompt("Nama profil baharu:", base) || base;
-      const p = {
-        name,
-        createdAt: new Date().toISOString(),
-        settings: JSON.parse(JSON.stringify(DEFAULT_PROFILE.settings)),
-      };
-      profiles = [p, ...profiles.filter(x => x.name !== name)];
-      activeProfileName = name;
-      saveProfiles(profiles);
-      refreshProfileSelect();
-      loadActiveProfileSettings();
-      showToast('Profil "' + name + '" dicipta');
-    });
+  btnDeleteProfile.addEventListener("click", () => {
+    if (!confirm('Padam profil "' + activeProfileName + '"?')) return;
+    profiles = profiles.filter((p) => p.name !== activeProfileName);
+    if (profiles.length === 0) profiles = [DEFAULT_PROFILE];
+    activeProfileName = profiles[0].name;
+    saveProfiles(profiles);
+    refreshProfileSelect();
+    loadActiveProfileSettings();
+    showToast("Profil dipadam");
+  });
 
-    function saveCurrentProfile(asName) {
-      const name = (asName || activeProfileName).trim();
-      let baseProfile =
-        profiles.find(p => p.name === activeProfileName) || profiles[0] || DEFAULT_PROFILE;
-      const updated = {
-        name,
-        createdAt: baseProfile.createdAt || new Date().toISOString(),
-        settings: JSON.parse(JSON.stringify(settings)),
-      };
-      let list = profiles.filter(p => p.name !== name);
-      list = [updated, ...list];
-      profiles = list;
-      activeProfileName = name;
-      saveProfiles(list);
-      refreshProfileSelect();
-      showToast('Profil "' + name + '" berjaya disimpan ✔');
+  btnExport.addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(profiles, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "IronTune_Profiles.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  fileImport.addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const arr = JSON.parse(String(reader.result));
+        if (!Array.isArray(arr)) throw new Error("Fail bukan senarai profil");
+        profiles = arr;
+        activeProfileName = arr[0]?.name || "Default";
+        saveProfiles(arr);
+        refreshProfileSelect();
+        loadActiveProfileSettings();
+        showToast("Profil berjaya diimport");
+      } catch (err) {
+        alert("Gagal import: " + err.message);
+      }
+    };
+    reader.readAsText(f);
+  });
+
+  // 🔁 Reset sekarang: kembali ke setting terakhir profil aktif
+  btnReset.addEventListener("click", () => {
+    loadActiveProfileSettings();
+    showToast("Calibration dikembalikan ke profil: " + activeProfileName);
+  });
+
+  // ---------- Gamepad ----------
+  btnDetect.addEventListener("click", () => {
+    alert(
+      "Tip: Tekan sebarang butang pada controller untuk trigger event Gamepad API.\n" +
+        "Kemudian tengok semula panel 'Gamepad'."
+    );
+  });
+
+  window.addEventListener("gamepadconnected", (e) => {
+    currentPad = e.gamepad;
+    showToast("Controller dikesan: " + e.gamepad.id);
+  });
+
+  window.addEventListener("gamepaddisconnected", () => {
+    currentPad = null;
+    showToast("Controller terputus");
+  });
+
+  function updateLayoutForPad(pad) {
+    const kind = getControllerKind(pad);
+    if (!pad) {
+      layoutBadgeEl.textContent = "Generic Layout";
+      return;
     }
-
-    btnSaveProfile.addEventListener("click", () => saveCurrentProfile());
-    btnSaveAs.addEventListener("click", () => {
-      const name = prompt("Simpan sebagai (Save As):", activeProfileName + " Copy");
-      if (name) saveCurrentProfile(name);
-    });
-
-    btnDeleteProfile.addEventListener("click", () => {
-      if (!confirm('Padam profil "' + activeProfileName + '"?')) return;
-      profiles = profiles.filter(p => p.name !== activeProfileName);
-      if (profiles.length === 0) profiles = [DEFAULT_PROFILE];
-      activeProfileName = profiles[0].name;
-      saveProfiles(profiles);
-      refreshProfileSelect();
-      loadActiveProfileSettings();
-      showToast("Profil dipadam");
-    });
-
-    btnExport.addEventListener("click", () => {
-      const blob = new Blob([JSON.stringify(profiles, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "IronTune_Profiles.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-
-    fileImport.addEventListener("change", e => {
-      const f = e.target.files[0];
-      if (!f) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const arr = JSON.parse(String(reader.result));
-          if (!Array.isArray(arr)) throw new Error("Fail bukan senarai profil");
-          profiles = arr;
-          activeProfileName = arr[0]?.name || "Default";
-          saveProfiles(arr);
-          refreshProfileSelect();
-          loadActiveProfileSettings();
-          showToast("Profil berjaya diimport");
-        } catch (err) {
-          alert("Gagal import: " + err.message);
-        }
-      };
-      reader.readAsText(f);
-    });
-
-    btnReset.addEventListener("click", () => {
-      settings = JSON.parse(JSON.stringify(DEFAULT_PROFILE.settings));
-      applySettingsToInputs();
-      showToast("Calibration direset ke Default");
-    });
-
-    btnSaveChanges.addEventListener("click", () => saveCurrentProfile());
-
-    // ---------- Gamepad ----------
-    btnDetect.addEventListener("click", () => {
-      alert("Tip: Tekan sebarang butang pada controller untuk trigger event Gamepad API.");
-    });
-
-    window.addEventListener("gamepadconnected", e => {
-      currentPad = e.gamepad;
-      showToast("Controller dikesan: " + e.gamepad.id);
-    });
-    window.addEventListener("gamepaddisconnected", () => {
-      currentPad = null;
-      showToast("Controller terputus");
-    });
-
-    function updateLayoutForPad(pad) {
-      const kind = getControllerKind(pad);
-      if (!pad) {
+    switch (kind) {
+      case "xbox":
+        layoutBadgeEl.textContent = "Xbox Layout";
+        break;
+      case "dualsense_edge":
+        layoutBadgeEl.textContent = "DualSense Edge Layout";
+        break;
+      case "ds4":
+        layoutBadgeEl.textContent = "DualShock 4 Layout";
+        break;
+      case "dualsense":
+        layoutBadgeEl.textContent = "DualSense Layout";
+        break;
+      case "switch":
+        layoutBadgeEl.textContent = "Switch / Pro Layout";
+        break;
+      default:
         layoutBadgeEl.textContent = "Generic Layout";
+    }
+  }
+
+  function setLamp(el, on) {
+    if (!el) return;
+    if (on) {
+      el.classList.remove("border-zinc-700", "text-zinc-400", "bg-zinc-800");
+      el.classList.add("border-cyan-300", "text-zinc-900", "bg-cyan-300");
+    } else {
+      el.classList.remove("border-cyan-300", "text-zinc-900", "bg-cyan-300");
+      el.classList.add("border-zinc-700", "text-zinc-400", "bg-zinc-800");
+    }
+  }
+
+  function setSquare(el, pressed) {
+    if (!el) return;
+    el.style.backgroundColor = pressed ? "#67e8f9" : "#27272a";
+  }
+
+  const STICK_CENTER = 55; // px
+  const STICK_RADIUS = 40; // px
+
+  function setStickDot(el, x, y) {
+    if (!el) return;
+    el.style.left = STICK_CENTER + x * STICK_RADIUS + "px";
+    el.style.top = STICK_CENTER - y * STICK_RADIUS + "px";
+  }
+
+  function updateGamepadUI() {
+    const pads = navigator.getGamepads
+      ? Array.from(navigator.getGamepads()).filter(Boolean)
+      : [];
+    if (!currentPad) currentPad = pads[0] || null;
+    const pad = currentPad || pads[0] || null;
+
+    if (!pad) {
+      padNameEl.textContent = "Tiada controller dikesan";
+      padStatusEl.textContent = "Status: —";
+      padIdShortEl.textContent = "Tiada controller dikesan";
+      updateLayoutForPad(null);
+      requestAnimationFrame(updateGamepadUI);
+      return;
+    }
+
+    padNameEl.textContent = pad.id;
+    padStatusEl.textContent = "Status: " + (pad.connected ? "Connected" : "Disconnected");
+    padIdShortEl.textContent = pad.id;
+    updateLayoutForPad(pad);
+
+    const ax = pad.axes || [];
+    let lx = ax[0] || 0;
+    let ly = ax[1] || 0;
+    let rx = ax[2] || 0;
+    let ry = ax[3] || 0;
+
+    const L = applyDeadzone(lx, ly, settings.left.deadzone);
+    const R = applyDeadzone(rx, ry, settings.right.deadzone);
+
+    const lx2 = applyCurve(L.x, settings.left.curve);
+    const ly2 = applyCurve(L.y, settings.left.curve);
+    const rx2 = applyCurve(R.x, settings.right.curve);
+    const ry2 = applyCurve(R.y, settings.right.curve);
+
+    setStickDot(stickL, lx2, ly2);
+    setStickDot(stickR, rx2, ry2);
+    lblLXY.textContent = "X: " + lx2.toFixed(3) + " • Y: " + ly2.toFixed(3);
+    lblRXY.textContent = "X: " + rx2.toFixed(3) + " • Y: " + ry2.toFixed(3);
+
+    const buttons = pad.buttons || [];
+    const ltRaw = buttons[6] ? buttons[6].value : 0;
+    const rtRaw = buttons[7] ? buttons[7].value : 0;
+
+    const norm = (v, min, max) =>
+      clamp01((v - min) / Math.max(0.0001, max - min));
+
+    const lt = norm(ltRaw, settings.triggers.l2Min, settings.triggers.l2Max);
+    const rt = norm(rtRaw, settings.triggers.r2Min, settings.triggers.r2Max);
+
+    barL2.style.width = Math.round(lt * 100) + "%";
+    barR2.style.width = Math.round(rt * 100) + "%";
+    lblL2Pct.textContent = Math.round(lt * 100) + "%";
+    lblR2Pct.textContent = Math.round(rt * 100) + "%";
+
+    setLamp(lampL1, buttons[4] && buttons[4].pressed);
+    setLamp(lampR1, buttons[5] && buttons[5].pressed);
+    setLamp(lampShare, buttons[8] && buttons[8].pressed);
+    setLamp(lampOptions, buttons[9] && buttons[9].pressed);
+
+    // D-pad
+    setSquare(dpadUp, buttons[12] && buttons[12].pressed);
+    setSquare(dpadDown, buttons[13] && buttons[13].pressed);
+    setSquare(dpadLeft, buttons[14] && buttons[14].pressed);
+    setSquare(dpadRight, buttons[15] && buttons[15].pressed);
+
+    // Face buttons (PS style / Xbox ikut layout badge)
+    setSquare(btnTri, buttons[3] && buttons[3].pressed);
+    setSquare(btnSquare, buttons[2] && buttons[2].pressed);
+    setSquare(btnCircle, buttons[1] && buttons[1].pressed);
+    setSquare(btnCross, buttons[0] && buttons[0].pressed);
+
+    // Home / L3 / R3
+    const homeIdx = pad.buttons.length > 16 ? 16 : -1;
+    const touchIdx = pad.buttons.length > 17 ? 17 : -1;
+    const homeOn = homeIdx >= 0 && pad.buttons[homeIdx].pressed;
+    const touchOn = touchIdx >= 0 && pad.buttons[touchIdx].pressed;
+
+    setLamp(btnHome, homeOn);
+    if (touchpad) {
+      touchpad.classList.toggle(
+        "border-cyan-300",
+        !!touchOn
+      );
+      touchpad.classList.toggle(
+        "bg-cyan-300/10",
+        !!touchOn
+      );
+    }
+
+    const l3On = buttons[10] && buttons[10].pressed;
+    const r3On = buttons[11] && buttons[11].pressed;
+    lblL3.textContent = "L3: " + (l3On ? "ON" : "OFF");
+    lblR3.textContent = "R3: " + (r3On ? "ON" : "OFF");
+
+    requestAnimationFrame(updateGamepadUI);
+  }
+
+  requestAnimationFrame(updateGamepadUI);
+
+  // ---------- WebHID Raw Monitor ----------
+  async function connectHID() {
+    try {
+      if (!("hid" in navigator)) {
+        alert("Browser ini tidak menyokong WebHID.");
         return;
       }
-      switch (kind) {
-        case "xbox":
-          layoutBadgeEl.textContent = "Xbox Layout";
-          break;
-        case "dualsense_edge":
-          layoutBadgeEl.textContent = "DualSense Edge Layout";
-          break;
-        case "ds4":
-          layoutBadgeEl.textContent = "DualShock 4 Layout";
-          break;
-        case "dualsense":
-          layoutBadgeEl.textContent = "DualSense Layout";
-          break;
-        case "switch":
-          layoutBadgeEl.textContent = "Switch / Pro Layout";
-          break;
-        default:
-          layoutBadgeEl.textContent = "Generic Layout";
-      }
+      const devices = await navigator.hid.requestDevice({
+        filters: [
+          { vendorId: 0x054c }, // Sony
+          { vendorId: 0x045e }, // Microsoft
+          { vendorId: 0x057e }, // Nintendo
+        ],
+      });
+      const dev = devices && devices[0];
+      if (!dev) return;
+
+      await dev.open();
+      hidDevice = dev;
+      rawHIDLog = [];
+      hidLogBox.innerHTML = "";
+
+      dev.addEventListener("inputreport", (e) => {
+        const view = new DataView(e.data.buffer);
+        let hex = "";
+        for (let i = 0; i < view.byteLength; i++) {
+          hex += view.getUint8(i).toString(16).padStart(2, "0") + " ";
+        }
+        const line =
+          new Date().toLocaleTimeString() +
+          " • reportId=" +
+          e.reportId +
+          " • " +
+          hex.trim();
+        rawHIDLog.unshift(line);
+        rawHIDLog = rawHIDLog.slice(0, 150);
+
+        hidLogBox.innerHTML = "";
+        rawHIDLog.forEach((ln) => {
+          const div = document.createElement("div");
+          div.textContent = ln;
+          hidLogBox.appendChild(div);
+        });
+      });
+
+      showToast("WebHID: peranti disambung");
+    } catch (e) {
+      alert("WebHID error: " + (e.message || e));
     }
+  }
 
-    function setLamp(el, on, activeClass) {
-      if (on) {
-        el.classList.remove("border-zinc-700", "text-zinc-400", "bg-zinc-800");
-        el.classList.add("bg-cyan-300", "text-zinc-900", "border-cyan-300");
-      } else {
-        el.classList.add("border-zinc-700", "text-zinc-400");
-        el.classList.remove("bg-cyan-300", "text-zinc-900", "border-cyan-300");
-      }
-    }
-
-    function setSquare(el, pressed, color) {
-      if (pressed) {
-        el.style.backgroundColor = color || "#67e8f9";
-      } else {
-        el.style.backgroundColor = "#27272a";
-      }
-    }
-
-    function updateGamepadUI() {
-      const pads = navigator.getGamepads
-        ? Array.from(navigator.getGamepads()).filter(Boolean)
-        : [];
-      if (!currentPad) currentPad = pads[0] || null;
-
-      const pad = currentPad || pads[0] || null;
-
-      if (!pad) {
-        padNameEl.textContent = "Tiada controller dikesan";
-        padStatusEl.textContent = "Status: —";
-        padIdShortEl.textContent = "Tiada controller dikesan";
-        updateLayoutForPad(null);
-        requestAnimationFrame(updateGamepadUI);
-        return;
-      }
-
-      padNameEl.textContent = pad.id;
-      padStatusEl.textContent = "Status: " + (pad.connected ? "Connected" : "Disconnected");
-      padIdShortEl.textContent = pad.id;
-      updateLayoutForPad(pad);
-
-      const ax = pad.axes || [];
-      let lx = ax[0] || 0;
-      let ly = ax[1] || 0;
-      let rx = ax[2] || 0;
-      let ry = ax[3] || 0;
-
-      const L = applyDeadzone(lx, ly, settings.left.deadzone);
-      const R = applyDeadzone(rx, ry, settings.right.deadzone);
-
-      const lx2 = applyCurve(L.x, settings.left.curve);
-      const ly2 = applyCurve(L.y, settings.left.curve);
-      const rx2 = applyCurve(R.x, settings.right.curve);
-      const ry2 = applyCurve(R.y, settings.right.curve);
-
-      // update sticks (convert -1..1 to position)
-      const radius = 40;
-      stickL.style.left = 50 + lx2 * radius + "%";
-      stickL.style.top = 50 + (-ly2) * radius + "%";
-      stickR.style.left = 50 + rx2 * radius + "%";
-      stickR.style.top = 50 + (-ry2) * radius + "%";
-      lblLXY.textContent = "X: " + lx2.toFixed(3) + " • Y: " + ly2.toFixed(3);
-      lblRXY.textContent = "X: " + rx2.toFixed(3) + " • Y: " + ry2.toFixed(3);
-
-      // triggers & bumpers
-      const buttons = pad.buttons || [];
-      const ltRaw = buttons[6] ? buttons[6].value : 0;
-      const rtRaw = buttons[7] ? buttons[7].value : 0;
-
-      const norm = (v, min, max) =>
-        clamp01((v - min) / Math.max(0.0001, max - min));
-
-      const lt = norm(ltRaw, settings.triggers.l2Min, settings.triggers.l2Max);
-      const rt = norm(rtRaw, settings.triggers.r2Min, settings.triggers.r2Max);
-
-      barL2.style.width = Math.round(lt * 100) + "%";
-      barR2.style.width = Math.round(rt * 100) + "%";
-      lblL2Pct.textContent = Math.round(lt * 100) + "%";
-      lblR2Pct.textContent = Math.round(rt * 100) + "%";
-
-      setLamp(lampL1, buttons[4] && buttons[4].pressed);
-      setLamp(lampR1, buttons[5] && buttons[5].pressed);
-      setLamp(lampShare, buttons[8] && buttons[8].pressed);
-      setLamp(lampOptions, buttons[9] && buttons[9].pressed);
-
-      // D-pad
-      setSquare(dpadUp, buttons[12] && buttons[12].pressed);
-      setSquare(dpadDown, buttons[13] && buttons[13].pressed
+  btnConnectHID.addEventListener("click", () => {
+    connectHID();
+  });
+</script>
