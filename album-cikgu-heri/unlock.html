@@ -1,1 +1,370 @@
 
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Akses Penuh – 10 Lagu Eksklusif Cikgu Heri</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #222, #000);
+      color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .album-container {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(10, 10, 10, 0.9);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .album-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .album-cover {
+      width: 220px;
+      height: 220px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #1db954, #191414);
+      position: relative;
+      overflow: hidden;
+    }
+    .album-cover-inner {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), transparent 55%);
+    }
+    .album-cover-title {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      right: 18px;
+      font-weight: 700;
+      font-size: 18px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.9);
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.08);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .pill span { font-size: 18px; }
+    .album-info h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+    }
+    .album-info .artist {
+      font-size: 15px;
+      color: #b3b3b3;
+      margin-bottom: 10px;
+    }
+    .tracks {
+      margin-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 12px;
+    }
+    .track {
+      padding: 10px 8px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      margin-bottom: 12px;
+    }
+    .track-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+      gap: 10px;
+    }
+    .track-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .track-subtitle {
+      font-size: 12px;
+      color: #b3b3b3;
+    }
+    audio { width: 100%; margin-top: 6px; }
+    a.download-link {
+      font-size: 11px;
+      color: #1db954;
+      text-decoration: none;
+    }
+    a.download-link:hover { text-decoration: underline; }
+    .small {
+      margin-top: 14px;
+      font-size: 11px;
+      color: #9a9a9a;
+      line-height: 1.5;
+    }
+    .status-bar {
+      text-align: center;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #d2d2d2;
+    }
+    .status-bar span {
+      color: #1db954;
+      font-weight: 600;
+    }
+    @media (max-width:700px) {
+      .album-header { flex-direction: column; align-items:flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="album-container">
+
+  <div class="album-header">
+    <div class="album-cover">
+      <div class="album-cover-inner"></div>
+      <div class="album-cover-title">10 Lagu Eksklusif Cikgu Heri</div>
+    </div>
+    <div class="album-info">
+      <div class="pill"><span>●</span> Akses Penuh</div>
+      <h1>Terima kasih kerana menyokong!</h1>
+      <div class="artist">
+        Anda kini boleh mendengar dan memuat turun semua 10 lagu eksklusif di bawah.
+      </div>
+      <div style="font-size:13px;color:#b3b3b3;">
+        *Mohon jangan sebarkan pautan ini secara terbuka. Sokongan anda membantu kami hasilkan lebih banyak karya.*
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar" id="statusBar">
+    Mengesahkan pembayaran dari ToyyibPay…
+  </div>
+
+  <div class="tracks" id="tracksWrapper" style="display:none;">
+
+    <!-- 1. Anakku Tak Mengerti -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">1. Anakku Tak Mengerti</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1nYd1_-9dlN24RV6FmzvX22NyfToAt4Dx"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1nYd1_-9dlN24RV6FmzvX22NyfToAt4Dx" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 2. Asmara Disko Malam -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">2. Asmara Disko Malam</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1n3SyNBwDGk6stUepdVnPt4UKiLMODMNL"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1n3SyNBwDGk6stUepdVnPt4UKiLMODMNL" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 3. Bila Dunia Jadi Sunyi -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">3. Bila Dunia Jadi Sunyi</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1g8yEBapmFXX6gMPU8C-BgR_M7bQUZZ4p"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1g8yEBapmFXX6gMPU8C-BgR_M7bQUZZ4p" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 4. Buaian Rindu Malam -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">4. Buaian Rindu Malam</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1wl1kbXM_4hrUkl2k3eduhcLMZIAYqhdc"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1wl1kbXM_4hrUkl2k3eduhcLMZIAYqhdc" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 5. Cinta Dikhianati -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">5. Cinta Dikhianati</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1c0Uqkd1iXnSAvG9BhzRN6g3GpvnHKA4p"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1c0Uqkd1iXnSAvG9BhzRN6g3GpvnHKA4p" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 6. Di Bumi Perantauan -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">6. Di Bumi Perantauan</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1T8mk-i7OpMPE4hmkeVDuTjtNwI9N0XPY"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1T8mk-i7OpMPE4hmkeVDuTjtNwI9N0XPY" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 7. Diam Pun Aku Lawan -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">7. Diam Pun Aku Lawan</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1rIB32GyBQG7yrZ9rBCVsFCvbAh_jZ6km"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1rIB32GyBQG7yrZ9rBCVsFCvbAh_jZ6km" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 8. It's About Time -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">8. It's About Time</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1FET8xXINWbqv7O6nObFrJT_ehPyP6hvs"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1FET8xXINWbqv7O6nObFrJT_ehPyP6hvs" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 9. Ribut Dalam Dada -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">9. Ribut Dalam Dada</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1t0SzOzdFleAS101pelKo6TZMjWbMKbHq"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1t0SzOzdFleAS101pelKo6TZMjWbMKbHq" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- 10. Terimalah Lagu Ini -->
+    <div class="track">
+      <div class="track-header">
+        <div>
+          <div class="track-title">10. Terimalah Lagu Ini</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+        </div>
+        <a class="download-link"
+           href="https://docs.google.com/uc?export=download&id=1bzfwS-LggFKCzRz4RgVI1-fjWVlCssHX"
+           target="_blank">
+          ⬇ Muat turun
+        </a>
+      </div>
+      <audio controls preload="none">
+        <source src="https://docs.google.com/uc?export=download&id=1bzfwS-LggFKCzRz4RgVI1-fjWVlCssHX" type="audio/mpeg">
+      </audio>
+    </div>
+
+  </div>
+
+  <div class="small">
+    Jika anda menghadapi masalah memainkan atau memuat turun lagu,
+    sila hubungi pihak Cikgu Heri bersama bukti pembayaran ToyyibPay.
+  </div>
+</div>
+
+<script>
+  const EXPECTED_BILL_CODE = "10-Lagu-Eksklusif-Cikgu-Heri";
+
+  function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+  }
+
+  (function verifyFromToyyibPay() {
+    const statusId = getQueryParam("status_id");
+    const billcode = getQueryParam("billcode");
+    const statusBar = document.getElementById("statusBar");
+    const tracksWrapper = document.getElementById("tracksWrapper");
+
+    // ToyyibPay biasanya hantar status_id=1 bila pembayaran berjaya
+    if (statusId === "1" && billcode === EXPECTED_BILL_CODE) {
+      statusBar.innerHTML = "<span>Pembayaran disahkan.</span> Terima kasih kerana menyokong 10 Lagu Eksklusif Cikgu Heri.";
+      tracksWrapper.style.display = "block";
+    } else {
+      statusBar.innerHTML =
+        "Pengesahan bayaran tidak sah atau tiada maklumat pembayaran dikesan. " +
+        "Jika anda telah membayar, sila akses halaman ini melalui pautan selepas pembayaran ToyyibPay atau hubungi admin.";
+      tracksWrapper.style.display = "none";
+    }
+  })();
+</script>
+</body>
+</html>
