@@ -1,78 +1,301 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Album Eksklusif Cikgu Heri</title>
+  <meta charset="UTF-8">
+  <title>10 Lagu Eksklusif Cikgu Heri</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #111;
-            color: white;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #222, #000);
+      color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .album-container {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(10, 10, 10, 0.9);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .album-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .album-cover {
+      width: 260px;
+      height: 260px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #1db954, #191414);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .album-cover-inner {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), transparent 55%);
+    }
+    .album-cover-title {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      right: 18px;
+      font-weight: 700;
+      font-size: 20px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.9);
+    }
+    .album-info h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+    .album-info .artist {
+      font-size: 16px;
+      color: #b3b3b3;
+      margin-bottom: 10px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.08);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .pill span {
+      font-size: 18px;
+    }
+    .price {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1db954;
+    }
+    .btn-primary {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: none;
+      outline: none;
+      background: #1db954;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.9);
+      background: #1ed760;
+    }
+    .notice {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #b3b3b3;
+    }
+    .tracks {
+      margin-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 16px;
+    }
+    .tracks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #b3b3b3;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+    }
+    .track {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 2fr) minmax(0, 2.5fr) 120px;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 8px;
+      border-radius: 10px;
+      transition: background 0.15s ease;
+    }
+    .track:hover { background: rgba(255,255,255,0.04); }
+    .track-number {
+      text-align: center;
+      color: #b3b3b3;
+      font-size: 13px;
+    }
+    .track-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .track-subtitle {
+      font-size: 12px;
+      color: #b3b3b3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lock-chip {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      text-align: center;
+    }
+    .info-small {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #8c8c8c;
+      line-height: 1.5;
+    }
 
-        .container {
-            padding: 40px 20px;
-            max-width: 600px;
-            margin: auto;
-        }
-
-        .album-cover {
-            width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 0 25px rgba(255,255,255,0.2);
-        }
-
-        h1 {
-            margin-top: 25px;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        p {
-            color: #ccc;
-            font-size: 16px;
-            margin-top: -10px;
-        }
-
-        .btn {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 14px 25px;
-            background: #00cc66;
-            color: #111;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .btn:hover {
-            background: #00ff88;
-        }
-    </style>
+    @media (max-width: 700px) {
+      .album-header { flex-direction: column; align-items: flex-start; }
+      .album-cover { width: 200px; height: 200px; }
+      .track {
+        grid-template-columns: 20px minmax(0, 2fr);
+        grid-template-rows: auto auto;
+      }
+      .lock-chip {
+        grid-column: 2 / 3;
+        justify-self: flex-start;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="album-container">
+    <div class="album-header">
+      <div class="album-cover">
+        <div class="album-cover-inner"></div>
+        <div class="album-cover-title">10 Lagu Eksklusif Cikgu Heri</div>
+      </div>
+      <div class="album-info">
+        <div class="pill"><span>●</span> Album Eksklusif</div>
+        <h1>10 Lagu Eksklusif Cikgu Heri</h1>
+        <div class="artist">Oleh Cikgu Heri</div>
+        <div class="price">RM100 – akses penuh 10 lagu</div>
 
-<div class="container">
+        <a class="btn-primary" href="https://toyyibpay.com/10-Lagu-Eksklusif-Cikgu-Heri">
+          💳 Beli &amp; Unlock Semua Lagu
+        </a>
 
-    <img src="https://i.imgur.com/AeSDO8G.png" class="album-cover" alt="Album Cikgu Heri">
+        <div class="notice">
+          Selepas pembayaran berjaya, anda akan dibawa ke halaman khas
+          untuk mendengar semua lagu secara penuh.
+        </div>
+      </div>
+    </div>
 
-    <h1>10 Lagu Eksklusif Cikgu Heri</h1>
-    <p>Akses penuh akan dibuka selepas pembayaran.</p>
+    <div class="tracks">
+      <div class="tracks-header">
+        <div>Senarai Lagu (Preview)</div>
+        <div class="badge-status">🔒 Terkunci – Hanya pembeli boleh dengar penuh</div>
+      </div>
 
-    <a class="btn" 
-       href="https://toyyibpay.com/10-Lagu-Eksklusif-Cikgu-Heri"
-       target="_blank">
-        Beli RM100
-    </a>
+      <div class="track">
+        <div class="track-number">1</div>
+        <div class="track-title">Anakku Tak Mengerti</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
 
-</div>
+      <div class="track">
+        <div class="track-number">2</div>
+        <div class="track-title">Asmara Disko Malam</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
 
+      <div class="track">
+        <div class="track-number">3</div>
+        <div class="track-title">Bila Dunia Jadi Sunyi</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
+
+      <div class="track">
+        <div class="track-number">4</div>
+        <div class="track-title">Buaian Rindu Malam</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
+
+      <div class="track">
+        <div class="track-number">5</div>
+        <div class="track-title">Cinta Dikhianati</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
+
+      <div class="track">
+        <div class="track-number">6</div>
+        <div class="track-title">Di Bumi Perantauan</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
+
+      <div class="track">
+        <div class="track-number">7</div>
+        <div class="track-title">Diam Pun Aku Lawan</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
+
+      <div class="track">
+        <div class="track-number">8</div>
+        <div class="track-title">It's About Time</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
+
+      <div class="track">
+        <div class="track-number">9</div>
+        <div class="track-title">Ribut Dalam Dada</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
+
+      <div class="track">
+        <div class="track-number">10</div>
+        <div class="track-title">Terimalah Lagu Ini</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
+      </div>
+    </div>
+
+    <div class="info-small">
+      Halaman ini hanya untuk preview tajuk lagu.<br>
+      Akses penuh diberikan di halaman khas selepas pembayaran ToyyibPay berjaya.
+    </div>
+  </div>
 </body>
 </html>
