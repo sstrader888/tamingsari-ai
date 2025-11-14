@@ -1,452 +1,519 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <!-- META SEO (OPEN/EDU FOCUS) -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SStrader Academy – Coaching Taming Sari oleh Cikgu Heri</title>
-  <meta name="description" content="SStrader Academy: Kelas asas hingga lanjutan, 1-to-1 coaching, group coaching dan pakej premium di HQ Taiping. Tempat tinggal disediakan.">
-  <meta name="keywords" content="kelas forex, coaching trading, taming sari, cikgu heri, kelas trader, asas trading, teknikal analisis">
-  <meta name="author" content="SStrader Academy">
+  <meta charset="UTF-8">
+  <title>10 Lagu Eksklusif Cikgu Heri</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="SStrader Academy – Coaching Taming Sari oleh Cikgu Heri">
-  <meta property="og:description" content="Program pembelajaran trading berstruktur untuk pemula hingga lanjutan. 1-to-1, group dan pakej premium di HQ Taiping.">
-  <meta property="og:image" content="https://i.imgur.com/qzYmSNR.jpeg">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://thesstrader.com">
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Wavesurfer untuk waveform -->
+  <script src="https://unpkg.com/wavesurfer.js"></script>
 
   <style>
-    :root{
-      /* Chelsea-ish blues */
-      --blue:#034694;
-      --blue-2:#0a66c2;
-      --blue-3:#1a8cff;
-      --sky:#eaf4ff;
-      --ink:#0b1a2b;
-      --muted:#6c7b8a;
-      --line:#e6eef7;
-      --card:#ffffff;
-      --accent:#0a66c2;
-      --success:#25D366;
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #222, #000);
+      color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial; color:var(--ink); line-height:1.65; background:var(--card)}
-    img{max-width:100%;height:auto;display:block}
-    a{color:var(--blue-2);text-decoration:none}
-    .container{max-width:1200px;margin:0 auto;padding:18px 20px}
+    .album-container {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(10, 10, 10, 0.9);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.06);
+      animation: fadeInUp 0.5s ease-out;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .album-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .album-cover {
+      width: 260px;
+      height: 260px;
+      border-radius: 22px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 16px 35px rgba(0,0,0,0.8);
+      transform: translateY(0);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: linear-gradient(135deg,#1db954,#191414);
+    }
+    .album-cover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 45px rgba(0,0,0,0.95);
+    }
+    .album-cover-title {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      right: 18px;
+      font-weight: 700;
+      font-size: 20px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.9);
+    }
+    .album-info h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+    .album-info .artist {
+      font-size: 16px;
+      color: #b3b3b3;
+      margin-bottom: 10px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.08);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .pill span {
+      font-size: 18px;
+    }
+    .price {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1db954;
+    }
+    .btn-primary {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: none;
+      outline: none;
+      background: #1db954;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.9);
+      background: #1ed760;
+    }
+    .notice {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #b3b3b3;
+    }
+    .tracks {
+      margin-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 16px;
+    }
+    .tracks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #b3b3b3;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+    }
+    .badge-status span {
+      color: #ffb347;
+      font-size: 14px;
+    }
+    .track {
+      padding: 10px 8px 14px;
+      border-radius: 12px;
+      transition: background 0.15s ease;
+      margin-bottom: 10px;
+    }
+    .track:hover { background: rgba(255,255,255,0.04); }
+    .track-row {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 2fr) minmax(0, 2fr) 150px;
+      gap: 12px;
+      align-items: center;
+    }
+    .track-number {
+      text-align: center;
+      color: #b3b3b3;
+      font-size: 13px;
+    }
+    .track-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .track-subtitle {
+      font-size: 12px;
+      color: #b3b3b3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .preview-btn {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: rgba(29,185,84,0.08);
+      color: #1db954;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .preview-btn span.icon {
+      font-size: 13px;
+    }
+    .preview-btn.playing {
+      background: #1db954;
+      color: #000;
+    }
+    .wave-container {
+      margin-top: 8px;
+      height: 48px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.03);
+      display: none;
+    }
+    .wave-inner {
+      width: 100%;
+      height: 100%;
+    }
+    .info-small {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #8c8c8c;
+      line-height: 1.6;
+    }
 
-    /* Decorative background (soft blobs + float dots) */
-    .hero-wrap{
-      background:
-        radial-gradient(900px 500px at 90% -10%, rgba(3,70,148,.08), transparent),
-        radial-gradient(600px 380px at -10% 0%, rgba(26,140,255,.12), transparent),
-        var(--card);
-      position:relative;
-      overflow:hidden;
-    }
-    .float-dot{
-      position:absolute;width:10px;height:10px;border-radius:50%;
-      background:radial-gradient(circle at 30% 30%,#fff, var(--blue-3));
-      opacity:.35;animation:float 9s ease-in-out infinite;
-    }
-    .float-dot.d1{left:6%; top:70%; animation-delay:.2s}
-    .float-dot.d2{right:6%; top:78%; animation-delay:1s}
-    .float-dot.d3{left:20%; top:85%; animation-delay:2s}
-    @keyframes float{
-      0%,100%{transform:translateY(0)}
-      50%{transform:translateY(-16px)}
-    }
-
-    /* NAV */
-    header.nav{
-      position:sticky; top:0; z-index:60;
-      backdrop-filter:saturate(140%) blur(10px);
-      background:rgba(255,255,255,.82);
-      border-bottom:1px solid var(--line);
-    }
-    .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand img{height:34px;filter:grayscale(100%) contrast(110%)}
-    .brand strong{font-size:18px;color:var(--blue)}
-    .nav-links{display:flex;gap:18px;align-items:center}
-    .nav-links a{font-weight:600;color:var(--ink)}
-    .nav-links a:hover{color:var(--blue)}
-    .cta-wa{background:linear-gradient(90deg,#25D366,#128C7E); color:#fff;font-weight:700;padding:10px 14px;border-radius:12px}
-    .hamburger{display:none;font-size:28px;cursor:pointer;user-select:none}
-
-    @media(max-width:768px){
-      .nav-links{display:none;position:absolute;right:20px;top:64px;background:#fff;border:1px solid var(--line);
-        border-radius:14px;padding:12px 14px;flex-direction:column;gap:10px;box-shadow:0 14px 26px rgba(0,0,0,.08)}
-      .nav-links.show{display:flex}
-      .hamburger{display:block}
-    }
-
-    /* HERO */
-    .hero{padding:56px 0 20px;text-align:center}
-    .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0 2px}
-    .badge{border:1px solid var(--line);background:var(--sky);color:var(--blue);padding:8px 12px;border-radius:999px;font-size:13px}
-    .hero h1{font-size:clamp(28px,3.6vw,44px);margin:8px 0}
-    .hero h1 .hl{color:var(--blue-3)}
-    .hero p{max-width:860px;margin:0 auto;color:var(--muted)}
-
-    /* SECTION */
-    .section{padding:30px 0}
-    .section h2{font-size:clamp(22px,2.6vw,30px);margin:0 0 12px;color:var(--blue)}
-
-    /* CARDS */
-    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    @media(max-width:960px){.cards{grid-template-columns:1fr 1fr}}
-    @media(max-width:640px){.cards{grid-template-columns:1fr}}
-    .card{
-      background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;position:relative;overflow:hidden;
-      box-shadow:0 10px 20px rgba(3,70,148,.06);
-      transition:transform .25s ease, box-shadow .25s ease;
-    }
-    .card:hover{transform:translateY(-4px);box-shadow:0 16px 30px rgba(3,70,148,.12)}
-    .price{font-weight:800;color:var(--blue-3)}
-    .list{margin:8px 0 14px;padding-left:18px}
-    .list li{margin:6px 0}
-    .btn{display:inline-block;background:linear-gradient(90deg,var(--blue),var(--blue-3));color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
-    .btn.outline{background:#fff;color:var(--blue);border:1px solid var(--blue)}
-
-    /* GRID 2 */
-    .grid-2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
-    @media(max-width:900px){.grid-2{grid-template-columns:1fr}}
-
-    .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 20px rgba(3,70,148,.06)}
-
-    /* Artikel */
-    .articles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    @media(max-width:880px){.articles{grid-template-columns:1fr}}
-    .article{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff;box-shadow:0 6px 14px rgba(3,70,148,.05)}
-    .article a{font-weight:700;color:var(--ink)}
-    .article a:hover{color:var(--blue)}
-
-    /* FAQ */
-    .faq{display:grid;gap:10px;margin-top:12px}
-    .faq-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;cursor:pointer}
-    .faq-q{font-weight:700;color:var(--ink)}
-    .faq-a{max-height:0;overflow:hidden;opacity:.5;transition:max-height .35s ease,opacity .35s ease}
-    .faq-item.active .faq-a{max-height:240px;opacity:1}
-
-    /* Footer */
-    footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:14px;background:#fff}
-
-    /* WhatsApp floating button */
-    .wa-float{
-      position:fixed; right:16px; bottom:20px; background:linear-gradient(90deg,#25D366,#128C7E); color:#fff;
-      padding:10px 14px; border-radius:999px; font-weight:800; z-index:50
-    }
-
-    /* IronTune promo section */
-    .irontune-panel{
-      background:radial-gradient(circle at 0% 0%, rgba(3,70,148,.25), transparent),
-                 radial-gradient(circle at 100% 100%, rgba(26,140,255,.18), transparent),
-                 #050816;
-      color:#e5e7eb;
-      border-radius:22px;
-      padding:22px 20px;
-      border:1px solid rgba(15,23,42,.8);
-      box-shadow:0 20px 40px rgba(3,70,148,.35);
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:18px;
-      flex-wrap:wrap;
-    }
-    .irontune-text{flex:1 1 260px}
-    .irontune-tag{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      font-size:11px;
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.7);
-      background:rgba(15,23,42,.7);
-      color:#cbd5f5;
-      margin-bottom:6px;
-    }
-    .irontune-panel h2{
-      margin:4px 0 6px;
-      font-size:clamp(20px,2.5vw,26px);
-      color:#f9fafb;
-    }
-    .irontune-panel h2 span{
-      color:var(--blue-3);
-    }
-    .irontune-panel p{
-      margin:4px 0;
-      font-size:14px;
-      color:#cbd5f5;
-    }
-    .irontune-list{
-      margin:8px 0 0;
-      padding-left:18px;
-      font-size:13px;
-      color:#d1d5db;
-    }
-    .irontune-list li{margin:4px 0}
-    .irontune-cta{
-      min-width:220px;
-    }
-    .btn-neon{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      background:linear-gradient(90deg,#06b6d4,#3b82f6);
-      color:#fff;
-      border-radius:999px;
-      padding:11px 18px;
-      font-weight:700;
-      font-size:14px;
-      border:0;
-    }
-    .btn-neon span.arrow{font-size:18px;line-height:0}
-    .irontune-note{
-      margin-top:6px;
-      font-size:11px;
-      color:#a5b4fc;
-    }
-    @media(max-width:768px){
-      .irontune-panel{
-        flex-direction:column;
-        align-items:flex-start;
+    @media (max-width: 700px) {
+      .album-header { flex-direction: column; align-items: flex-start; }
+      .album-cover { width: 210px; height: 210px; }
+      .track-row {
+        grid-template-columns: 22px minmax(0, 2fr);
+        grid-template-rows: auto auto auto;
       }
-      .irontune-cta{
-        width:100%;
+      .track-subtitle {
+        grid-column: 2 / -1;
+      }
+      .preview-btn {
+        grid-column: 2 / -1;
+        justify-self: flex-start;
       }
     }
   </style>
 </head>
 <body>
-
-  <!-- NAV -->
-  <header class="nav">
-    <div class="container nav-inner">
-      <div class="brand">
-        <img src="https://i.imgur.com/qzYmSNR.jpeg" alt="Logo SStrader">
-        <strong>SStrader Academy</strong>
+  <div class="album-container">
+    <div class="album-header">
+      <div class="album-cover">
+        <div class="album-cover-title">10 Lagu Eksklusif Cikgu Heri</div>
       </div>
-      <nav class="nav-links" id="navLinks">
-        <a href="#paket">Pakej</a>
-        <a href="#silibus">Silibus</a>
-        <a href="#irontune">Tools</a>
-        <a href="#artikel">Artikel</a>
-        <a href="#hubungi">Hubungi</a>
-        <a class="cta-wa" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20nak%20tanya%20program%20coaching.">WhatsApp Cikgu</a>
-      </nav>
-      <div class="hamburger" id="hamburger">☰</div>
+      <div class="album-info">
+        <div class="pill"><span>●</span> Album Eksklusif</div>
+        <h1>10 Lagu Eksklusif Cikgu Heri</h1>
+        <div class="artist">Oleh Cikgu Heri</div>
+        <div class="price">RM100 – akses penuh 10 lagu</div>
+
+        <a class="btn-primary" href="https://toyyibpay.com/10-Lagu-Eksklusif-Cikgu-Heri">
+          💳 Beli &amp; Unlock Semua Lagu
+        </a>
+
+        <div class="notice">
+          Selepas pembayaran berjaya, anda akan dibawa ke halaman khas
+          untuk mendengar semua lagu secara penuh dan memuat turun fail audio.
+        </div>
+      </div>
     </div>
-  </header>
 
-  <!-- HERO -->
-  <div class="hero-wrap">
-    <section class="hero container">
-      <div class="badges">
-        <span class="badge">HQ Taiping, Perak</span>
-        <span class="badge">Penginapan Disediakan</span>
-        <span class="badge">Silibus Berstruktur</span>
+    <div class="tracks">
+      <div class="tracks-header">
+        <div>Senarai Lagu (Preview 15 Saat)</div>
+        <div class="badge-status"><span>🔒</span> Lagu penuh hanya untuk pembeli</div>
       </div>
-      <h1>Pembelajaran Trading <span class="hl">Berfokus & Berdisiplin</span></h1>
-      <p>Latihan dari asas hingga lanjutan bersama <strong>Cikgu Heri</strong>. Sesuai untuk pemula yang mahu mula dengan betul dan trader intermediate yang perlukan struktur, disiplin dan pemahaman price action.</p>
-    </section>
-    <!-- soft floating dots -->
-    <span class="float-dot d1"></span>
-    <span class="float-dot d2"></span>
-    <span class="float-dot d3"></span>
+
+      <!-- Track list -->
+      <div class="track" data-track-id="anak">
+        <div class="track-row">
+          <div class="track-number">1</div>
+          <div class="track-title">Anakku Tak Mengerti</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="anak">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-anak">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="asmara">
+        <div class="track-row">
+          <div class="track-number">2</div>
+          <div class="track-title">Asmara Disko Malam</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="asmara">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-asmara">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="bila">
+        <div class="track-row">
+          <div class="track-number">3</div>
+          <div class="track-title">Bila Dunia Jadi Sunyi</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="bila">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-bila">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="buaian">
+        <div class="track-row">
+          <div class="track-number">4</div>
+          <div class="track-title">Buaian Rindu Malam</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="buaian">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-buaian">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="cinta">
+        <div class="track-row">
+          <div class="track-number">5</div>
+          <div class="track-title">Cinta Dikhianati</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="cinta">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-cinta">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="bumi">
+        <div class="track-row">
+          <div class="track-number">6</div>
+          <div class="track-title">Di Bumi Perantauan</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="bumi">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-bumi">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="diam">
+        <div class="track-row">
+          <div class="track-number">7</div>
+          <div class="track-title">Diam Pun Aku Lawan</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="diam">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-diam">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="time">
+        <div class="track-row">
+          <div class="track-number">8</div>
+          <div class="track-title">It's About Time</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="time">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-time">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="ribut">
+        <div class="track-row">
+          <div class="track-number">9</div>
+          <div class="track-title">Ribut Dalam Dada</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="ribut">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-ribut">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+
+      <div class="track" data-track-id="terima">
+        <div class="track-row">
+          <div class="track-number">10</div>
+          <div class="track-title">Terimalah Lagu Ini</div>
+          <div class="track-subtitle">Cikgu Heri</div>
+          <button class="preview-btn" data-track="terima">
+            <span class="icon">▶</span> Preview 15s
+          </button>
+        </div>
+        <div class="wave-container" id="wave-terima">
+          <div class="wave-inner"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-small">
+      *Preview hanya 15 saat untuk setiap lagu. Akses penuh lagu dan muat turun fail audio
+      hanya diberikan kepada pembeli yang membuat pembayaran melalui ToyyibPay.*
+    </div>
   </div>
 
-  <!-- PAKEJ -->
-  <section id="paket" class="container section">
-    <h2>Pilih Pakej Pembelajaran</h2>
-    <p style="color:var(--muted)">Semua sesi dijalankan di <strong>HQ SStrader, Taiping, Perak</strong>. Penginapan disediakan untuk memudahkan pembelajaran intensif.</p>
-
-    <div class="cards" style="margin-top:14px">
-      <div class="card">
-        <h3>👨‍🏫 1-to-1 Coaching</h3>
-        <div class="price">RM2,000</div>
-        <ul class="list">
-          <li>Fokus penuh pada kekuatan & kelemahan individu</li>
-          <li>Drill teknikal & latihan rekod jurnal</li>
-          <li>Jadual fleksibel (ikut slot Cikgu)</li>
-        </ul>
-        <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20berminat%201-to-1%20coaching.">Daftar Minat</a>
-      </div>
-
-      <div class="card">
-        <h3>👥 Group Coaching</h3>
-        <div class="price">RM4,000 (min 4 orang)</div>
-        <ul class="list">
-          <li>Belajar dalam kumpulan kecil, interaktif</li>
-          <li>Latihan praktikal & pembentangan setup</li>
-          <li>Nota modul & tugasan mingguan</li>
-        </ul>
-        <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20saya%20berminat%20Group%20coaching%20(min%204).">Tempah Kumpulan</a>
-      </div>
-
-      <div class="card">
-        <h3>🌟 Pakej Premium</h3>
-        <div class="price">Sebut harga khas</div>
-        <ul class="list">
-          <li>Silibus penuh + mentoring lanjutan</li>
-          <li>Sesi praktikal intensif di HQ (dengan penginapan)</li>
-          <li>Pemeriksaan jurnal & pelan pembelajaran individu</li>
-        </ul>
-        <a class="btn" href="https://api.whatsapp.com/send?phone=60132541233&text=Salam%20Cikgu%20Heri%2C%20mohon%20maklumat%20Pakej%20Premium.">Minta Sebut Harga</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- SILIBUS + LOKASI -->
-  <section id="silibus" class="container section grid-2">
-    <div class="panel">
-      <h2>Silibus Ringkas</h2>
-      <ul class="list" style="margin-top:6px">
-        <li>Asas pasaran & struktur pergerakan harga</li>
-        <li>Price Action: zon minat, candle behavior, momentum</li>
-        <li>Rangka kerja “Entry bersebab” & timing</li>
-        <li>Pengurusan risiko & ukuran posisi (risk budgeting)</li>
-        <li>Jurnal & review: bina sistem yang berulang</li>
-        <li>Psikologi: rutin, disiplin, expectation management</li>
-      </ul>
-      <p style="color:var(--muted)">Nota: Tiada janji pulangan. Fokus pada proses & kemahiran.</p>
-    </div>
-    <div class="panel">
-      <h2>Lokasi & Kemudahan</h2>
-      <p>Semua program diadakan di <strong>HQ SStrader, Taiping, Perak</strong>. Penginapan disediakan untuk peserta luar kawasan (tertakluk kekosongan).</p>
-      <a class="btn outline" href="https://api.whatsapp.com/send?phone=60132541233&text=Assalamualaikum%2C%20nak%20tanya%20slot%20dan%20penginapan%20di%20HQ%20SStrader.">Tanya Slot & Penginapan</a>
-    </div>
-  </section>
-
-  <!-- IRONTUNE SECTION -->
-  <section id="irontune" class="container section">
-    <div class="irontune-panel">
-      <div class="irontune-text">
-        <div class="irontune-tag">
-          <span>Baru</span>
-          <span>Untuk kedai console & gamer</span>
-        </div>
-        <h2>IronTune — <span>Controller Calibration Hub</span></h2>
-        <p>by <strong>Iron Gamers</strong>. Web-based tester & calibration untuk <strong>DualSense</strong>, <strong>DualShock 4</strong> dan <strong>Xbox Controller</strong>. Direka khas untuk kegunaan kedai servis console serta gamer yang nak pastikan semua butang & analog respons dengan tepat.</p>
-        <ul class="irontune-list">
-          <li>Visual tester: stick, trigger, D-Pad & butang dengan neon layout.</li>
-          <li>Calibrate deadzone & curve ikut keperluan pemain.</li>
-          <li>Simpan profil controller (localStorage) dan export/import JSON.</li>
-          <li>Advanced WebHID monitor untuk debugging teknikal.</li>
-        </ul>
-      </div>
-      <div class="irontune-cta">
-        <!-- Tukar /irontune/ kepada path sebenar IronTune bila Cikgu dah upload -->
-        <a href="/irontune/" class="btn-neon">
-          Buka IronTune
-          <span class="arrow">↗</span>
-        </a>
-        <p class="irontune-note">
-          Berjalan terus dalam browser (Chrome / Edge) • Sokongan Gamepad API & WebHID.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Seksyen Album Eksklusif -->
-<section style="margin:40px 0; text-align:center;">
-  <h2>🎧 10 Lagu Eksklusif Cikgu Heri</h2>
-  <p>
-    Koleksi 10 lagu khas Cikgu Heri untuk peminat & student SStrader.
-    Akses penuh selepas pembayaran melalui ToyyibPay.
-  </p>
-  <a href="album-cikgu-heri/" 
-     style="
-       display:inline-block;
-       margin-top:12px;
-       padding:12px 22px;
-       background:#1db954;
-       color:#000;
-       font-weight:700;
-       border-radius:999px;
-       text-decoration:none;
-     ">
-    Buka Album Eksklusif
-  </a>
-</section>
-
-  <!-- ARTIKEL TERKINI -->
-  <section id="artikel" class="container section">
-    <h2>Artikel Terkini</h2>
-    <div class="articles" style="margin-top:10px">
-      <div class="article">
-        <a href="artikel1.html">Rahsia Rangka Kerja Entry Bersebab (Untuk Pemula)</a>
-        <p style="margin:6px 0 0;color:var(--muted)">Cara melihat market secara struktur — bukan tekaan.</p>
-      </div>
-      <div class="article">
-        <a href="artikel4.html">Money Management & Compounding: Disiplin Diutamakan</a>
-        <p style="margin:6px 0 0;color:var(--muted)">Formula risiko praktikal untuk jangka panjang.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="container section">
-    <h2>Soalan Lazim</h2>
-    <div class="faq">
-      <div class="faq-item">
-        <div class="faq-q">Adakah kelas sesuai untuk pemula?</div>
-        <div class="faq-a">Ya. Silibus bermula dari asas pasaran, disusun agar pemula boleh ikut langkah demi langkah.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">Berapa lama tempoh sesi?</div>
-        <div class="faq-a">Bergantung kepada pakej. 1-to-1 lebih fleksibel (beberapa sesi fokus). Group dijadualkan dengan modul bertahap.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">Ada jaminan keuntungan?</div>
-        <div class="faq-a">Tiada. Program ini melatih kemahiran proses: analisis, risiko & disiplin. Keputusan bergantung pada usaha & pematuhan pelan.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">Bagaimana cara daftar?</div>
-        <div class="faq-a">Klik mana-mana butang WhatsApp di laman ini untuk berbual terus dengan Cikgu Heri: <a href="https://api.whatsapp.com/send?phone=60132541233">+60 13-254 1233</a>.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DISCLAIMER / COMPLIANCE -->
-  <section class="container section" id="hubungi">
-    <div class="panel">
-      <h2>Penafian & Pematuhan</h2>
-      <p style="color:var(--muted);margin:6px 0 0">
-        Laman ini bertujuan pendidikan. Tiada tawaran produk pelaburan terkawal, tiada nasihat kewangan individu, dan tiada ajakan untuk membuka akaun/berurus niaga.
-        Contoh dan kajian kes adalah untuk tujuan pembelajaran sahaja. Prestasi lampau bukan jaminan keputusan masa hadapan.
-      </p>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="container" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>© 2025 SStrader Academy. Semua hak cipta terpelihara.</div>
-      <div>Hubungi: <a href="https://api.whatsapp.com/send?phone=60132541233">+60 13-254 1233</a></div>
-    </div>
-  </footer>
-
-  <!-- Floating WhatsApp -->
-  <a class="wa-float" href="https://api.whatsapp.com/send?phone=60132541233&text=Cikgu%2C%20saya%20nak%20mula%20belajar.%20Ini%20latar%20belakang%20saya%3A">WhatsApp Cikgu</a>
-
   <script>
-    // NAV toggle
-    document.getElementById('hamburger').addEventListener('click', ()=>{
-      document.getElementById('navLinks').classList.toggle('show');
-    });
+    // Konfigurasi lagu dengan ID Google Drive
+    const TRACKS = {
+      anak:   "1nYd1_-9dlN24RV6FmzvX22NyfToAt4Dx",
+      asmara: "1n3SyNBwDGk6stUepdVnPt4UKiLMODMNL",
+      bila:   "1g8yEBapmFXX6gMPU8C-BgR_M7bQUZZ4p",
+      buaian: "1wl1kbXM_4hrUkl2k3eduhcLMZIAYqhdc",
+      cinta:  "1c0Uqkd1iXnSAvG9BhzRN6g3GpvnHKA4p",
+      bumi:   "1T8mk-i7OpMPE4hmkeVDuTjtNwI9N0XPY",
+      diam:   "1rIB32GyBQG7yrZ9rBCVsFCvbAh_jZ6km",
+      time:   "1FET8xXINWbqv7O6nObFrJT_ehPyP6hvs",
+      ribut:  "1t0SzOzdFleAS101pelKo6TZMjWbMKbHq",
+      terima: "1bzfwS-LggFKCzRz4RgVI1-fjWVlCssHX"
+    };
 
-    // FAQ toggle
-    document.querySelectorAll('.faq-item').forEach(it=>{
-      it.addEventListener('click',()=>it.classList.toggle('active'));
+    let currentWave = null;
+    let currentTrackKey = null;
+    let currentTimeout = null;
+
+    function stopCurrent() {
+      if (currentWave) {
+        currentWave.stop();
+        currentWave.destroy();
+        currentWave = null;
+      }
+      if (currentTimeout) {
+        clearTimeout(currentTimeout);
+        currentTimeout = null;
+      }
+      document.querySelectorAll(".preview-btn.playing").forEach(btn => {
+        btn.classList.remove("playing");
+        btn.querySelector(".icon").textContent = "▶";
+      });
+      document.querySelectorAll(".wave-container").forEach(w => {
+        w.style.display = "none";
+        w.querySelector(".wave-inner").innerHTML = "";
+      });
+    }
+
+    function playPreview(trackKey) {
+      const driveId = TRACKS[trackKey];
+      if (!driveId) return;
+
+      // Kalau klik track yang sama dan sedang main → berhenti
+      if (currentTrackKey === trackKey && currentWave) {
+        stopCurrent();
+        currentTrackKey = null;
+        return;
+      }
+
+      // Hentikan yang lama
+      stopCurrent();
+
+      currentTrackKey = trackKey;
+
+      const btn = document.querySelector('.preview-btn[data-track="' + trackKey + '"]');
+      const waveContainer = document.getElementById("wave-" + trackKey);
+      const waveInner = waveContainer.querySelector(".wave-inner");
+
+      if (!btn || !waveContainer || !waveInner) return;
+
+      btn.classList.add("playing");
+      btn.querySelector(".icon").textContent = "⏸";
+
+      waveContainer.style.display = "block";
+
+      currentWave = WaveSurfer.create({
+        container: waveInner,
+        waveColor: "#555",
+        progressColor: "#1db954",
+        barWidth: 2,
+        barGap: 2,
+        barRadius: 2,
+        height: 48,
+        responsive: true,
+      });
+
+      const url = "https://docs.google.com/uc?export=download&id=" + driveId;
+      currentWave.load(url);
+
+      currentWave.on("ready", () => {
+        currentWave.play();
+        // Hentikan selepas 15 saat
+        currentTimeout = setTimeout(() => {
+          if (currentWave) {
+            currentWave.pause();
+          }
+          btn.classList.remove("playing");
+          btn.querySelector(".icon").textContent = "▶";
+        }, 15000);
+      });
+
+      currentWave.on("error", (e) => {
+        console.error(e);
+        stopCurrent();
+        alert("Maaf, terdapat masalah memuatkan preview lagu ini.");
+      });
+    }
+
+    document.querySelectorAll(".preview-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-track");
+        playPreview(key);
+      });
     });
   </script>
-
 </body>
 </html>
-
