@@ -5,9 +5,6 @@
   <title>10 Lagu Eksklusif Cikgu Heri</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Wavesurfer untuk waveform -->
-  <script src="https://unpkg.com/wavesurfer.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -46,13 +43,7 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 16px 35px rgba(0,0,0,0.8);
-      transform: translateY(0);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
       background: linear-gradient(135deg,#1db954,#191414);
-    }
-    .album-cover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 22px 45px rgba(0,0,0,0.95);
     }
     .album-cover-title {
       position: absolute;
@@ -146,25 +137,22 @@
       font-size: 14px;
     }
     .track {
-      padding: 10px 8px 14px;
-      border-radius: 12px;
-      transition: background 0.15s ease;
-      margin-bottom: 10px;
-    }
-    .track:hover { background: rgba(255,255,255,0.04); }
-    .track-row {
       display: grid;
-      grid-template-columns: 28px minmax(0, 2fr) minmax(0, 2fr) 150px;
+      grid-template-columns: 24px minmax(0, 2fr) minmax(0, 2.5fr) 160px;
       gap: 12px;
       align-items: center;
+      padding: 10px 8px;
+      border-radius: 10px;
+      transition: background 0.15s ease;
+      font-size: 14px;
     }
+    .track:hover { background: rgba(255,255,255,0.04); }
     .track-number {
       text-align: center;
       color: #b3b3b3;
       font-size: 13px;
     }
     .track-title {
-      font-size: 14px;
       font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
@@ -177,36 +165,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .preview-btn {
+    .lock-chip {
       font-size: 12px;
-      padding: 6px 10px;
+      padding: 4px 10px;
       border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: rgba(29,185,84,0.08);
-      color: #1db954;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .preview-btn span.icon {
-      font-size: 13px;
-    }
-    .preview-btn.playing {
-      background: #1db954;
-      color: #000;
-    }
-    .wave-container {
-      margin-top: 8px;
-      height: 48px;
-      border-radius: 10px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.03);
-      display: none;
-    }
-    .wave-inner {
-      width: 100%;
-      height: 100%;
+      background: rgba(255,255,255,0.08);
+      text-align: center;
     }
     .info-small {
       margin-top: 16px;
@@ -218,14 +182,14 @@
     @media (max-width: 700px) {
       .album-header { flex-direction: column; align-items: flex-start; }
       .album-cover { width: 210px; height: 210px; }
-      .track-row {
+      .track {
         grid-template-columns: 22px minmax(0, 2fr);
         grid-template-rows: auto auto auto;
       }
       .track-subtitle {
         grid-column: 2 / -1;
       }
-      .preview-btn {
+      .lock-chip {
         grid-column: 2 / -1;
         justify-self: flex-start;
       }
@@ -257,263 +221,85 @@
 
     <div class="tracks">
       <div class="tracks-header">
-        <div>Senarai Lagu (Preview 15 Saat)</div>
+        <div>Senarai Lagu (Preview Tajuk Sahaja)</div>
         <div class="badge-status"><span>🔒</span> Lagu penuh hanya untuk pembeli</div>
       </div>
 
-      <!-- Track list -->
-      <div class="track" data-track-id="anak">
-        <div class="track-row">
-          <div class="track-number">1</div>
-          <div class="track-title">Anakku Tak Mengerti</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="anak">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-anak">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">1</div>
+        <div class="track-title">Anakku Tak Mengerti</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="asmara">
-        <div class="track-row">
-          <div class="track-number">2</div>
-          <div class="track-title">Asmara Disko Malam</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="asmara">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-asmara">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">2</div>
+        <div class="track-title">Asmara Disko Malam</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="bila">
-        <div class="track-row">
-          <div class="track-number">3</div>
-          <div class="track-title">Bila Dunia Jadi Sunyi</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="bila">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-bila">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">3</div>
+        <div class="track-title">Bila Dunia Jadi Sunyi</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="buaian">
-        <div class="track-row">
-          <div class="track-number">4</div>
-          <div class="track-title">Buaian Rindu Malam</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="buaian">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-buaian">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">4</div>
+        <div class="track-title">Buaian Rindu Malam</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="cinta">
-        <div class="track-row">
-          <div class="track-number">5</div>
-          <div class="track-title">Cinta Dikhianati</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="cinta">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-cinta">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">5</div>
+        <div class="track-title">Cinta Dikhianati</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="bumi">
-        <div class="track-row">
-          <div class="track-number">6</div>
-          <div class="track-title">Di Bumi Perantauan</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="bumi">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-bumi">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">6</div>
+        <div class="track-title">Di Bumi Perantauan</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="diam">
-        <div class="track-row">
-          <div class="track-number">7</div>
-          <div class="track-title">Diam Pun Aku Lawan</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="diam">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-diam">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">7</div>
+        <div class="track-title">Diam Pun Aku Lawan</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="time">
-        <div class="track-row">
-          <div class="track-number">8</div>
-          <div class="track-title">It's About Time</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="time">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-time">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">8</div>
+        <div class="track-title">It's About Time</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="ribut">
-        <div class="track-row">
-          <div class="track-number">9</div>
-          <div class="track-title">Ribut Dalam Dada</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="ribut">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-ribut">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">9</div>
+        <div class="track-title">Ribut Dalam Dada</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
 
-      <div class="track" data-track-id="terima">
-        <div class="track-row">
-          <div class="track-number">10</div>
-          <div class="track-title">Terimalah Lagu Ini</div>
-          <div class="track-subtitle">Cikgu Heri</div>
-          <button class="preview-btn" data-track="terima">
-            <span class="icon">▶</span> Preview 15s
-          </button>
-        </div>
-        <div class="wave-container" id="wave-terima">
-          <div class="wave-inner"></div>
-        </div>
+      <div class="track">
+        <div class="track-number">10</div>
+        <div class="track-title">Terimalah Lagu Ini</div>
+        <div class="track-subtitle">Cikgu Heri</div>
+        <div class="lock-chip">🔒 Unlock selepas pembayaran</div>
       </div>
     </div>
 
     <div class="info-small">
-      *Preview hanya 15 saat untuk setiap lagu. Akses penuh lagu dan muat turun fail audio
-      hanya diberikan kepada pembeli yang membuat pembayaran melalui ToyyibPay.*
+      Halaman ini hanya memaparkan senarai tajuk lagu. Akses penuh untuk mendengar dan
+      memuat turun semua lagu akan diberikan di halaman khas selepas pembayaran ToyyibPay berjaya.
     </div>
   </div>
-
-  <script>
-    // Konfigurasi lagu dengan ID Google Drive
-    const TRACKS = {
-      anak:   "1nYd1_-9dlN24RV6FmzvX22NyfToAt4Dx",
-      asmara: "1n3SyNBwDGk6stUepdVnPt4UKiLMODMNL",
-      bila:   "1g8yEBapmFXX6gMPU8C-BgR_M7bQUZZ4p",
-      buaian: "1wl1kbXM_4hrUkl2k3eduhcLMZIAYqhdc",
-      cinta:  "1c0Uqkd1iXnSAvG9BhzRN6g3GpvnHKA4p",
-      bumi:   "1T8mk-i7OpMPE4hmkeVDuTjtNwI9N0XPY",
-      diam:   "1rIB32GyBQG7yrZ9rBCVsFCvbAh_jZ6km",
-      time:   "1FET8xXINWbqv7O6nObFrJT_ehPyP6hvs",
-      ribut:  "1t0SzOzdFleAS101pelKo6TZMjWbMKbHq",
-      terima: "1bzfwS-LggFKCzRz4RgVI1-fjWVlCssHX"
-    };
-
-    let currentWave = null;
-    let currentTrackKey = null;
-    let currentTimeout = null;
-
-    function stopCurrent() {
-      if (currentWave) {
-        currentWave.stop();
-        currentWave.destroy();
-        currentWave = null;
-      }
-      if (currentTimeout) {
-        clearTimeout(currentTimeout);
-        currentTimeout = null;
-      }
-      document.querySelectorAll(".preview-btn.playing").forEach(btn => {
-        btn.classList.remove("playing");
-        btn.querySelector(".icon").textContent = "▶";
-      });
-      document.querySelectorAll(".wave-container").forEach(w => {
-        w.style.display = "none";
-        w.querySelector(".wave-inner").innerHTML = "";
-      });
-    }
-
-    function playPreview(trackKey) {
-      const driveId = TRACKS[trackKey];
-      if (!driveId) return;
-
-      // Kalau klik track yang sama dan sedang main → berhenti
-      if (currentTrackKey === trackKey && currentWave) {
-        stopCurrent();
-        currentTrackKey = null;
-        return;
-      }
-
-      // Hentikan yang lama
-      stopCurrent();
-
-      currentTrackKey = trackKey;
-
-      const btn = document.querySelector('.preview-btn[data-track="' + trackKey + '"]');
-      const waveContainer = document.getElementById("wave-" + trackKey);
-      const waveInner = waveContainer.querySelector(".wave-inner");
-
-      if (!btn || !waveContainer || !waveInner) return;
-
-      btn.classList.add("playing");
-      btn.querySelector(".icon").textContent = "⏸";
-
-      waveContainer.style.display = "block";
-
-      currentWave = WaveSurfer.create({
-        container: waveInner,
-        waveColor: "#555",
-        progressColor: "#1db954",
-        barWidth: 2,
-        barGap: 2,
-        barRadius: 2,
-        height: 48,
-        responsive: true,
-      });
-
-      const url = "https://docs.google.com/uc?export=download&id=" + driveId;
-      currentWave.load(url);
-
-      currentWave.on("ready", () => {
-        currentWave.play();
-        // Hentikan selepas 15 saat
-        currentTimeout = setTimeout(() => {
-          if (currentWave) {
-            currentWave.pause();
-          }
-          btn.classList.remove("playing");
-          btn.querySelector(".icon").textContent = "▶";
-        }, 15000);
-      });
-
-      currentWave.on("error", (e) => {
-        console.error(e);
-        stopCurrent();
-        alert("Maaf, terdapat masalah memuatkan preview lagu ini.");
-      });
-    }
-
-    document.querySelectorAll(".preview-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const key = btn.getAttribute("data-track");
-        playPreview(key);
-      });
-    });
-  </script>
 </body>
 </html>
