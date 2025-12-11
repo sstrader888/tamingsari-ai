@@ -253,4 +253,107 @@
 
     // Dinding
     if (player.x < 15) player.x = 15;
-    if (player.x > canvas.width - 15) player.
+    if (player.x > canvas.width - 15) player.x = canvas.width - 15;
+
+    // Spawn Rocks
+    if (Math.random() < 0.02 * speed) {
+      rocks.push({
+        x: Math.random() * canvas.width,
+        y: -50,
+        s: 20 + Math.random() * 30,
+        vy: (3 + Math.random() * 2) * speed
+      });
+    }
+
+    // Rocks Logic
+    for (let i = rocks.length - 1; i >= 0; i--) {
+      let r = rocks[i];
+      r.y += r.vy;
+      
+      // Collision
+      let dx = player.x - r.x;
+      let dy = player.y - r.y;
+      let dist = Math.sqrt(dx*dx + dy*dy);
+      
+      if (dist < (r.s/2 + 15)) {
+        gameOver();
+      }
+
+      if (r.y > canvas.height + 50) {
+        rocks.splice(i, 1);
+        score += 10;
+        scoreEl.innerText = score;
+        speed += 0.005; // Makin lama makin laju
+      }
+    }
+  }
+
+  // --- DRAW LOOP ---
+  function draw() {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Stars
+    ctx.fillStyle = '#fff';
+    stars.forEach(s => {
+      s.y += 0.002 * canvas.height; 
+      if(s.y > 1) s.y = 0;
+      ctx.beginPath();
+      ctx.arc(s.x * canvas.width, s.y * canvas.height, s.s, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    if (running) {
+      // Player (Triangle)
+      ctx.save();
+      ctx.translate(player.x, player.y);
+      ctx.fillStyle = keys.dash ? '#fff' : '#00f3ff';
+      ctx.shadowBlur = 20; ctx.shadowColor = '#00f3ff';
+      ctx.beginPath();
+      ctx.moveTo(0, -20);
+      ctx.lineTo(15, 20);
+      ctx.lineTo(0, 10);
+      ctx.lineTo(-15, 20);
+      ctx.fill();
+      ctx.restore();
+
+      // Rocks (Squares)
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = '#ff0055';
+      ctx.lineWidth = 2;
+      rocks.forEach(r => {
+        ctx.strokeRect(r.x - r.s/2, r.y - r.s/2, r.s, r.s);
+        ctx.fillStyle = 'rgba(255,0,85,0.2)';
+        ctx.fillRect(r.x - r.s/2, r.y - r.s/2, r.s, r.s);
+      });
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function loop() {
+    update();
+    draw();
+    if(running) requestAnimationFrame(loop);
+  }
+
+  function gameOver() {
+    running = false;
+    playTone('hit');
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem('neonBest', highScore);
+      bestEl.innerText = highScore;
+    }
+    overlay.classList.remove('hidden');
+    document.querySelector('h1').innerHTML = "GAME OVER<br><small>Score: "+score+"</small>";
+    startBtn.innerText = "🔄 RETRY";
+  }
+
+  startBtn.addEventListener('click', resetGame);
+  
+  // Start loop for background (walaupun belum play)
+  loop();
+
+</script>
+</body>
+</html>
