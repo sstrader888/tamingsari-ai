@@ -3,24 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEON DODGE: MOBILE PRO</title>
+  <title>NEON DODGE: MOBILE FIX</title>
   <style>
-    :root {
-      --accent: #00f3ff;
-      --danger: #ff0055;
+    /* RESET CSS UNTUK MOBILE */
+    * {
+      box-sizing: border-box;
+      touch-action: none; /* Halang zoom & scroll */
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
-    /* Reset supaya full screen betul-betul */
     body {
       margin: 0;
       padding: 0;
       background: #000;
-      overflow: hidden; /* Halang scroll */
-      touch-action: none; /* Halang zoom/pan */
+      overflow: hidden;
       font-family: 'Segoe UI', sans-serif;
+      position: fixed; /* Kunci screen supaya tak boleh scroll */
+      width: 100%;
+      height: 100%;
     }
 
-    /* Canvas memenuhi seluruh skrin */
+    /* CANVAS BACKGROUND */
     canvas {
       display: block;
       position: absolute;
@@ -28,20 +32,20 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 1; /* Layer paling bawah */
+      z-index: 1;
     }
 
-    /* HUD (Score) Terapung di atas */
+    /* SCOREBOARD (HUD) */
     .hud {
       position: absolute;
-      top: 40px; /* Jarak dari atas (elak notch kamera) */
+      top: 40px; /* Jarak dari atas */
       left: 0;
       width: 100%;
       display: flex;
       justify-content: space-between;
-      padding: 0 20px;
-      z-index: 10; /* Layer atas canvas */
-      pointer-events: none; /* Supaya boleh tekan game di belakang tulisan */
+      padding: 0 25px;
+      z-index: 10;
+      pointer-events: none;
     }
 
     .score-box {
@@ -49,91 +53,131 @@
       font-size: 18px;
       font-weight: 800;
       text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.3);
+      padding: 5px 10px;
+      border-radius: 10px;
     }
-    .score-box span { color: var(--accent); }
+    .score-box span { color: #00f3ff; }
 
-    /* Button Dash Terapung di Bawah */
-    .dash-btn {
+    /* DASH BUTTON (TERAPUNG) */
+    .dash-wrapper {
       position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 0, 85, 0.3);
-      border: 2px solid var(--danger);
-      color: #fff;
-      padding: 15px 40px;
-      border-radius: 50px;
-      font-size: 16px;
-      font-weight: bold;
+      bottom: 40px;
+      left: 0; 
+      width: 100%;
+      display: flex;
+      justify-content: center;
       z-index: 20;
-      backdrop-filter: blur(5px);
-      box-shadow: 0 0 15px var(--danger);
+      pointer-events: auto;
+    }
+
+    .dash-btn {
+      background: rgba(255, 0, 85, 0.2); /* Lutsinar */
+      border: 2px solid #ff0055;
+      color: #fff;
+      padding: 15px 60px; /* Button besar */
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: uppercase;
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
       transition: transform 0.1s;
     }
+    
     .dash-btn:active {
-      background: var(--danger);
-      transform: translateX(-50%) scale(0.95);
+      background: #ff0055;
+      transform: scale(0.95);
     }
 
-    /* Start / Game Over Screen */
+    /* MENU OVERLAY (PALING ATAS) */
     .overlay {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
+      position: fixed; /* Guna fixed supaya sentiasa atas */
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(5, 5, 16, 0.92);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 50;
+      z-index: 999; /* Z-Index paling tinggi */
       transition: opacity 0.3s;
     }
-    .hidden { opacity: 0; pointer-events: none; }
     
+    .hidden { 
+      opacity: 0; 
+      pointer-events: none; 
+      visibility: hidden; /* Pastikan betul-betul hilang */
+    }
+
     h1 {
-      color: var(--accent);
+      color: #00f3ff;
       font-style: italic;
-      font-size: 40px;
+      font-size: 42px;
       margin: 0 0 10px 0;
       text-align: center;
-      text-shadow: 0 0 20px var(--accent);
+      text-shadow: 0 0 25px #00f3ff;
     }
-    
-    p { color: #ccc; text-align: center; margin-bottom: 30px; line-height: 1.5; }
 
+    p { color: #ccc; text-align: center; margin-bottom: 30px; line-height: 1.6; padding: 0 20px; }
+
+    /* BUTTON PLAY YANG DIBAIKI */
     .btn-start {
-      background: var(--accent);
+      background: linear-gradient(135deg, #00f3ff, #00c3cc);
       color: #000;
       border: none;
-      padding: 15px 50px;
-      font-size: 20px;
-      font-weight: bold;
+      padding: 18px 60px;
+      font-size: 22px;
+      font-weight: 900;
       border-radius: 50px;
-      box-shadow: 0 0 20px rgba(0,243,255,0.5);
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.4);
+      cursor: pointer;
+      position: relative;
+      z-index: 1000; /* Lebih tinggi dari overlay */
     }
+    
+    .btn-start:active { transform: scale(0.95); }
+
+    /* TOUCH ZONES */
+    .touch-zone {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      z-index: 5;
+      /* background: rgba(255,0,0,0.1); Debug: Turn on to see zones */
+    }
+    #zone-left { left: 0; }
+    #zone-right { right: 0; }
+
   </style>
 </head>
 <body>
 
   <canvas id="gameCanvas"></canvas>
 
+  <div id="zone-left" class="touch-zone"></div>
+  <div id="zone-right" class="touch-zone"></div>
+
   <div class="hud">
     <div class="score-box">SCORE: <span id="scoreEl">0</span></div>
     <div class="score-box">BEST: <span id="bestEl">0</span></div>
   </div>
 
-  <button class="dash-btn" id="btnDash">⚡ DASH</button>
+  <div class="dash-wrapper">
+    <button class="dash-btn" id="btnDash">⚡ DASH</button>
+  </div>
 
   <div class="overlay" id="menuOverlay">
     <h1>NEON DODGE</h1>
     <p>
-      TAP KIRI skrin untuk ke Kiri<br>
-      TAP KANAN skrin untuk ke Kanan<br>
-      Tekan butang DASH untuk laju
+      TAP KIRI skrin = Gerak Kiri<br>
+      TAP KANAN skrin = Gerak Kanan<br>
+      Elak blok merah!
     </p>
-    <button class="btn-start" id="startBtn">▶️ PLAY</button>
+    <button class="btn-start" id="startBtn">▶️ PLAY NOW</button>
   </div>
 
 <script>
+  // --- SETUP ---
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
   const scoreEl = document.getElementById('scoreEl');
@@ -142,46 +186,54 @@
   const startBtn = document.getElementById('startBtn');
   const btnDash = document.getElementById('btnDash');
 
-  // --- AUDIO SIMPLE ---
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  let actx = new AudioContext();
+  // Audio Context (Lazy Load)
+  let actx = null;
+
+  function initAudio() {
+    if (!actx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      actx = new AudioContext();
+    }
+    if (actx.state === 'suspended') {
+      actx.resume();
+    }
+  }
 
   function playTone(type) {
-    if (actx.state === 'suspended') actx.resume();
+    if (!actx) return; // Kalau audio tak start, jangan error
     const osc = actx.createOscillator();
     const gain = actx.createGain();
     osc.connect(gain);
     gain.connect(actx.destination);
     const now = actx.currentTime;
-    
+
     if (type === 'hit') {
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.setValueAtTime(200, now);
       osc.frequency.exponentialRampToValueAtTime(10, now+0.3);
       gain.gain.setValueAtTime(0.3, now);
       gain.gain.linearRampToValueAtTime(0, now+0.3);
-      osc.start(now); osc.stop(now+0.3);
     } else {
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now+0.1);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.exponentialRampToValueAtTime(800, now+0.1);
       gain.gain.setValueAtTime(0.1, now);
       gain.gain.linearRampToValueAtTime(0, now+0.1);
-      osc.start(now); osc.stop(now+0.1);
     }
+    osc.start(now); osc.stop(now+0.3);
   }
 
-  // --- RESIZE LOGIC (PENTING UNTUK MOBILE) ---
+  // --- RESIZE ---
   function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
   window.addEventListener('resize', resize);
-  resize(); // Panggil terus masa mula
+  resize();
 
-  // --- GAME VARIABLES ---
+  // --- GAME STATE ---
   let player = { x: 0, y: 0, w: 30, h: 40, vx: 0 };
   let rocks = [];
-  let particles = [];
   let stars = [];
   let score = 0;
   let highScore = localStorage.getItem('neonBest') || 0;
@@ -189,58 +241,32 @@
   let speed = 1;
   bestEl.innerText = highScore;
 
-  // Background Stars
-  for(let i=0; i<60; i++) stars.push({x:Math.random(), y:Math.random(), s:Math.random()*2});
+  // Init Stars
+  for(let i=0; i<50; i++) stars.push({x:Math.random(), y:Math.random(), s:Math.random()*2});
 
-  function resetGame() {
+  // --- CORE FUNCTIONS ---
+  function startGame() {
+    console.log("Game Starting..."); // Debug
+    initAudio(); // Start audio bila user click
+    playTone('start');
+    
+    // Reset Variables
     player.x = canvas.width / 2;
-    player.y = canvas.height - 120; // Naikkan sikit supaya tak kena button dash
+    player.y = canvas.height - 150;
     rocks = [];
-    particles = [];
     score = 0;
     speed = 1;
     running = true;
     scoreEl.innerText = 0;
+
+    // Hide UI
     overlay.classList.add('hidden');
-    playTone('start');
+    
+    // Start Loop
     loop();
   }
 
-  // --- CONTROLS (TOUCH SCREEN) ---
-  const keys = { left: false, right: false, dash: false };
-
-  // Logic: Kalau sentuh separuh kiri skrin = Kiri, separuh kanan = Kanan
-  canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    for (let i = 0; i < e.touches.length; i++) {
-      let touchX = e.touches[i].clientX;
-      if (touchX < canvas.width / 2) keys.left = true;
-      else keys.right = true;
-    }
-  });
-
-  canvas.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    // Reset keys bila jari angkat (simplistik)
-    if (e.touches.length === 0) {
-      keys.left = false;
-      keys.right = false;
-    }
-  });
-
-  // Mouse fallback (untuk test kat PC)
-  canvas.addEventListener('mousedown', (e) => {
-    if (e.clientX < canvas.width/2) keys.left = true; else keys.right = true;
-  });
-  canvas.addEventListener('mouseup', () => { keys.left = false; keys.right = false; });
-
-  // Dash Button Logic
-  btnDash.addEventListener('touchstart', (e) => { e.preventDefault(); keys.dash = true; });
-  btnDash.addEventListener('touchend', (e) => { e.preventDefault(); keys.dash = false; });
-  btnDash.addEventListener('mousedown', () => keys.dash = true);
-  btnDash.addEventListener('mouseup', () => keys.dash = false);
-
-  // --- UPDATE LOOP ---
+  // --- LOOP ---
   function update() {
     if (!running) return;
 
@@ -251,7 +277,7 @@
     if (keys.left) player.x -= moveSpeed;
     if (keys.right) player.x += moveSpeed;
 
-    // Dinding
+    // Clamp
     if (player.x < 15) player.x = 15;
     if (player.x > canvas.width - 15) player.x = canvas.width - 15;
 
@@ -269,7 +295,7 @@
     for (let i = rocks.length - 1; i >= 0; i--) {
       let r = rocks[i];
       r.y += r.vy;
-      
+
       // Collision
       let dx = player.x - r.x;
       let dy = player.y - r.y;
@@ -283,41 +309,38 @@
         rocks.splice(i, 1);
         score += 10;
         scoreEl.innerText = score;
-        speed += 0.005; // Makin lama makin laju
+        speed += 0.005;
       }
     }
   }
 
-  // --- DRAW LOOP ---
   function draw() {
-    ctx.fillStyle = '#000';
+    // Clear
+    ctx.fillStyle = '#050510';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Stars
     ctx.fillStyle = '#fff';
     stars.forEach(s => {
-      s.y += 0.002 * canvas.height; 
-      if(s.y > 1) s.y = 0;
+      s.y += 0.002 * canvas.height;
+      if (s.y > 1) s.y = 0;
       ctx.beginPath();
       ctx.arc(s.x * canvas.width, s.y * canvas.height, s.s, 0, Math.PI*2);
       ctx.fill();
     });
 
     if (running) {
-      // Player (Triangle)
+      // Player
       ctx.save();
       ctx.translate(player.x, player.y);
       ctx.fillStyle = keys.dash ? '#fff' : '#00f3ff';
-      ctx.shadowBlur = 20; ctx.shadowColor = '#00f3ff';
+      ctx.shadowBlur = 15; ctx.shadowColor = '#00f3ff';
       ctx.beginPath();
-      ctx.moveTo(0, -20);
-      ctx.lineTo(15, 20);
-      ctx.lineTo(0, 10);
-      ctx.lineTo(-15, 20);
+      ctx.moveTo(0, -20); ctx.lineTo(15, 20); ctx.lineTo(0, 10); ctx.lineTo(-15, 20);
       ctx.fill();
       ctx.restore();
 
-      // Rocks (Squares)
+      // Rocks
       ctx.shadowBlur = 0;
       ctx.strokeStyle = '#ff0055';
       ctx.lineWidth = 2;
@@ -327,13 +350,13 @@
         ctx.fillRect(r.x - r.s/2, r.y - r.s/2, r.s, r.s);
       });
     }
-    requestAnimationFrame(loop);
+
+    if (running) requestAnimationFrame(loop);
   }
 
   function loop() {
     update();
     draw();
-    if(running) requestAnimationFrame(loop);
   }
 
   function gameOver() {
@@ -344,14 +367,43 @@
       localStorage.setItem('neonBest', highScore);
       bestEl.innerText = highScore;
     }
+    
+    // Show Overlay
     overlay.classList.remove('hidden');
-    document.querySelector('h1').innerHTML = "GAME OVER<br><small>Score: "+score+"</small>";
+    document.querySelector('h1').innerHTML = "SYSTEM FAIL";
+    document.querySelector('p').innerHTML = "SCORE: " + score;
     startBtn.innerText = "🔄 RETRY";
   }
 
-  startBtn.addEventListener('click', resetGame);
-  
-  // Start loop for background (walaupun belum play)
+  // --- CONTROLS FIX ---
+  const keys = { left: false, right: false, dash: false };
+
+  // 1. Play Button Fix (Handle Both Touch & Click)
+  startBtn.addEventListener('click', (e) => {
+    e.preventDefault(); 
+    startGame();
+  });
+  startBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // Stop ghost clicks
+    startGame();
+  });
+
+  // 2. Movement Zones (Kiri / Kanan)
+  const zLeft = document.getElementById('zone-left');
+  const zRight = document.getElementById('zone-right');
+
+  const bindPress = (elem, key) => {
+    elem.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+    elem.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+    elem.addEventListener('mousedown', () => keys[key] = true);
+    elem.addEventListener('mouseup', () => keys[key] = false);
+  };
+
+  bindPress(zLeft, 'left');
+  bindPress(zRight, 'right');
+  bindPress(btnDash, 'dash');
+
+  // Start background animation
   loop();
 
 </script>
