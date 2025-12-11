@@ -3,521 +3,195 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEON DODGE: CYBER EDITION</title>
+  <title>NEON DODGE: ULTIMATE</title>
   <style>
     :root {
       --bg: #050510;
-      --panel: #0f1020;
       --accent: #00f3ff;
-      --accent-glow: rgba(0, 243, 255, 0.6);
       --danger: #ff0055;
+      --shield: #4dff4d; /* Hijau Neon untuk Shield */
       --text: #eef;
     }
 
-    * { box-sizing: border-box; touch-action: manipulation; user-select: none; }
+    * { box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 
     body {
       margin: 0;
       height: 100vh;
+      background: #000;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at center, #1a1a2e, #000);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow: hidden;
-      color: var(--text);
     }
 
-    .game-container {
+    /* Game Container */
+    .game-wrapper {
       position: relative;
       width: 100%;
-      max-width: 400px;
-      padding: 10px;
-      animation: fadeIn 0.8s ease;
+      height: 100%;
+      max-width: 480px; /* Limit lebar untuk tablet/PC */
+      background: radial-gradient(circle at bottom, #1a1a2e, #000);
+      display: flex;
+      flex-direction: column;
     }
 
-    /* UI Overlay for HUD */
+    /* Score HUD */
     .hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
       display: flex;
       justify-content: space-between;
-      margin-bottom: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: 14px;
-      text-shadow: 0 0 10px var(--accent-glow);
+      z-index: 10;
+      pointer-events: none; /* Supaya tak ganggu touch */
     }
 
-    .score-box span { color: var(--accent); }
-    .high-score-box span { color: #ffe600; }
+    .hud-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 12px;
+      border-radius: 20px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      backdrop-filter: blur(4px);
+    }
+    .hud-box span { color: var(--accent); }
+    .hud-box.shield-active { border-color: var(--shield); color: var(--shield); }
 
-    /* The Game Canvas */
+    /* Canvas */
     canvas {
       display: block;
       width: 100%;
-      border-radius: 12px;
-      border: 2px solid var(--accent);
-      box-shadow: 0 0 20px var(--accent-glow);
-      background: #080810;
-      cursor: crosshair;
+      height: 100%;
     }
 
-    .controls-area {
-      margin-top: 15px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    /* Modern Buttons */
-    button {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 14px;
+    /* Start Screen / Game Over Overlay */
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      z-index: 20;
+      transition: opacity 0.3s;
+    }
+    
+    .hidden { opacity: 0; pointer-events: none; }
+
+    h1 {
+      font-size: 32px;
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--accent);
+      margin-bottom: 10px;
+      font-style: italic;
+      text-align: center;
     }
 
-    button:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.1); }
-    
-    .btn-primary {
+    .btn {
       background: var(--accent);
       color: #000;
       border: none;
-      box-shadow: 0 4px 15px var(--accent-glow);
-      grid-column: span 2;
+      padding: 15px 40px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+      margin-top: 20px;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Controls Layer (Invisible) */
+    .controls-layer {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      z-index: 5;
+    }
+    .control-zone {
+      flex: 1;
+      /* background: rgba(255,0,0,0.1); Debugging: Turn on to see zones */
     }
     
-    .btn-dash {
-      background: var(--danger);
-      box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
-      border: none;
-      font-size: 12px;
-    }
-
-    /* Touch Zones for Mobile */
-    .touch-controls {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .touch-btn {
-      flex: 1;
-      height: 60px;
-      font-size: 24px;
-      background: rgba(255,255,255,0.05);
+    /* Dash Button (Visual Only) */
+    .dash-indicator {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: auto; /* Boleh tekan */
+      background: rgba(255, 0, 85, 0.2);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      padding: 10px 20px;
       border-radius: 8px;
+      font-weight: bold;
+      z-index: 15;
     }
+    .dash-indicator:active { background: var(--danger); color: white; }
 
-    /* Shake Animation */
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-2px, 0, 0); }
-      20%, 80% { transform: translate3d(4px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
-      40%, 60% { transform: translate3d(6px, 0, 0); }
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
   </style>
 </head>
 <body>
 
-<div class="game-container" id="gameContainer">
+<div class="game-wrapper" id="gameWrapper">
+  
   <div class="hud">
-    <div class="score-box">SCORE: <span id="scoreVal">0</span></div>
-    <div class="high-score-box">BEST: <span id="bestVal">0</span></div>
+    <div class="hud-box">SCORE: <span id="scoreEl">0</span></div>
+    <div class="hud-box" id="shieldHud" style="opacity:0">🛡️ SHIELD: <span id="shieldTime">0</span>s</div>
   </div>
 
-  <canvas id="canvas" width="400" height="600"></canvas>
+  <canvas id="gameCanvas"></canvas>
 
-  <div class="controls-area">
-    <button class="btn-primary" id="mainBtn">🚀 START GAME</button>
-    <button id="muteBtn">🔊 SOUND ON</button>
-    <button class="btn-dash" id="dashBtn">⚡ DASH (Shift)</button>
+  <div class="controls-layer">
+    <div class="control-zone" id="zoneLeft"></div>
+    <div class="control-zone" id="zoneRight"></div>
   </div>
 
-  <div class="touch-controls">
-    <button class="touch-btn" id="leftBtn">⬅️</button>
-    <button class="touch-btn" id="rightBtn">➡️</button>
+  <button class="dash-indicator" id="btnDash">⚡ DASH (TAP)</button>
+
+  <div class="overlay" id="menuOverlay">
+    <h1>NEON DODGE<br><span style="font-size:20px; color:#fff">ULTIMATE EDITION</span></h1>
+    <p style="color:#aaa; text-align:center; padding:0 20px;">
+      Kiri Skrin = Gerak Kiri<br>
+      Kanan Skrin = Gerak Kanan<br>
+      Dapatkan <span style="color:#4dff4d">🛡️</span> untuk kekebalan!
+    </p>
+    <button class="btn" id="startBtn">▶️ START GAME</button>
   </div>
+
 </div>
 
 <script>
-/** * GAME CONFIGURATION 
+/** * KONFIGURASI & SETUP
  */
-const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const scoreEl = document.getElementById('scoreVal');
-const bestEl = document.getElementById('bestVal');
-const mainBtn = document.getElementById('mainBtn');
-const container = document.getElementById('gameContainer');
+const wrapper = document.getElementById('gameWrapper');
+const scoreEl = document.getElementById('scoreEl');
+const shieldHud = document.getElementById('shieldHud');
+const shieldTimeEl = document.getElementById('shieldTime');
+const overlay = document.getElementById('menuOverlay');
+const startBtn = document.getElementById('startBtn');
 
-let GAME = {
-  active: false,
-  over: false,
-  score: 0,
-  highScore: parseInt(localStorage.getItem('neonHighScore')) || 0,
-  speedMultiplier: 1,
-  muted: false,
-  frame: 0
-};
-
-bestEl.innerText = GAME.highScore;
-
-/** * AUDIO SYSTEM (Synthesizer)
- */
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-let actx;
-
-function initAudio() {
-  if (!actx) actx = new AudioContext();
-  if (actx.state === 'suspended') actx.resume();
+// Resize Canvas Full Screen
+function resize() {
+  canvas.width = wrapper.clientWidth;
+  canvas.height = wrapper.clientHeight;
 }
+window.addEventListener('resize', resize);
+resize();
 
-function playSound(type) {
-  if (GAME.muted || !actx) return;
-  const osc = actx.createOscillator();
-  const gain = actx.createGain();
-  osc.connect(gain);
-  gain.connect(actx.destination);
-
-  const now = actx.currentTime;
-  
-  if (type === 'jump') {
-    osc.frequency.setValueAtTime(150, now);
-    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
-    gain.gain.setValueAtTime(0.3, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-    osc.start(now);
-    osc.stop(now + 0.1);
-  } else if (type === 'crash') {
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(100, now);
-    osc.frequency.exponentialRampToValueAtTime(10, now + 0.4);
-    gain.gain.setValueAtTime(0.5, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-    osc.start(now);
-    osc.stop(now + 0.4);
-  } else if (type === 'score') {
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(600, now);
-    osc.frequency.setValueAtTime(800, now + 0.05);
-    gain.gain.setValueAtTime(0.1, now);
-    gain.gain.linearRampToValueAtTime(0, now + 0.1);
-    osc.start(now);
-    osc.stop(now + 0.1);
-  }
-}
-
-/** * ENTITIES
- */
-const player = {
-  x: 200, y: 500, w: 30, h: 40,
-  vx: 0, speed: 6, tilt: 0,
-  color: '#00f3ff',
-  dashing: false
-};
-
-let rocks = [];
-let particles = [];
-let stars = [];
-
-// Initialize Starfield
-for(let i=0; i<60; i++) {
-  stars.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    size: Math.random() * 2 + 0.5,
-    speed: Math.random() * 3 + 1
-  });
-}
-
-function spawnParticle(x, y, color, count=5) {
-  for(let i=0; i<count; i++){
-    particles.push({
-      x: x, y: y,
-      vx: (Math.random() - 0.5) * 6,
-      vy: (Math.random() - 0.5) * 6,
-      life: 1.0,
-      color: color
-    });
-  }
-}
-
-function resetGame() {
-  GAME.active = true;
-  GAME.over = false;
-  GAME.score = 0;
-  GAME.speedMultiplier = 1;
-  rocks = [];
-  particles = [];
-  player.x = canvas.width/2;
-  scoreEl.innerText = "0";
-  mainBtn.innerHTML = "PLAYING...";
-  mainBtn.style.opacity = "0.5";
-  container.classList.remove('shake');
-  initAudio();
-  playSound('jump');
-  loop();
-}
-
-/** * LOGIC & DRAWING
- */
-function update() {
-  if (!GAME.active) return;
-  GAME.frame++;
-  GAME.speedMultiplier += 0.0005; // Slowly gets faster
-
-  // Player Movement
-  if (keys.Left) player.vx = -player.speed;
-  else if (keys.Right) player.vx = player.speed;
-  else player.vx = 0;
-
-  if (keys.Dash) {
-    if(!player.dashing) {
-      player.dashing = true;
-      spawnParticle(player.x, player.y + 20, '#fff', 2); // dash trail
-    }
-    player.vx *= 2.5; // Speed boost
-  } else {
-    player.dashing = false;
-  }
-
-  player.x += player.vx;
-  
-  // Tilt effect
-  player.tilt = player.vx * 2; 
-
-  // Boundaries
-  if (player.x < 15) player.x = 15;
-  if (player.x > canvas.width - 15) player.x = canvas.width - 15;
-
-  // Starfield logic
-  stars.forEach(s => {
-    s.y += s.speed * (GAME.speedMultiplier * 1.5);
-    if(s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
-  });
-
-  // Rock Spawning
-  if (GAME.frame % Math.floor(60 / GAME.speedMultiplier) === 0) {
-    const size = 25 + Math.random() * 25;
-    rocks.push({
-      x: Math.random() * (canvas.width - size),
-      y: -50,
-      size: size,
-      angle: 0,
-      rotSpeed: (Math.random() - 0.5) * 0.2,
-      speed: (3 + Math.random() * 3) * GAME.speedMultiplier
-    });
-  }
-
-  // Rock Logic
-  for (let i = rocks.length - 1; i >= 0; i--) {
-    let r = rocks[i];
-    r.y += r.speed;
-    r.angle += r.rotSpeed;
-
-    // Collision Player
-    const dx = player.x - (r.x + r.size/2);
-    const dy = player.y - (r.y + r.size/2);
-    const dist = Math.sqrt(dx*dx + dy*dy);
-
-    if (dist < (r.size/2 + 10)) { // Hit
-      gameOver();
-    }
-
-    // Floor Collision
-    if (r.y > canvas.height) {
-      spawnParticle(r.x + r.size/2, canvas.height, '#ff0055', 3);
-      rocks.splice(i, 1);
-      GAME.score += 10;
-      scoreEl.innerText = GAME.score;
-      if(GAME.score % 100 === 0) playSound('score');
-    }
-  }
-
-  // Particle Logic
-  for (let i = particles.length - 1; i >= 0; i--) {
-    let p = particles[i];
-    p.x += p.vx;
-    p.y += p.vy;
-    p.life -= 0.05;
-    if (p.life <= 0) particles.splice(i, 1);
-  }
-}
-
-function draw() {
-  // Clear
-  ctx.fillStyle = "#080810";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Draw Stars
-  ctx.fillStyle = "#ffffff";
-  stars.forEach(s => {
-    ctx.globalAlpha = Math.random() * 0.5 + 0.3;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fill();
-  });
-  ctx.globalAlpha = 1;
-
-  // Draw Particles
-  particles.forEach(p => {
-    ctx.fillStyle = p.color;
-    ctx.globalAlpha = p.life;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
-    ctx.fill();
-  });
-  ctx.globalAlpha = 1;
-
-  // Draw Player (Spaceship)
-  if (GAME.active || !GAME.over) {
-    ctx.save();
-    ctx.translate(player.x, player.y);
-    ctx.rotate(player.tilt * Math.PI / 180);
-    
-    // Thruster flame
-    if(GAME.active) {
-      ctx.fillStyle = `rgba(0, 243, 255, ${Math.random()})`;
-      ctx.beginPath();
-      ctx.moveTo(-5, 15);
-      ctx.lineTo(0, 30 + (player.dashing ? 20 : 0));
-      ctx.lineTo(5, 15);
-      ctx.fill();
-    }
-
-    // Ship Body
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = player.color;
-    ctx.fillStyle = player.color;
-    ctx.beginPath();
-    ctx.moveTo(0, -20);
-    ctx.lineTo(15, 15);
-    ctx.lineTo(0, 10);
-    ctx.lineTo(-15, 15);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // Draw Rocks (Asteroids)
-  ctx.shadowBlur = 0;
-  ctx.strokeStyle = "#ff0055";
-  ctx.lineWidth = 2;
-  
-  rocks.forEach(r => {
-    ctx.save();
-    ctx.translate(r.x + r.size/2, r.y + r.size/2);
-    ctx.rotate(r.angle);
-    ctx.beginPath();
-    // Draw polygon
-    ctx.moveTo(-r.size/2, -r.size/2);
-    ctx.lineTo(r.size/2, -r.size/2);
-    ctx.lineTo(r.size/2, r.size/2);
-    ctx.lineTo(-r.size/2, r.size/2);
-    ctx.closePath();
-    ctx.stroke();
-    
-    // Inner fill
-    ctx.fillStyle = "rgba(255, 0, 85, 0.2)";
-    ctx.fill();
-    ctx.restore();
-  });
-
-  // Game Over Overlay
-  if (GAME.over) {
-    ctx.fillStyle = "rgba(0,0,0,0.7)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 30px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("SYSTEM FAILURE", canvas.width/2, canvas.height/2 - 20);
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#aaa";
-    ctx.fillText("Final Score: " + GAME.score, canvas.width/2, canvas.height/2 + 20);
-  }
-}
-
-function loop() {
-  update();
-  draw();
-  if (GAME.active) requestAnimationFrame(loop);
-}
-
-function gameOver() {
-  GAME.active = false;
-  GAME.over = true;
-  playSound('crash');
-  container.classList.add('shake');
-  spawnParticle(player.x, player.y, '#00f3ff', 20); // Explosion
-  draw(); // Draw one last time to show overlay
-
-  if (GAME.score > GAME.highScore) {
-    GAME.highScore = GAME.score;
-    localStorage.setItem('neonHighScore', GAME.highScore);
-    bestEl.innerText = GAME.highScore;
-  }
-  
-  mainBtn.innerHTML = "🔄 RETRY?";
-  mainBtn.style.opacity = "1";
-}
-
-/** * CONTROLS 
- */
-const keys = { Left: false, Right: false, Dash: false };
-
-window.addEventListener('keydown', e => {
-  if (e.code === 'ArrowLeft' || e.key === 'a') keys.Left = true;
-  if (e.code === 'ArrowRight' || e.key === 'd') keys.Right = true;
-  if (e.code === 'ShiftLeft' || e.code === 'Space') keys.Dash = true;
-  // Restart on space if game over
-  if (GAME.over && e.code === 'Space') resetGame();
-});
-
-window.addEventListener('keyup', e => {
-  if (e.code === 'ArrowLeft' || e.key === 'a') keys.Left = false;
-  if (e.code === 'ArrowRight' || e.key === 'd') keys.Right = false;
-  if (e.code === 'ShiftLeft' || e.code === 'Space') keys.Dash = false;
-});
-
-// Mobile / Buttons
-const bindBtn = (id, key) => {
-  const btn = document.getElementById(id);
-  btn.addEventListener('mousedown', () => keys[key] = true);
-  btn.addEventListener('mouseup', () => keys[key] = false);
-  btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
-  btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
-};
-
-bindBtn('leftBtn', 'Left');
-bindBtn('rightBtn', 'Right');
-bindBtn('dashBtn', 'Dash');
-
-mainBtn.addEventListener('click', () => {
-  if (!GAME.active) resetGame();
-});
-
-document.getElementById('muteBtn').addEventListener('click', (e) => {
-  GAME.muted = !GAME.muted;
-  e.target.innerText = GAME.muted ? "🔇 MUTED" : "🔊 SOUND ON";
-});
-
-// Initial Draw
-draw();
-ctx.fillStyle = "#fff";
-ctx.textAlign = "center";
-ctx.font = "14px Arial";
-ctx.fillText("READY PILOT?", canvas.width/2, canvas.height/2);
-
-</script>
-</body>
-</html>
+// Game State
+let
