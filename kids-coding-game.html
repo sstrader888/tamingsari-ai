@@ -3,75 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEON DODGE: ULTIMATE</title>
+  <title>NEON DODGE: MOBILE PRO</title>
   <style>
     :root {
-      --bg: #050510;
       --accent: #00f3ff;
       --danger: #ff0055;
-      --shield: #4dff4d; /* Hijau Neon untuk Shield */
-      --text: #eef;
     }
 
-    * { box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-
+    /* Reset supaya full screen betul-betul */
     body {
       margin: 0;
-      height: 100vh;
+      padding: 0;
       background: #000;
+      overflow: hidden; /* Halang scroll */
+      touch-action: none; /* Halang zoom/pan */
       font-family: 'Segoe UI', sans-serif;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
     }
 
-    /* Game Container */
-    .game-wrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      max-width: 480px; /* Limit lebar untuk tablet/PC */
-      background: radial-gradient(circle at bottom, #1a1a2e, #000);
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Score HUD */
-    .hud {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      display: flex;
-      justify-content: space-between;
-      z-index: 10;
-      pointer-events: none; /* Supaya tak ganggu touch */
-    }
-
-    .hud-box {
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 8px 12px;
-      border-radius: 20px;
-      color: #fff;
-      font-weight: 800;
-      font-size: 14px;
-      text-transform: uppercase;
-      backdrop-filter: blur(4px);
-    }
-    .hud-box span { color: var(--accent); }
-    .hud-box.shield-active { border-color: var(--shield); color: var(--shield); }
-
-    /* Canvas */
+    /* Canvas memenuhi seluruh skrin */
     canvas {
       display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
+      z-index: 1; /* Layer paling bawah */
     }
 
-    /* Start Screen / Game Over Overlay */
+    /* HUD (Score) Terapung di atas */
+    .hud {
+      position: absolute;
+      top: 40px; /* Jarak dari atas (elak notch kamera) */
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 10; /* Layer atas canvas */
+      pointer-events: none; /* Supaya boleh tekan game di belakang tulisan */
+    }
+
+    .score-box {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+    .score-box span { color: var(--accent); }
+
+    /* Button Dash Terapung di Bawah */
+    .dash-btn {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 0, 85, 0.3);
+      border: 2px solid var(--danger);
+      color: #fff;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      z-index: 20;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 0 15px var(--danger);
+      transition: transform 0.1s;
+    }
+    .dash-btn:active {
+      background: var(--danger);
+      transform: translateX(-50%) scale(0.95);
+    }
+
+    /* Start / Game Over Screen */
     .overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -80,118 +84,173 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 20;
+      z-index: 50;
       transition: opacity 0.3s;
     }
-    
     .hidden { opacity: 0; pointer-events: none; }
-
+    
     h1 {
-      font-size: 32px;
       color: var(--accent);
-      text-shadow: 0 0 20px var(--accent);
-      margin-bottom: 10px;
       font-style: italic;
+      font-size: 40px;
+      margin: 0 0 10px 0;
       text-align: center;
+      text-shadow: 0 0 20px var(--accent);
     }
+    
+    p { color: #ccc; text-align: center; margin-bottom: 30px; line-height: 1.5; }
 
-    .btn {
+    .btn-start {
       background: var(--accent);
       color: #000;
       border: none;
-      padding: 15px 40px;
-      font-size: 18px;
+      padding: 15px 50px;
+      font-size: 20px;
       font-weight: bold;
       border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
-      margin-top: 20px;
-      animation: pulse 1.5s infinite;
+      box-shadow: 0 0 20px rgba(0,243,255,0.5);
     }
-
-    /* Controls Layer (Invisible) */
-    .controls-layer {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      display: flex;
-      z-index: 5;
-    }
-    .control-zone {
-      flex: 1;
-      /* background: rgba(255,0,0,0.1); Debugging: Turn on to see zones */
-    }
-    
-    /* Dash Button (Visual Only) */
-    .dash-indicator {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      pointer-events: auto; /* Boleh tekan */
-      background: rgba(255, 0, 85, 0.2);
-      border: 1px solid var(--danger);
-      color: var(--danger);
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: bold;
-      z-index: 15;
-    }
-    .dash-indicator:active { background: var(--danger); color: white; }
-
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-    .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-    @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
   </style>
 </head>
 <body>
 
-<div class="game-wrapper" id="gameWrapper">
-  
-  <div class="hud">
-    <div class="hud-box">SCORE: <span id="scoreEl">0</span></div>
-    <div class="hud-box" id="shieldHud" style="opacity:0">🛡️ SHIELD: <span id="shieldTime">0</span>s</div>
-  </div>
-
   <canvas id="gameCanvas"></canvas>
 
-  <div class="controls-layer">
-    <div class="control-zone" id="zoneLeft"></div>
-    <div class="control-zone" id="zoneRight"></div>
+  <div class="hud">
+    <div class="score-box">SCORE: <span id="scoreEl">0</span></div>
+    <div class="score-box">BEST: <span id="bestEl">0</span></div>
   </div>
 
-  <button class="dash-indicator" id="btnDash">⚡ DASH (TAP)</button>
+  <button class="dash-btn" id="btnDash">⚡ DASH</button>
 
   <div class="overlay" id="menuOverlay">
-    <h1>NEON DODGE<br><span style="font-size:20px; color:#fff">ULTIMATE EDITION</span></h1>
-    <p style="color:#aaa; text-align:center; padding:0 20px;">
-      Kiri Skrin = Gerak Kiri<br>
-      Kanan Skrin = Gerak Kanan<br>
-      Dapatkan <span style="color:#4dff4d">🛡️</span> untuk kekebalan!
+    <h1>NEON DODGE</h1>
+    <p>
+      TAP KIRI skrin untuk ke Kiri<br>
+      TAP KANAN skrin untuk ke Kanan<br>
+      Tekan butang DASH untuk laju
     </p>
-    <button class="btn" id="startBtn">▶️ START GAME</button>
+    <button class="btn-start" id="startBtn">▶️ PLAY</button>
   </div>
 
-</div>
-
 <script>
-/** * KONFIGURASI & SETUP
- */
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const wrapper = document.getElementById('gameWrapper');
-const scoreEl = document.getElementById('scoreEl');
-const shieldHud = document.getElementById('shieldHud');
-const shieldTimeEl = document.getElementById('shieldTime');
-const overlay = document.getElementById('menuOverlay');
-const startBtn = document.getElementById('startBtn');
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const scoreEl = document.getElementById('scoreEl');
+  const bestEl = document.getElementById('bestEl');
+  const overlay = document.getElementById('menuOverlay');
+  const startBtn = document.getElementById('startBtn');
+  const btnDash = document.getElementById('btnDash');
 
-// Resize Canvas Full Screen
-function resize() {
-  canvas.width = wrapper.clientWidth;
-  canvas.height = wrapper.clientHeight;
-}
-window.addEventListener('resize', resize);
-resize();
+  // --- AUDIO SIMPLE ---
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let actx = new AudioContext();
 
-// Game State
-let
+  function playTone(type) {
+    if (actx.state === 'suspended') actx.resume();
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.connect(gain);
+    gain.connect(actx.destination);
+    const now = actx.currentTime;
+    
+    if (type === 'hit') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(10, now+0.3);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.linearRampToValueAtTime(0, now+0.3);
+      osc.start(now); osc.stop(now+0.3);
+    } else {
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now+0.1);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.linearRampToValueAtTime(0, now+0.1);
+      osc.start(now); osc.stop(now+0.1);
+    }
+  }
+
+  // --- RESIZE LOGIC (PENTING UNTUK MOBILE) ---
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize(); // Panggil terus masa mula
+
+  // --- GAME VARIABLES ---
+  let player = { x: 0, y: 0, w: 30, h: 40, vx: 0 };
+  let rocks = [];
+  let particles = [];
+  let stars = [];
+  let score = 0;
+  let highScore = localStorage.getItem('neonBest') || 0;
+  let running = false;
+  let speed = 1;
+  bestEl.innerText = highScore;
+
+  // Background Stars
+  for(let i=0; i<60; i++) stars.push({x:Math.random(), y:Math.random(), s:Math.random()*2});
+
+  function resetGame() {
+    player.x = canvas.width / 2;
+    player.y = canvas.height - 120; // Naikkan sikit supaya tak kena button dash
+    rocks = [];
+    particles = [];
+    score = 0;
+    speed = 1;
+    running = true;
+    scoreEl.innerText = 0;
+    overlay.classList.add('hidden');
+    playTone('start');
+    loop();
+  }
+
+  // --- CONTROLS (TOUCH SCREEN) ---
+  const keys = { left: false, right: false, dash: false };
+
+  // Logic: Kalau sentuh separuh kiri skrin = Kiri, separuh kanan = Kanan
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    for (let i = 0; i < e.touches.length; i++) {
+      let touchX = e.touches[i].clientX;
+      if (touchX < canvas.width / 2) keys.left = true;
+      else keys.right = true;
+    }
+  });
+
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    // Reset keys bila jari angkat (simplistik)
+    if (e.touches.length === 0) {
+      keys.left = false;
+      keys.right = false;
+    }
+  });
+
+  // Mouse fallback (untuk test kat PC)
+  canvas.addEventListener('mousedown', (e) => {
+    if (e.clientX < canvas.width/2) keys.left = true; else keys.right = true;
+  });
+  canvas.addEventListener('mouseup', () => { keys.left = false; keys.right = false; });
+
+  // Dash Button Logic
+  btnDash.addEventListener('touchstart', (e) => { e.preventDefault(); keys.dash = true; });
+  btnDash.addEventListener('touchend', (e) => { e.preventDefault(); keys.dash = false; });
+  btnDash.addEventListener('mousedown', () => keys.dash = true);
+  btnDash.addEventListener('mouseup', () => keys.dash = false);
+
+  // --- UPDATE LOOP ---
+  function update() {
+    if (!running) return;
+
+    // Player Move
+    let moveSpeed = 6;
+    if (keys.dash) moveSpeed = 12;
+
+    if (keys.left) player.x -= moveSpeed;
+    if (keys.right) player.x += moveSpeed;
+
+    // Dinding
+    if (player.x < 15) player.x = 15;
+    if (player.x > canvas.width - 15) player.
