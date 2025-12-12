@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEON DODGE: FINAL FIX</title>
+  <title>NEON DODGE: LITE</title>
   <style>
-    /* IMPORT FONT */
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
 
+    /* RESET & OPTIMIZATION */
     * { box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-
+    
     body {
       margin: 0; padding: 0;
       background: #000;
-      font-family: 'Orbitron', sans-serif; /* Font Cyberpunk */
+      font-family: 'Orbitron', sans-serif;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -22,85 +22,64 @@
       width: 100vw;
     }
 
-    /* GAME CONTAINER (PC Limit Lebar, Mobile Full Screen) */
+    /* GAME CONTAINER */
     #gameContainer {
       position: relative;
       width: 100%;
       height: 100%;
-      max-width: 480px; /* Limit lebar untuk PC supaya tak gepeng */
-      background: linear-gradient(to bottom, #1a0b2e, #000000);
-      overflow: hidden;
-      box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+      max-width: 480px; 
+      background: #050011; /* Solid color, no gradient for speed */
       border-left: 1px solid #333;
       border-right: 1px solid #333;
     }
 
     canvas { display: block; width: 100%; height: 100%; z-index: 1; }
 
-    /* UI SCORE */
+    /* UI ELEMENTS */
     .hud {
       position: absolute; top: 30px; width: 100%;
       display: flex; justify-content: space-between; padding: 0 25px;
       z-index: 10; pointer-events: none;
     }
-    .score-box { color: #fff; font-size: 14px; letter-spacing: 2px; text-shadow: 0 0 10px #00f3ff; }
-    .score-val { font-size: 24px; color: #00f3ff; font-weight: 900; display:block; }
+    .score-box { color: #fff; font-size: 14px; }
+    .score-val { font-size: 24px; color: #00f3ff; font-weight: 900; }
 
-    /* CONTROLS HINT (PC ONLY) */
-    .pc-hint {
-      position: absolute; bottom: 10px; width: 100%; text-align: center;
-      color: rgba(255,255,255,0.3); font-size: 10px; pointer-events: none; z-index: 5;
-      display: none;
-    }
-    @media (min-width: 600px) { .pc-hint { display: block; } }
-
-    /* DASH BUTTON */
+    /* BUTTONS - SIMPLE DESIGN (NO GLOW) */
     .dash-wrapper {
-      position: absolute; bottom: 50px; width: 100%;
+      position: absolute; bottom: 60px; width: 100%;
       display: flex; justify-content: center; z-index: 20; pointer-events: auto;
     }
     .dash-btn {
-      background: rgba(255, 0, 85, 0.15); border: 2px solid #ff0055;
-      color: #fff; padding: 15px 50px; border-radius: 8px;
+      background: #ff0055; 
+      border: 2px solid #fff;
+      color: #fff; padding: 15px 60px; border-radius: 8px;
       font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900;
-      letter-spacing: 2px; text-transform: uppercase;
-      box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
-      cursor: pointer; transition: 0.1s;
+      text-transform: uppercase;
+      /* Tiada box-shadow heavy */
     }
-    .dash-btn:active, .dash-btn.active-key {
-      background: #ff0055; transform: scale(0.95); box-shadow: 0 0 40px #ff0055;
-    }
+    .dash-btn:active { transform: scale(0.95); opacity: 0.8; }
 
-    /* MENU OVERLAY */
+    /* MENU - NO BLUR */
     .overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(5, 0, 16, 0.95);
+      background: rgba(0, 0, 0, 0.95); /* Solid dark */
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 999; transition: opacity 0.3s;
+      z-index: 999;
     }
-    .hidden { opacity: 0; pointer-events: none; visibility: hidden; }
+    .hidden { display: none !important; }
 
-    h1 {
-      color: #00f3ff; font-size: 42px; margin: 0; text-align: center;
-      text-shadow: 0 0 30px #00f3ff; font-style: italic;
-    }
-    .subtitle { color: #ff0055; font-size: 14px; margin-bottom: 40px; letter-spacing: 3px; }
+    h1 { color: #00f3ff; font-size: 40px; margin: 0; text-align: center; margin-bottom: 20px; }
     
     .btn-start {
       background: #00f3ff; color: #000; border: none; padding: 20px 60px;
       font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900;
-      clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-      box-shadow: 0 0 30px rgba(0, 243, 255, 0.4); cursor: pointer;
-      margin-top: 20px;
+      cursor: pointer; margin-top: 20px;
     }
-    .btn-start:hover { background: #fff; }
     .btn-start:active { transform: scale(0.95); }
 
-    /* TOUCH ZONES */
     .touch-zone { position: absolute; top: 0; height: 100%; width: 50%; z-index: 5; }
     #zone-left { left: 0; }
     #zone-right { right: 0; }
-
   </style>
 </head>
 <body>
@@ -112,23 +91,18 @@
   <div id="zone-right" class="touch-zone"></div>
 
   <div class="hud">
-    <div class="score-box">SCORE<span class="score-val" id="scoreEl">0</span></div>
-    <div class="score-box" style="text-align:right">BEST<span class="score-val" id="bestEl">0</span></div>
+    <div>SCORE<br><span class="score-val" id="scoreEl">0</span></div>
+    <div style="text-align:right">BEST<br><span class="score-val" id="bestEl">0</span></div>
   </div>
 
   <div class="dash-wrapper">
     <button class="dash-btn" id="btnDash">⚡ DASH</button>
   </div>
-  
-  <div class="pc-hint">PC: ARROW KEYS TO MOVE | SPACE TO DASH</div>
 
   <div class="overlay" id="menuOverlay">
-    <h1>NEON<br>DODGE</h1>
-    <div class="subtitle">HYBRID EDITION</div>
-    <p style="color:#aaa; text-align:center; font-size:12px; margin-bottom:10px;">
-      MOBILE: TAP SIDES TO MOVE<br>PC: USE ARROW KEYS
-    </p>
-    <button class="btn-start" id="startBtn">START SYSTEM</button>
+    <h1>NEON<br>LITE</h1>
+    <p style="color:#aaa; text-align:center;">PERFORMANCE MODE</p>
+    <button class="btn-start" id="startBtn">START</button>
   </div>
 </div>
 
@@ -136,40 +110,32 @@
   // SETUP
   const container = document.getElementById('gameContainer');
   const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: false }); // Optimization flag
   const scoreEl = document.getElementById('scoreEl');
   const bestEl = document.getElementById('bestEl');
   const overlay = document.getElementById('menuOverlay');
   const startBtn = document.getElementById('startBtn');
   const btnDash = document.getElementById('btnDash');
 
-  // AUDIO ENGINE (Safe Mode)
+  // AUDIO (SAFE)
   let actx = null;
   function initAudio() {
     try {
       if (!actx) { actx = new (window.AudioContext || window.webkitAudioContext)(); }
       if (actx.state === 'suspended') actx.resume();
-    } catch(e) { console.log("Audio Error", e); }
+    } catch(e) {}
   }
-
-  function playSound(type) {
+  function playTone(freq, type) {
     if (!actx) return;
     try {
       const osc = actx.createOscillator();
       const gain = actx.createGain();
       osc.connect(gain); gain.connect(actx.destination);
-      const now = actx.currentTime;
-      
-      if (type === 'hit') { // Boom
-        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now);
-        osc.frequency.exponentialRampToValueAtTime(10, now+0.4);
-        gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now+0.3);
-      } else if (type === 'dash') { // Swoosh
-        osc.type = 'square'; osc.frequency.setValueAtTime(200, now);
-        osc.frequency.linearRampToValueAtTime(600, now+0.2);
-        gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now+0.2);
-      }
-      osc.start(now); osc.stop(now+0.4);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, actx.currentTime);
+      gain.gain.setValueAtTime(0.1, actx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, actx.currentTime + 0.1);
+      osc.start(); osc.stop(actx.currentTime + 0.1);
     } catch(e) {}
   }
 
@@ -181,15 +147,14 @@
   window.addEventListener('resize', resize);
   setTimeout(resize, 100);
 
-  // GAME VARIABLES
-  let player = { x: 0, y: 0, trail: [] };
+  // GAME VARS
+  let player = { x: 0, y: 0 };
   let rocks = [];
   let score = 0;
   let highScore = localStorage.getItem('neonBest') || 0;
   let running = false;
   let speed = 1;
-  let frame = 0;
-  let gridOffset = 0;
+  let gridY = 0;
   bestEl.innerText = highScore;
 
   const keys = { left: false, right: false, dash: false };
@@ -197,212 +162,156 @@
   function startGame() {
     initAudio();
     resize();
-    
-    // Reset Everything
     player.x = canvas.width / 2;
-    player.y = canvas.height - 120;
-    player.trail = [];
+    player.y = canvas.height - 100;
     rocks = [];
     score = 0;
     speed = 1;
     running = true;
     scoreEl.innerText = 0;
-    
     overlay.classList.add('hidden');
-    loop(); // Start loop hanya SEKALI di sini
+    playTone(600, 'sine');
+    loop();
   }
 
   function update() {
     if (!running) return;
-    frame++;
 
-    // Grid Animation
-    gridOffset += (2 * speed) + (keys.dash ? 5 : 0);
-    if (gridOffset > 40) gridOffset = 0;
+    // Movement
+    let ms = keys.dash ? 12 : 7;
+    if (keys.left) player.x -= ms;
+    if (keys.right) player.x += ms;
 
-    // Movement Logic
-    let moveSpeed = 6;
-    if (keys.dash) moveSpeed = 12;
-
-    // Trail logic
-    if (frame % 3 === 0) {
-      player.trail.push({x: player.x, y: player.y});
-      if (player.trail.length > 6) player.trail.shift();
-    }
-
-    if (keys.left) player.x -= moveSpeed;
-    if (keys.right) player.x += moveSpeed;
-
-    // Clamp Screen
+    // Clamp
     if (player.x < 15) player.x = 15;
     if (player.x > canvas.width - 15) player.x = canvas.width - 15;
 
-    // Spawn Rocks
+    // Grid Loop
+    gridY += 3 * speed;
+    if (gridY > 40) gridY = 0;
+
+    // Spawn Rocks (Less frequent for performance)
     if (Math.random() < 0.02 * speed) {
       rocks.push({
-        x: Math.random() * canvas.width,
-        y: -60,
-        s: 25 + Math.random() * 25,
-        vy: (4 + Math.random() * 2) * speed,
-        rot: Math.random()
+        x: Math.random() * (canvas.width - 30),
+        y: -50,
+        s: 30 + Math.random() * 20,
+        vy: (5 + Math.random() * 2) * speed
       });
     }
 
     // Rocks Logic
     for (let i = rocks.length - 1; i >= 0; i--) {
       let r = rocks[i];
-      r.y += r.vy; r.rot += 0.05;
+      r.y += r.vy;
 
-      // Collision
-      let dx = player.x - r.x;
-      let dy = player.y - r.y;
-      if (Math.sqrt(dx*dx + dy*dy) < (r.s/2 + 15)) {
+      // Simple Box Collision (Faster than circle)
+      if (
+        player.x < r.x + r.s &&
+        player.x + 20 > r.x &&
+        player.y < r.y + r.s &&
+        player.y + 20 > r.y
+      ) {
         gameOver();
       }
 
-      // Remove rocks
-      if (r.y > canvas.height + 60) {
+      if (r.y > canvas.height + 50) {
         rocks.splice(i, 1);
         score += 10;
         scoreEl.innerText = score;
-        speed += 0.002;
+        speed += 0.001;
       }
     }
   }
 
   function draw() {
-    // Background
+    // 1. CLEAR (Solid color is fastest)
     ctx.fillStyle = '#050011';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 3D Grid
-    ctx.save();
-    ctx.strokeStyle = 'rgba(200, 0, 255, 0.2)';
-    ctx.lineWidth = 1;
+    // 2. GRID (Simple Lines, No Glow)
+    ctx.strokeStyle = '#330044'; // Dark purple
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    
+    // Vertical lines
     let cx = canvas.width / 2;
-    // Garis Menegak
-    for (let i = -8; i <= 8; i++) {
+    for (let i = -6; i <= 6; i++) {
         let x = cx + (i * 60);
-        ctx.beginPath(); ctx.moveTo(x, 0); 
-        ctx.lineTo((x - cx) * 4 + cx, canvas.height); 
-        ctx.stroke();
+        ctx.moveTo(x, 0); ctx.lineTo((x - cx) * 3 + cx, canvas.height);
     }
-    // Garis Melintang
+    // Horizontal lines
     for (let i = 0; i < canvas.height; i += 40) {
-        let y = i + gridOffset;
+        let y = i + gridY;
         if(y > canvas.height) y -= canvas.height;
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
     }
-    ctx.restore();
+    ctx.stroke();
 
     if (running) {
-      // Draw Trail
-      if (player.trail.length > 0) {
-        ctx.strokeStyle = 'rgba(0, 243, 255, 0.4)';
-        ctx.lineWidth = 10; ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(player.trail[0].x, player.trail[0].y);
-        for(let t of player.trail) ctx.lineTo(t.x, t.y);
-        ctx.lineTo(player.x, player.y);
-        ctx.stroke();
-      }
-
-      // Draw Player
-      ctx.save(); ctx.translate(player.x, player.y);
+      // 3. PLAYER (Simple Triangle)
       ctx.fillStyle = keys.dash ? '#fff' : '#00f3ff';
-      ctx.shadowBlur = 20; ctx.shadowColor = '#00f3ff';
-      ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(15, 15); ctx.lineTo(0, 5); ctx.lineTo(-15, 15); ctx.fill();
-      // Engine Flame
-      if (keys.dash) {
-        ctx.fillStyle = '#ff0055';
-        ctx.beginPath(); ctx.moveTo(-5, 15); ctx.lineTo(0, 40); ctx.lineTo(5, 15); ctx.fill();
-      }
-      ctx.restore();
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y - 20);
+      ctx.lineTo(player.x + 15, player.y + 20);
+      ctx.lineTo(player.x - 15, player.y + 20);
+      ctx.fill();
 
-      // Draw Rocks
-      ctx.shadowBlur = 10; ctx.shadowColor = '#ff0055';
-      ctx.strokeStyle = '#ff0055'; ctx.lineWidth = 2;
+      // 4. ROCKS (Hollow Boxes)
+      ctx.strokeStyle = '#ff0055';
+      ctx.lineWidth = 3;
       rocks.forEach(r => {
-        ctx.save(); ctx.translate(r.x, r.y); ctx.rotate(r.rot);
-        ctx.strokeRect(-r.s/2, -r.s/2, r.s, r.s);
-        ctx.fillStyle = 'rgba(255, 0, 85, 0.15)'; ctx.fillRect(-r.s/2, -r.s/2, r.s, r.s);
-        ctx.restore();
+        ctx.strokeRect(r.x, r.y, r.s, r.s);
       });
     }
-    
-    // PEMBETULAN PENTING: Jangan panggil requestAnimationFrame dalam draw!
-    // Ia hanya patut dipanggil dalam loop()
   }
 
   function loop() {
     update();
     draw();
-    if (running) {
-      requestAnimationFrame(loop);
-    }
+    if (running) requestAnimationFrame(loop);
   }
 
   function gameOver() {
-    running = false; // Stop loop
-    playSound('hit');
-    
-    // Save Highscore
-    if (score > highScore) { 
-      highScore = score; 
-      localStorage.setItem('neonBest', highScore); 
-      bestEl.innerText = highScore; 
+    running = false;
+    playTone(150, 'sawtooth');
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem('neonBest', highScore);
+      bestEl.innerText = highScore;
     }
-    
-    // Show Menu
     overlay.classList.remove('hidden');
-    document.querySelector('h1').innerHTML = "SYSTEM<br>FAILURE";
-    startBtn.innerText = "REBOOT SYSTEM";
+    document.querySelector('h1').innerText = "GAME OVER";
+    startBtn.innerText = "RETRY";
   }
 
-  // --- CONTROLS ---
-
-  // 1. TOUCH (Mobile)
+  // CONTROLS
   const bindTouch = (elem, key) => {
-    elem.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; if(key==='dash') playSound('dash'); });
+    elem.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
     elem.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
   };
   bindTouch(document.getElementById('zone-left'), 'left');
   bindTouch(document.getElementById('zone-right'), 'right');
   bindTouch(btnDash, 'dash');
-
-  // 2. MOUSE (Untuk Menu & Dash PC)
-  startBtn.addEventListener('click', startGame);
-  // Elak double click issue pada mobile
-  startBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startGame(); });
   
-  btnDash.addEventListener('mousedown', () => { keys.dash = true; playSound('dash'); });
-  btnDash.addEventListener('mouseup', () => keys.dash = false);
+  startBtn.addEventListener('click', startGame);
+  startBtn.addEventListener('touchstart', (e)=>{e.preventDefault(); startGame()});
 
-  // 3. KEYBOARD (PC)
+  // PC Keys
   window.addEventListener('keydown', (e) => {
-    if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
-    if(e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
-    if(e.code === 'Space' || e.key === 'Shift') {
-      if(!keys.dash) playSound('dash');
-      keys.dash = true;
-      btnDash.classList.add('active-key'); // Visual effect pada button
-    }
-    // Space untuk restart kalau game over
-    if(!running && e.code === 'Space') startGame();
+    if(e.key==='ArrowLeft') keys.left=true;
+    if(e.key==='ArrowRight') keys.right=true;
+    if(e.code==='Space') keys.dash=true;
+    if(!running && e.code==='Space') startGame();
   });
-
   window.addEventListener('keyup', (e) => {
-    if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
-    if(e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
-    if(e.code === 'Space' || e.key === 'Shift') {
-      keys.dash = false;
-      btnDash.classList.remove('active-key');
-    }
+    if(e.key==='ArrowLeft') keys.left=false;
+    if(e.key==='ArrowRight') keys.right=false;
+    if(e.code==='Space') keys.dash=false;
   });
 
-  // Render first frame (Static background)
+  // Init
   draw();
-
 </script>
 </body>
 </html>
