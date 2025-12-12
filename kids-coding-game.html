@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEON DODGE: LITE</title>
+  <title>GALACTIC DEFENDER</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
 
-    /* RESET & OPTIMIZATION */
     * { box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
     
     body {
@@ -22,61 +21,65 @@
       width: 100vw;
     }
 
-    /* GAME CONTAINER */
     #gameContainer {
       position: relative;
       width: 100%;
       height: 100%;
-      max-width: 480px; 
-      background: #050011; /* Solid color, no gradient for speed */
-      border-left: 1px solid #333;
-      border-right: 1px solid #333;
+      max-width: 500px;
+      background: #0a0a1a;
+      border-left: 2px solid #333;
+      border-right: 2px solid #333;
+      overflow: hidden;
     }
 
     canvas { display: block; width: 100%; height: 100%; z-index: 1; }
 
-    /* UI ELEMENTS */
+    /* UI */
     .hud {
-      position: absolute; top: 30px; width: 100%;
-      display: flex; justify-content: space-between; padding: 0 25px;
+      position: absolute; top: 20px; width: 100%;
+      display: flex; justify-content: space-between; padding: 0 20px;
       z-index: 10; pointer-events: none;
     }
-    .score-box { color: #fff; font-size: 14px; }
-    .score-val { font-size: 24px; color: #00f3ff; font-weight: 900; }
+    .score-txt { color: #aaa; font-size: 12px; }
+    .score-val { font-size: 20px; color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
 
-    /* BUTTONS - SIMPLE DESIGN (NO GLOW) */
+    /* DASH BUTTON - Diletakkan jauh sikit dari kapal */
     .dash-wrapper {
-      position: absolute; bottom: 60px; width: 100%;
+      position: absolute; bottom: 30px; width: 100%;
       display: flex; justify-content: center; z-index: 20; pointer-events: auto;
     }
     .dash-btn {
-      background: #ff0055; 
-      border: 2px solid #fff;
-      color: #fff; padding: 15px 60px; border-radius: 8px;
-      font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900;
-      text-transform: uppercase;
-      /* Tiada box-shadow heavy */
+      background: rgba(255, 0, 85, 0.2); 
+      border: 2px solid #ff0055;
+      color: #fff; padding: 15px 50px; border-radius: 4px;
+      font-family: 'Orbitron', sans-serif; font-size: 18px; 
+      letter-spacing: 2px; text-transform: uppercase;
+      backdrop-filter: blur(4px);
     }
-    .dash-btn:active { transform: scale(0.95); opacity: 0.8; }
+    .dash-btn:active { background: #ff0055; transform: scale(0.95); }
 
-    /* MENU - NO BLUR */
+    /* MENU */
     .overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.95); /* Solid dark */
+      background: rgba(0, 0, 0, 0.9);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 999;
+      z-index: 99;
     }
     .hidden { display: none !important; }
 
-    h1 { color: #00f3ff; font-size: 40px; margin: 0; text-align: center; margin-bottom: 20px; }
+    h1 { 
+      color: #00ffcc; font-size: 36px; text-align: center; margin-bottom: 10px; 
+      text-shadow: 0 0 10px #00ffcc;
+      line-height: 1.2;
+    }
     
     .btn-start {
-      background: #00f3ff; color: #000; border: none; padding: 20px 60px;
+      background: #00ffcc; color: #000; border: none; padding: 15px 40px;
       font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900;
-      cursor: pointer; margin-top: 20px;
+      clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+      cursor: pointer; margin-top: 30px;
     }
-    .btn-start:active { transform: scale(0.95); }
-
+    
     .touch-zone { position: absolute; top: 0; height: 100%; width: 50%; z-index: 5; }
     #zone-left { left: 0; }
     #zone-right { right: 0; }
@@ -91,55 +94,65 @@
   <div id="zone-right" class="touch-zone"></div>
 
   <div class="hud">
-    <div>SCORE<br><span class="score-val" id="scoreEl">0</span></div>
-    <div style="text-align:right">BEST<br><span class="score-val" id="bestEl">0</span></div>
+    <div><div class="score-txt">SCORE</div><div class="score-val" id="scoreEl">0</div></div>
+    <div style="text-align:right"><div class="score-txt">BEST</div><div class="score-val" id="bestEl">0</div></div>
   </div>
 
   <div class="dash-wrapper">
-    <button class="dash-btn" id="btnDash">⚡ DASH</button>
+    <button class="dash-btn" id="btnDash">⚡ BOOST</button>
   </div>
 
   <div class="overlay" id="menuOverlay">
-    <h1>NEON<br>LITE</h1>
-    <p style="color:#aaa; text-align:center;">PERFORMANCE MODE</p>
-    <button class="btn-start" id="startBtn">START</button>
+    <h1>GALACTIC<br>DEFENDER</h1>
+    <p style="color:#888; text-align:center; font-size:12px;">AUTO-SHOOT ENABLED</p>
+    <button class="btn-start" id="startBtn">LAUNCH SHIP</button>
   </div>
 </div>
 
 <script>
-  // SETUP
   const container = document.getElementById('gameContainer');
   const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d', { alpha: false }); // Optimization flag
+  const ctx = canvas.getContext('2d', { alpha: false });
   const scoreEl = document.getElementById('scoreEl');
   const bestEl = document.getElementById('bestEl');
   const overlay = document.getElementById('menuOverlay');
   const startBtn = document.getElementById('startBtn');
   const btnDash = document.getElementById('btnDash');
 
-  // AUDIO (SAFE)
+  // AUDIO
   let actx = null;
   function initAudio() {
     try {
-      if (!actx) { actx = new (window.AudioContext || window.webkitAudioContext)(); }
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
       if (actx.state === 'suspended') actx.resume();
     } catch(e) {}
   }
-  function playTone(freq, type) {
+  
+  function playSound(type) {
     if (!actx) return;
     try {
       const osc = actx.createOscillator();
       const gain = actx.createGain();
       osc.connect(gain); gain.connect(actx.destination);
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, actx.currentTime);
-      gain.gain.setValueAtTime(0.1, actx.currentTime);
-      gain.gain.linearRampToValueAtTime(0, actx.currentTime + 0.1);
-      osc.start(); osc.stop(actx.currentTime + 0.1);
+      const now = actx.currentTime;
+      
+      if (type === 'laser') {
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now+0.1);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.linearRampToValueAtTime(0, now+0.1);
+        osc.start(now); osc.stop(now+0.1);
+      } else if (type === 'boom') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, now);
+        osc.frequency.exponentialRampToValueAtTime(10, now+0.3);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0, now+0.3);
+        osc.start(now); osc.stop(now+0.3);
+      }
     } catch(e) {}
   }
 
-  // RESIZE
   function resize() {
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
@@ -147,121 +160,207 @@
   window.addEventListener('resize', resize);
   setTimeout(resize, 100);
 
-  // GAME VARS
-  let player = { x: 0, y: 0 };
-  let rocks = [];
+  // GAME STATE
+  let player = { x: 0, y: 0, w: 40 };
+  let bullets = [];
+  let enemies = [];
+  let stars = [];
   let score = 0;
-  let highScore = localStorage.getItem('neonBest') || 0;
+  let highScore = localStorage.getItem('spaceBest') || 0;
   let running = false;
-  let speed = 1;
-  let gridY = 0;
+  let speed = 2; // Kelajuan background (forward movement)
+  let frame = 0;
+
   bestEl.innerText = highScore;
+  
+  // Stars Background
+  for(let i=0; i<40; i++) stars.push({
+    x: Math.random(), y: Math.random(), 
+    s: Math.random()*2, v: Math.random()*2+1
+  });
 
   const keys = { left: false, right: false, dash: false };
 
   function startGame() {
     initAudio();
     resize();
+    // SET POSISI KAPAL LEBIH TINGGI (SUPAYA TAK KENA BUTTON DASH)
     player.x = canvas.width / 2;
-    player.y = canvas.height - 100;
-    rocks = [];
+    player.y = canvas.height - 180; // <--- INI UBAH KEDUDUKAN
+    
+    bullets = [];
+    enemies = [];
     score = 0;
-    speed = 1;
+    speed = 2;
     running = true;
     scoreEl.innerText = 0;
     overlay.classList.add('hidden');
-    playTone(600, 'sine');
     loop();
   }
 
   function update() {
     if (!running) return;
+    frame++;
+    speed = keys.dash ? 8 : 3; // Laju bila dash
 
-    // Movement
-    let ms = keys.dash ? 12 : 7;
-    if (keys.left) player.x -= ms;
-    if (keys.right) player.x += ms;
+    // 1. Move Player
+    let moveSpeed = keys.dash ? 10 : 6;
+    if (keys.left) player.x -= moveSpeed;
+    if (keys.right) player.x += moveSpeed;
+    if (player.x < 20) player.x = 20;
+    if (player.x > canvas.width - 20) player.x = canvas.width - 20;
 
-    // Clamp
-    if (player.x < 15) player.x = 15;
-    if (player.x > canvas.width - 15) player.x = canvas.width - 15;
+    // 2. Shooting (Auto) - Setiap 15 frame
+    if (frame % 15 === 0) {
+      bullets.push({x: player.x, y: player.y - 20});
+      playSound('laser');
+    }
 
-    // Grid Loop
-    gridY += 3 * speed;
-    if (gridY > 40) gridY = 0;
+    // 3. Bullets Move
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      bullets[i].y -= 15; // Laju peluru
+      if (bullets[i].y < 0) bullets.splice(i, 1);
+    }
 
-    // Spawn Rocks (Less frequent for performance)
-    if (Math.random() < 0.02 * speed) {
-      rocks.push({
-        x: Math.random() * (canvas.width - 30),
+    // 4. Enemies Spawn
+    if (frame % 60 === 0) { // Setiap 1 saat
+      enemies.push({
+        x: Math.random() * (canvas.width - 40) + 20,
         y: -50,
-        s: 30 + Math.random() * 20,
-        vy: (5 + Math.random() * 2) * speed
+        s: 30 + Math.random() * 20, // size
+        hp: 2
       });
     }
 
-    // Rocks Logic
-    for (let i = rocks.length - 1; i >= 0; i--) {
-      let r = rocks[i];
-      r.y += r.vy;
+    // 5. Enemies Logic
+    for (let i = enemies.length - 1; i >= 0; i--) {
+      let e = enemies[i];
+      e.y += speed + 2; // Musuh gerak ke bawah
 
-      // Simple Box Collision (Faster than circle)
-      if (
-        player.x < r.x + r.s &&
-        player.x + 20 > r.x &&
-        player.y < r.y + r.s &&
-        player.y + 20 > r.y
-      ) {
-        gameOver();
+      // Kena Tembak?
+      for (let b = bullets.length - 1; b >= 0; b--) {
+        let bull = bullets[b];
+        // Jarak peluru ke musuh
+        let dx = bull.x - e.x;
+        let dy = bull.y - e.y;
+        if (Math.sqrt(dx*dx + dy*dy) < e.s) {
+          bullets.splice(b, 1); // Padam peluru
+          e.hp--;
+          if(e.hp <= 0) {
+            playSound('boom');
+            enemies.splice(i, 1); // Padam musuh
+            score += 100;
+            scoreEl.innerText = score;
+          }
+          break; // Stop check peluru lain
+        }
       }
 
-      if (r.y > canvas.height + 50) {
-        rocks.splice(i, 1);
-        score += 10;
-        scoreEl.innerText = score;
-        speed += 0.001;
+      // Langgar Player?
+      let pdx = player.x - e.x;
+      let pdy = player.y - e.y;
+      if (Math.sqrt(pdx*pdx + pdy*pdy) < (e.s/2 + 15)) {
+         gameOver();
+      }
+
+      // Keluar skrin
+      if (e.y > canvas.height + 50) {
+        enemies.splice(i, 1);
       }
     }
   }
 
+  function drawJet(x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    // Warna Asas
+    ctx.fillStyle = "#fff";
+    
+    // Sayap Kiri
+    ctx.beginPath();
+    ctx.moveTo(-10, 0); ctx.lineTo(-30, 20); ctx.lineTo(-10, 20);
+    ctx.fill();
+    
+    // Sayap Kanan
+    ctx.beginPath();
+    ctx.moveTo(10, 0); ctx.lineTo(30, 20); ctx.lineTo(10, 20);
+    ctx.fill();
+    
+    // Badan Utama (Fuselage)
+    ctx.fillStyle = "#ddd";
+    ctx.beginPath();
+    ctx.moveTo(0, -30); // Muncung
+    ctx.lineTo(12, 25); // Ekor kanan
+    ctx.lineTo(0, 15);  // Tengah ekor
+    ctx.lineTo(-12, 25); // Ekor kiri
+    ctx.fill();
+
+    // Kokpit (Kaca Biru)
+    ctx.fillStyle = "#00ccff";
+    ctx.beginPath();
+    ctx.moveTo(0, -10);
+    ctx.ellipse(0, -5, 4, 8, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Api Enjin
+    if (keys.dash) {
+       ctx.fillStyle = "#ffaa00";
+       ctx.beginPath();
+       ctx.moveTo(-5, 25); ctx.lineTo(0, 50); ctx.lineTo(5, 25);
+       ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
   function draw() {
-    // 1. CLEAR (Solid color is fastest)
-    ctx.fillStyle = '#050011';
+    // Clear Background
+    ctx.fillStyle = "#050011";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 2. GRID (Simple Lines, No Glow)
-    ctx.strokeStyle = '#330044'; // Dark purple
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    
-    // Vertical lines
-    let cx = canvas.width / 2;
-    for (let i = -6; i <= 6; i++) {
-        let x = cx + (i * 60);
-        ctx.moveTo(x, 0); ctx.lineTo((x - cx) * 3 + cx, canvas.height);
-    }
-    // Horizontal lines
-    for (let i = 0; i < canvas.height; i += 40) {
-        let y = i + gridY;
-        if(y > canvas.height) y -= canvas.height;
-        ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
-    }
-    ctx.stroke();
+    // Bintang (Effect Bergerak Ke Depan)
+    ctx.fillStyle = "#fff";
+    stars.forEach(s => {
+      s.y += s.v * (keys.dash ? 4 : 1);
+      if(s.y > 1) s.y = 0; // Reset ke atas
+      
+      let px = s.x * canvas.width;
+      let py = s.y * canvas.height;
+      
+      ctx.beginPath();
+      ctx.arc(px, py, keys.dash ? 1 : s.s, 0, Math.PI*2);
+      ctx.fill();
+      
+      // Garisan laju (Warp effect)
+      if(keys.dash) {
+        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py-20); ctx.stroke();
+      }
+    });
 
     if (running) {
-      // 3. PLAYER (Simple Triangle)
-      ctx.fillStyle = keys.dash ? '#fff' : '#00f3ff';
-      ctx.beginPath();
-      ctx.moveTo(player.x, player.y - 20);
-      ctx.lineTo(player.x + 15, player.y + 20);
-      ctx.lineTo(player.x - 15, player.y + 20);
-      ctx.fill();
+      // Draw Player Jet
+      drawJet(player.x, player.y);
 
-      // 4. ROCKS (Hollow Boxes)
-      ctx.strokeStyle = '#ff0055';
+      // Draw Bullets
+      ctx.fillStyle = "#ff0";
+      bullets.forEach(b => {
+        ctx.fillRect(b.x - 2, b.y - 10, 4, 15);
+      });
+
+      // Draw Enemies (Asteroid Merah)
+      ctx.fillStyle = "#ff4444";
+      ctx.strokeStyle = "#aa0000";
       ctx.lineWidth = 3;
-      rocks.forEach(r => {
-        ctx.strokeRect(r.x, r.y, r.s, r.s);
+      enemies.forEach(e => {
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.s/2, 0, Math.PI*2);
+        ctx.fill(); ctx.stroke();
+        // Shine
+        ctx.fillStyle = "rgba(255,255,255,0.2)";
+        ctx.beginPath(); ctx.arc(e.x - 5, e.y - 5, e.s/4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#ff4444"; // Reset
       });
     }
   }
@@ -274,26 +373,29 @@
 
   function gameOver() {
     running = false;
-    playTone(150, 'sawtooth');
+    playSound('boom');
     if (score > highScore) {
       highScore = score;
-      localStorage.setItem('neonBest', highScore);
+      localStorage.setItem('spaceBest', highScore);
       bestEl.innerText = highScore;
     }
     overlay.classList.remove('hidden');
-    document.querySelector('h1').innerText = "GAME OVER";
-    startBtn.innerText = "RETRY";
+    document.querySelector('h1').innerHTML = "MISSION<br>FAILED";
+    startBtn.innerText = "RETRY MISSION";
   }
 
   // CONTROLS
-  const bindTouch = (elem, key) => {
-    elem.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
-    elem.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+  const bindTouch = (id, k) => {
+    const el = document.getElementById(id);
+    el.addEventListener('touchstart', (e)=>{e.preventDefault(); keys[k]=true;});
+    el.addEventListener('touchend', (e)=>{e.preventDefault(); keys[k]=false;});
+    el.addEventListener('mousedown', ()=>{keys[k]=true;});
+    el.addEventListener('mouseup', ()=>{keys[k]=false;});
   };
-  bindTouch(document.getElementById('zone-left'), 'left');
-  bindTouch(document.getElementById('zone-right'), 'right');
-  bindTouch(btnDash, 'dash');
-  
+  bindTouch('zone-left', 'left');
+  bindTouch('zone-right', 'right');
+  bindTouch('btnDash', 'dash');
+
   startBtn.addEventListener('click', startGame);
   startBtn.addEventListener('touchstart', (e)=>{e.preventDefault(); startGame()});
 
@@ -302,7 +404,6 @@
     if(e.key==='ArrowLeft') keys.left=true;
     if(e.key==='ArrowRight') keys.right=true;
     if(e.code==='Space') keys.dash=true;
-    if(!running && e.code==='Space') startGame();
   });
   window.addEventListener('keyup', (e) => {
     if(e.key==='ArrowLeft') keys.left=false;
@@ -310,8 +411,7 @@
     if(e.code==='Space') keys.dash=false;
   });
 
-  // Init
-  draw();
+  draw(); // Static frame
 </script>
 </body>
 </html>
