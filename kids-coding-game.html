@@ -3,83 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>GALACTIC DEFENDER</title>
+  <title>GALACTIC DEFENDER: EXTREME</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
 
     * { box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
     
     body {
-      margin: 0; padding: 0;
-      background: #000;
+      margin: 0; padding: 0; background: #000;
       font-family: 'Orbitron', sans-serif;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      width: 100vw;
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+      height: 100vh; width: 100vw;
     }
 
     #gameContainer {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      max-width: 500px;
-      background: #0a0a1a;
-      border-left: 2px solid #333;
-      border-right: 2px solid #333;
+      position: relative; width: 100%; height: 100%; max-width: 500px;
+      background: #0a0a1a; border-left: 2px solid #444; border-right: 2px solid #444;
       overflow: hidden;
     }
 
     canvas { display: block; width: 100%; height: 100%; z-index: 1; }
 
-    /* UI */
+    /* UI & HUD */
     .hud {
       position: absolute; top: 20px; width: 100%;
       display: flex; justify-content: space-between; padding: 0 20px;
       z-index: 10; pointer-events: none;
     }
-    .score-txt { color: #aaa; font-size: 12px; }
-    .score-val { font-size: 20px; color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
+    .score-label { color: #888; font-size: 10px; letter-spacing: 1px; }
+    .score-val { font-size: 22px; color: #00ffcc; text-shadow: 0 0 5px #00ffcc; font-weight: 900; }
+    
+    .boss-warning {
+      position: absolute; top: 40%; width: 100%; text-align: center;
+      color: red; font-size: 40px; font-weight: 900; 
+      text-shadow: 0 0 10px red; display: none; z-index: 15;
+      animation: blink 0.2s infinite;
+    }
 
-    /* DASH BUTTON - Diletakkan jauh sikit dari kapal */
+    /* BUTTONS */
     .dash-wrapper {
       position: absolute; bottom: 30px; width: 100%;
       display: flex; justify-content: center; z-index: 20; pointer-events: auto;
     }
     .dash-btn {
-      background: rgba(255, 0, 85, 0.2); 
-      border: 2px solid #ff0055;
-      color: #fff; padding: 15px 50px; border-radius: 4px;
+      background: rgba(255, 0, 85, 0.2); border: 2px solid #ff0055;
+      color: #fff; padding: 15px 50px; border-radius: 6px;
       font-family: 'Orbitron', sans-serif; font-size: 18px; 
       letter-spacing: 2px; text-transform: uppercase;
-      backdrop-filter: blur(4px);
     }
     .dash-btn:active { background: #ff0055; transform: scale(0.95); }
 
-    /* MENU */
+    /* OVERLAY */
     .overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.92);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 99;
     }
     .hidden { display: none !important; }
 
-    h1 { 
-      color: #00ffcc; font-size: 36px; text-align: center; margin-bottom: 10px; 
-      text-shadow: 0 0 10px #00ffcc;
-      line-height: 1.2;
-    }
-    
+    h1 { color: #ff3333; font-size: 32px; text-align: center; margin-bottom: 5px; text-shadow: 0 0 20px #ff0000; }
+    .subtitle { color: #fff; font-size: 12px; letter-spacing: 4px; margin-bottom: 30px; }
+
     .btn-start {
-      background: #00ffcc; color: #000; border: none; padding: 15px 40px;
-      font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900;
+      background: #00ffcc; color: #000; border: none; padding: 15px 50px;
+      font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900;
       clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-      cursor: pointer; margin-top: 30px;
+      cursor: pointer;
     }
-    
+
+    @keyframes blink { 0% {opacity:1} 50% {opacity:0} 100% {opacity:1} }
+    .shake { animation: shake 0.5s; }
+    @keyframes shake { 0% {transform: translate(1px, 1px) rotate(0deg);} 10% {transform: translate(-1px, -2px) rotate(-1deg);} 20% {transform: translate(-3px, 0px) rotate(1deg);} 30% {transform: translate(3px, 2px) rotate(0deg);} 40% {transform: translate(1px, -1px) rotate(1deg);} 50% {transform: translate(-1px, 2px) rotate(-1deg);} 60% {transform: translate(-3px, 1px) rotate(0deg);} 70% {transform: translate(3px, 1px) rotate(-1deg);} 80% {transform: translate(-1px, -1px) rotate(1deg);} 90% {transform: translate(1px, 2px) rotate(0deg);} 100% {transform: translate(1px, -2px) rotate(-1deg);} }
+
     .touch-zone { position: absolute; top: 0; height: 100%; width: 50%; z-index: 5; }
     #zone-left { left: 0; }
     #zone-right { right: 0; }
@@ -89,23 +85,24 @@
 
 <div id="gameContainer">
   <canvas id="gameCanvas"></canvas>
-  
   <div id="zone-left" class="touch-zone"></div>
   <div id="zone-right" class="touch-zone"></div>
 
   <div class="hud">
-    <div><div class="score-txt">SCORE</div><div class="score-val" id="scoreEl">0</div></div>
-    <div style="text-align:right"><div class="score-txt">BEST</div><div class="score-val" id="bestEl">0</div></div>
+    <div><div class="score-label">SCORE</div><div class="score-val" id="scoreEl">0</div></div>
+    <div style="text-align:right"><div class="score-label">BEST</div><div class="score-val" id="bestEl">0</div></div>
   </div>
+  
+  <div class="boss-warning" id="bossWarn">WARNING<br>BOSS DETECTED</div>
 
   <div class="dash-wrapper">
     <button class="dash-btn" id="btnDash">⚡ BOOST</button>
   </div>
 
   <div class="overlay" id="menuOverlay">
-    <h1>GALACTIC<br>DEFENDER</h1>
-    <p style="color:#888; text-align:center; font-size:12px;">AUTO-SHOOT ENABLED</p>
-    <button class="btn-start" id="startBtn">LAUNCH SHIP</button>
+    <h1>GALACTIC<br>EXTREME</h1>
+    <div class="subtitle">HARDCORE MODE</div>
+    <button class="btn-start" id="startBtn">START MISSION</button>
   </div>
 </div>
 
@@ -117,7 +114,7 @@
   const bestEl = document.getElementById('bestEl');
   const overlay = document.getElementById('menuOverlay');
   const startBtn = document.getElementById('startBtn');
-  const btnDash = document.getElementById('btnDash');
+  const bossWarn = document.getElementById('bossWarn');
 
   // AUDIO
   let actx = null;
@@ -127,7 +124,6 @@
       if (actx.state === 'suspended') actx.resume();
     } catch(e) {}
   }
-  
   function playSound(type) {
     if (!actx) return;
     try {
@@ -137,19 +133,16 @@
       const now = actx.currentTime;
       
       if (type === 'laser') {
-        osc.frequency.setValueAtTime(800, now);
-        osc.frequency.exponentialRampToValueAtTime(100, now+0.1);
-        gain.gain.setValueAtTime(0.05, now);
-        gain.gain.linearRampToValueAtTime(0, now+0.1);
-        osc.start(now); osc.stop(now+0.1);
+        osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now+0.1);
+        gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now+0.1);
       } else if (type === 'boom') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(100, now);
-        osc.frequency.exponentialRampToValueAtTime(10, now+0.3);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.linearRampToValueAtTime(0, now+0.3);
-        osc.start(now); osc.stop(now+0.3);
+        osc.type='sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.exponentialRampToValueAtTime(10, now+0.3);
+        gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now+0.3);
+      } else if (type === 'warn') {
+        osc.type='square'; osc.frequency.setValueAtTime(150, now);
+        gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now+0.5);
       }
+      osc.start(now); osc.stop(now+(type==='warn'?0.5:0.3));
     } catch(e) {}
   }
 
@@ -160,258 +153,267 @@
   window.addEventListener('resize', resize);
   setTimeout(resize, 100);
 
-  // GAME STATE
-  let player = { x: 0, y: 0, w: 40 };
+  // GAME VARS
+  let player = { x: 0, y: 0 };
   let bullets = [];
+  let enemyBullets = []; // Peluru musuh
   let enemies = [];
   let stars = [];
   let score = 0;
-  let highScore = localStorage.getItem('spaceBest') || 0;
+  let highScore = localStorage.getItem('extremeBest') || 0;
   let running = false;
-  let speed = 2; // Kelajuan background (forward movement)
   let frame = 0;
+  let bossActive = false;
+  let nextBossScore = 500;
 
   bestEl.innerText = highScore;
-  
-  // Stars Background
-  for(let i=0; i<40; i++) stars.push({
-    x: Math.random(), y: Math.random(), 
-    s: Math.random()*2, v: Math.random()*2+1
-  });
-
   const keys = { left: false, right: false, dash: false };
 
+  // Init Stars
+  for(let i=0; i<50; i++) stars.push({x:Math.random(), y:Math.random(), s:Math.random()*2, v:Math.random()+0.5});
+
   function startGame() {
-    initAudio();
-    resize();
-    // SET POSISI KAPAL LEBIH TINGGI (SUPAYA TAK KENA BUTTON DASH)
+    initAudio(); resize();
     player.x = canvas.width / 2;
-    player.y = canvas.height - 180; // <--- INI UBAH KEDUDUKAN
+    player.y = canvas.height - 180;
+    bullets = []; enemyBullets = []; enemies = [];
+    score = 0; running = true;
+    bossActive = false; nextBossScore = 500;
     
-    bullets = [];
-    enemies = [];
-    score = 0;
-    speed = 2;
-    running = true;
     scoreEl.innerText = 0;
     overlay.classList.add('hidden');
+    bossWarn.style.display = 'none';
+    container.classList.remove('shake');
     loop();
+  }
+
+  function spawnBoss() {
+    bossActive = true;
+    playSound('warn');
+    bossWarn.style.display = 'block';
+    setTimeout(() => { bossWarn.style.display = 'none'; }, 2000);
+
+    enemies.push({
+      type: 'boss',
+      x: canvas.width/2, y: -100,
+      w: 100, h: 80,
+      hp: 30 + (score/100), // Boss makin lama makin kuat
+      dir: 1
+    });
   }
 
   function update() {
     if (!running) return;
     frame++;
-    speed = keys.dash ? 8 : 3; // Laju bila dash
 
     // 1. Move Player
-    let moveSpeed = keys.dash ? 10 : 6;
-    if (keys.left) player.x -= moveSpeed;
-    if (keys.right) player.x += moveSpeed;
+    let speed = keys.dash ? 9 : 5;
+    if (keys.left) player.x -= speed;
+    if (keys.right) player.x += speed;
     if (player.x < 20) player.x = 20;
     if (player.x > canvas.width - 20) player.x = canvas.width - 20;
 
-    // 2. Shooting (Auto) - Setiap 15 frame
-    if (frame % 15 === 0) {
+    // 2. Auto Shoot
+    if (frame % 12 === 0) {
       bullets.push({x: player.x, y: player.y - 20});
       playSound('laser');
     }
 
-    // 3. Bullets Move
+    // 3. Spawn Logic (Normal vs Boss)
+    if (!bossActive) {
+      if (score >= nextBossScore) {
+        spawnBoss();
+        nextBossScore += 500;
+      } else if (frame % 50 === 0) {
+        // Random Enemy Type
+        let rand = Math.random();
+        let type = 'normal';
+        if (rand > 0.7) type = 'shooter'; // 30% musuh tembak
+        if (rand > 0.9) type = 'chaser';  // 10% musuh kejar
+        
+        enemies.push({
+          type: type,
+          x: Math.random() * (canvas.width - 40) + 20,
+          y: -40,
+          s: 30, hp: type==='shooter'?3:1
+        });
+      }
+    }
+
+    // 4. Bullets Logic
     for (let i = bullets.length - 1; i >= 0; i--) {
-      bullets[i].y -= 15; // Laju peluru
+      bullets[i].y -= 15;
       if (bullets[i].y < 0) bullets.splice(i, 1);
     }
 
-    // 4. Enemies Spawn
-    if (frame % 60 === 0) { // Setiap 1 saat
-      enemies.push({
-        x: Math.random() * (canvas.width - 40) + 20,
-        y: -50,
-        s: 30 + Math.random() * 20, // size
-        hp: 2
-      });
+    // 5. Enemy Bullets Logic
+    for (let i = enemyBullets.length - 1; i >= 0; i--) {
+      let eb = enemyBullets[i];
+      eb.y += 6; // Peluru musuh turun
+      eb.x += eb.vx || 0;
+      
+      // Hit Player?
+      let dx = player.x - eb.x;
+      let dy = player.y - eb.y;
+      if (Math.sqrt(dx*dx + dy*dy) < 15) {
+        gameOver();
+      }
+      if (eb.y > canvas.height) enemyBullets.splice(i, 1);
     }
 
-    // 5. Enemies Logic
+    // 6. Enemies Logic
     for (let i = enemies.length - 1; i >= 0; i--) {
       let e = enemies[i];
-      e.y += speed + 2; // Musuh gerak ke bawah
+
+      // Movement
+      if (e.type === 'boss') {
+        if (e.y < 80) e.y += 1; // Masuk skrin
+        e.x += e.dir * 2; // Gerak kiri kanan
+        if (e.x > canvas.width - 60 || e.x < 60) e.dir *= -1;
+        
+        // Boss Shoot
+        if (frame % 40 === 0) {
+          enemyBullets.push({x: e.x, y: e.y + 40, vx: 0}); // Tengah
+          enemyBullets.push({x: e.x, y: e.y + 40, vx: -2}); // Kiri
+          enemyBullets.push({x: e.x, y: e.y + 40, vx: 2}); // Kanan
+        }
+
+      } else if (e.type === 'chaser') {
+        e.y += 4;
+        if (e.x < player.x) e.x += 1; // Kejar player
+        else e.x -= 1;
+      } else {
+        e.y += 3; // Normal speed
+        if (e.type === 'shooter' && frame % 100 === 0) {
+          enemyBullets.push({x: e.x, y: e.y, vx: 0});
+        }
+      }
 
       // Kena Tembak?
       for (let b = bullets.length - 1; b >= 0; b--) {
         let bull = bullets[b];
-        // Jarak peluru ke musuh
-        let dx = bull.x - e.x;
-        let dy = bull.y - e.y;
-        if (Math.sqrt(dx*dx + dy*dy) < e.s) {
-          bullets.splice(b, 1); // Padam peluru
+        let hitbox = e.type==='boss' ? 50 : 20;
+        
+        if (Math.abs(bull.x - e.x) < hitbox && Math.abs(bull.y - e.y) < hitbox) {
+          bullets.splice(b, 1);
           e.hp--;
-          if(e.hp <= 0) {
+          if (e.hp <= 0) {
             playSound('boom');
-            enemies.splice(i, 1); // Padam musuh
-            score += 100;
+            enemies.splice(i, 1);
+            if(e.type==='boss') {
+              score += 500;
+              bossActive = false;
+              container.classList.add('shake');
+              setTimeout(()=>container.classList.remove('shake'), 500);
+            } else {
+              score += (e.type==='shooter'?50:20);
+            }
             scoreEl.innerText = score;
           }
-          break; // Stop check peluru lain
+          break;
         }
       }
 
       // Langgar Player?
-      let pdx = player.x - e.x;
-      let pdy = player.y - e.y;
-      if (Math.sqrt(pdx*pdx + pdy*pdy) < (e.s/2 + 15)) {
-         gameOver();
+      let hitbox = e.type==='boss' ? 60 : 25;
+      if (Math.abs(player.x - e.x) < hitbox && Math.abs(player.y - e.y) < hitbox) {
+        gameOver();
       }
 
-      // Keluar skrin
-      if (e.y > canvas.height + 50) {
-        enemies.splice(i, 1);
-      }
+      if (e.y > canvas.height + 100) enemies.splice(i, 1);
     }
-  }
-
-  function drawJet(x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    
-    // Warna Asas
-    ctx.fillStyle = "#fff";
-    
-    // Sayap Kiri
-    ctx.beginPath();
-    ctx.moveTo(-10, 0); ctx.lineTo(-30, 20); ctx.lineTo(-10, 20);
-    ctx.fill();
-    
-    // Sayap Kanan
-    ctx.beginPath();
-    ctx.moveTo(10, 0); ctx.lineTo(30, 20); ctx.lineTo(10, 20);
-    ctx.fill();
-    
-    // Badan Utama (Fuselage)
-    ctx.fillStyle = "#ddd";
-    ctx.beginPath();
-    ctx.moveTo(0, -30); // Muncung
-    ctx.lineTo(12, 25); // Ekor kanan
-    ctx.lineTo(0, 15);  // Tengah ekor
-    ctx.lineTo(-12, 25); // Ekor kiri
-    ctx.fill();
-
-    // Kokpit (Kaca Biru)
-    ctx.fillStyle = "#00ccff";
-    ctx.beginPath();
-    ctx.moveTo(0, -10);
-    ctx.ellipse(0, -5, 4, 8, 0, 0, Math.PI*2);
-    ctx.fill();
-
-    // Api Enjin
-    if (keys.dash) {
-       ctx.fillStyle = "#ffaa00";
-       ctx.beginPath();
-       ctx.moveTo(-5, 25); ctx.lineTo(0, 50); ctx.lineTo(5, 25);
-       ctx.fill();
-    }
-
-    ctx.restore();
   }
 
   function draw() {
-    // Clear Background
-    ctx.fillStyle = "#050011";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#050011"; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Bintang (Effect Bergerak Ke Depan)
+    // Stars
     ctx.fillStyle = "#fff";
     stars.forEach(s => {
-      s.y += s.v * (keys.dash ? 4 : 1);
-      if(s.y > 1) s.y = 0; // Reset ke atas
-      
-      let px = s.x * canvas.width;
-      let py = s.y * canvas.height;
-      
-      ctx.beginPath();
-      ctx.arc(px, py, keys.dash ? 1 : s.s, 0, Math.PI*2);
-      ctx.fill();
-      
-      // Garisan laju (Warp effect)
-      if(keys.dash) {
-        ctx.strokeStyle = "rgba(255,255,255,0.3)";
-        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py-20); ctx.stroke();
-      }
+      s.y += s.v * (keys.dash?5:1); if(s.y > 1) s.y=0;
+      ctx.beginPath(); ctx.arc(s.x*canvas.width, s.y*canvas.height, s.s, 0, Math.PI*2); ctx.fill();
     });
 
     if (running) {
-      // Draw Player Jet
-      drawJet(player.x, player.y);
+      // Player
+      ctx.save(); ctx.translate(player.x, player.y);
+      ctx.fillStyle = "#fff";
+      // Jet Shape
+      ctx.beginPath(); ctx.moveTo(0,-25); ctx.lineTo(15,20); ctx.lineTo(0,10); ctx.lineTo(-15,20); ctx.fill();
+      ctx.fillStyle = "#00ccff"; ctx.beginPath(); ctx.arc(0,-5, 4, 0, Math.PI*2); ctx.fill(); // cockpit
+      if(keys.dash) { ctx.fillStyle="#ffaa00"; ctx.beginPath(); ctx.moveTo(-5,20); ctx.lineTo(0,40); ctx.lineTo(5,20); ctx.fill(); }
+      ctx.restore();
 
-      // Draw Bullets
+      // Bullets (Player)
       ctx.fillStyle = "#ff0";
-      bullets.forEach(b => {
-        ctx.fillRect(b.x - 2, b.y - 10, 4, 15);
+      bullets.forEach(b => ctx.fillRect(b.x-2, b.y-10, 4, 15));
+
+      // Bullets (Enemy)
+      ctx.fillStyle = "#f0f"; // Peluru musuh warna Ungu
+      enemyBullets.forEach(b => {
+        ctx.beginPath(); ctx.arc(b.x, b.y, 6, 0, Math.PI*2); ctx.fill();
       });
 
-      // Draw Enemies (Asteroid Merah)
-      ctx.fillStyle = "#ff4444";
-      ctx.strokeStyle = "#aa0000";
-      ctx.lineWidth = 3;
+      // Enemies
       enemies.forEach(e => {
-        ctx.beginPath();
-        ctx.arc(e.x, e.y, e.s/2, 0, Math.PI*2);
-        ctx.fill(); ctx.stroke();
-        // Shine
-        ctx.fillStyle = "rgba(255,255,255,0.2)";
-        ctx.beginPath(); ctx.arc(e.x - 5, e.y - 5, e.s/4, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = "#ff4444"; // Reset
+        ctx.save(); ctx.translate(e.x, e.y);
+        
+        if (e.type === 'boss') {
+          // BOSS DRAWING
+          ctx.fillStyle = "#aa0000";
+          ctx.beginPath(); ctx.moveTo(0, 50); ctx.lineTo(50, -20); ctx.lineTo(20, -40); ctx.lineTo(-20, -40); ctx.lineTo(-50, -20); ctx.fill();
+          // Boss Core
+          ctx.fillStyle = "#ff0000"; ctx.beginPath(); ctx.arc(0, 0, 15 + Math.sin(frame*0.1)*5, 0, Math.PI*2); ctx.fill();
+          // Health Bar
+          ctx.fillStyle = "red"; ctx.fillRect(-40, -60, 80, 5);
+          ctx.fillStyle = "#0f0"; ctx.fillRect(-40, -60, 80 * (e.hp/30), 5);
+          
+        } else if (e.type === 'shooter') {
+          // SHOOTER DRAWING
+          ctx.fillStyle = "#ff8800";
+          ctx.beginPath(); ctx.moveTo(0, 15); ctx.lineTo(15, -15); ctx.lineTo(-15, -15); ctx.fill();
+        } else {
+          // BASIC/CHASER
+          ctx.fillStyle = e.type==='chaser' ? "#ffff00" : "#ff4444";
+          ctx.beginPath(); ctx.arc(0, 0, e.type==='chaser'?10:15, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.restore();
       });
     }
   }
 
-  function loop() {
-    update();
-    draw();
-    if (running) requestAnimationFrame(loop);
-  }
+  function loop() { update(); draw(); if(running) requestAnimationFrame(loop); }
 
   function gameOver() {
-    running = false;
-    playSound('boom');
-    if (score > highScore) {
-      highScore = score;
-      localStorage.setItem('spaceBest', highScore);
-      bestEl.innerText = highScore;
-    }
+    running = false; playSound('boom');
+    if(score>highScore){ highScore=score; localStorage.setItem('extremeBest', highScore); bestEl.innerText=highScore; }
     overlay.classList.remove('hidden');
-    document.querySelector('h1').innerHTML = "MISSION<br>FAILED";
+    document.querySelector('h1').innerHTML = "SYSTEM<br>DESTROYED";
     startBtn.innerText = "RETRY MISSION";
+    container.classList.add('shake');
   }
 
   // CONTROLS
-  const bindTouch = (id, k) => {
-    const el = document.getElementById(id);
+  const bindT = (id,k) => {
+    let el = document.getElementById(id);
     el.addEventListener('touchstart', (e)=>{e.preventDefault(); keys[k]=true;});
     el.addEventListener('touchend', (e)=>{e.preventDefault(); keys[k]=false;});
     el.addEventListener('mousedown', ()=>{keys[k]=true;});
     el.addEventListener('mouseup', ()=>{keys[k]=false;});
-  };
-  bindTouch('zone-left', 'left');
-  bindTouch('zone-right', 'right');
-  bindTouch('btnDash', 'dash');
-
+  }
+  bindT('zone-left','left'); bindT('zone-right','right'); bindT('btnDash','dash');
   startBtn.addEventListener('click', startGame);
   startBtn.addEventListener('touchstart', (e)=>{e.preventDefault(); startGame()});
 
   // PC Keys
-  window.addEventListener('keydown', (e) => {
-    if(e.key==='ArrowLeft') keys.left=true;
-    if(e.key==='ArrowRight') keys.right=true;
-    if(e.code==='Space') keys.dash=true;
+  window.addEventListener('keydown', e=>{
+    if(e.key==='ArrowLeft') keys.left=true; if(e.key==='ArrowRight') keys.right=true; if(e.code==='Space') keys.dash=true;
   });
-  window.addEventListener('keyup', (e) => {
-    if(e.key==='ArrowLeft') keys.left=false;
-    if(e.key==='ArrowRight') keys.right=false;
-    if(e.code==='Space') keys.dash=false;
+  window.addEventListener('keyup', e=>{
+    if(e.key==='ArrowLeft') keys.left=false; if(e.key==='ArrowRight') keys.right=false; if(e.code==='Space') keys.dash=false;
   });
 
-  draw(); // Static frame
+  draw();
 </script>
 </body>
 </html>
