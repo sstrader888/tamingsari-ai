@@ -3,154 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEON DODGE: OVERDRIVE</title>
+  <title>NEON DODGE: HYBRID</title>
   <style>
-    /* IMPORT FONT GAMER */
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
-    * {
-      box-sizing: border-box;
-      touch-action: none;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
+    * { box-sizing: border-box; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 
     body {
-      margin: 0;
-      padding: 0;
-      background: #050011; /* Ungu Gelap */
+      margin: 0; padding: 0;
+      background: #050011;
+      font-family: 'Orbitron', sans-serif;
       overflow: hidden;
-      font-family: 'Orbitron', sans-serif; /* Font Sci-Fi */
-      position: fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* CONTAINER KHAS: Di PC dia limit lebar, di Mobile dia full screen */
+    #gameContainer {
+      position: relative;
       width: 100%;
       height: 100%;
-    }
-
-    canvas {
-      display: block;
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 1;
-      /* Vignette effect (Gelap di bucu) */
-      mask-image: radial-gradient(circle, white 60%, transparent 100%);
-    }
-
-    /* BACKGROUND RADIAL GRADIENT (Supaya tak hitam mati) */
-    .bg-gradient {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
+      max-width: 500px; /* Limit lebar untuk PC */
       background: radial-gradient(circle at center bottom, #2a004d, #000000);
-      z-index: 0;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 243, 255, 0.1); /* Glow tepi sikit kat PC */
     }
 
-    /* HUD */
+    canvas { display: block; width: 100%; height: 100%; z-index: 1; }
+
+    /* UI */
     .hud {
-      position: absolute;
-      top: 30px;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 25px;
-      z-index: 10;
-      pointer-events: none;
+      position: absolute; top: 30px; width: 100%;
+      display: flex; justify-content: space-between; padding: 0 25px;
+      z-index: 10; pointer-events: none;
     }
-
-    .score-box {
-      color: #fff;
-      font-size: 16px;
-      letter-spacing: 2px;
-      text-shadow: 0 0 10px #00f3ff;
-    }
+    .score-box { color: #fff; font-size: 16px; letter-spacing: 2px; text-shadow: 0 0 10px #00f3ff; }
     .score-val { font-size: 24px; color: #00f3ff; font-weight: 900; display:block; }
 
-    /* DASH BUTTON */
-    .dash-wrapper {
-      position: absolute;
-      bottom: 40px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      z-index: 20;
-      pointer-events: auto;
+    /* CONTROLS (PC KEYBOARD HINT) */
+    .pc-controls-hint {
+      position: absolute; bottom: 10px; width: 100%; text-align: center;
+      color: rgba(255,255,255,0.3); font-size: 10px; pointer-events: none;
+      z-index: 5; display: none; /* Hidden on mobile by default */
     }
 
+    /* DASH BUTTON (MOBILE ONLY) */
+    .dash-wrapper {
+      position: absolute; bottom: 40px; width: 100%;
+      display: flex; justify-content: center; z-index: 20; pointer-events: auto;
+    }
     .dash-btn {
-      background: rgba(255, 0, 85, 0.1);
-      border: 2px solid #ff0055;
-      color: #fff;
-      padding: 15px 50px;
-      border-radius: 4px; /* Petak sikit ala cyberpunk */
-      font-family: 'Orbitron', sans-serif;
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      background: rgba(255, 0, 85, 0.1); border: 2px solid #ff0055;
+      color: #fff; padding: 15px 50px; border-radius: 4px;
+      font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900;
+      letter-spacing: 2px; text-transform: uppercase;
       box-shadow: 0 0 20px rgba(255, 0, 85, 0.6);
       transition: all 0.1s;
-      clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%); /* Bentuk Cyber */
+      clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
     }
-    
-    .dash-btn:active {
-      background: #ff0055;
-      box-shadow: 0 0 40px #ff0055;
-      transform: scale(0.95);
+    .dash-btn:active, .dash-btn.active-key { /* Style bila tekan keyboard juga */
+      background: #ff0055; transform: scale(0.95); box-shadow: 0 0 40px #ff0055;
     }
 
     /* OVERLAY */
     .overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(5, 0, 16, 0.95);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-      transition: opacity 0.3s;
-      backdrop-filter: blur(10px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 999; transition: opacity 0.3s; backdrop-filter: blur(5px);
     }
-    
     .hidden { opacity: 0; pointer-events: none; visibility: hidden; }
 
     h1 {
-      color: #00f3ff;
-      font-size: 40px;
-      margin: 0;
-      text-align: center;
-      text-shadow: 0 0 30px #00f3ff, 0 0 60px #00f3ff; /* Double glow */
-      font-style: italic;
-      letter-spacing: -2px;
+      color: #00f3ff; font-size: 40px; margin: 0; text-align: center;
+      text-shadow: 0 0 30px #00f3ff; font-style: italic; letter-spacing: -2px;
     }
-
-    .subtitle { color: #ff0055; font-size: 14px; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 10px #ff0055; }
-
+    .subtitle { color: #ff0055; font-size: 14px; margin-bottom: 40px; letter-spacing: 4px; text-shadow: 0 0 10px #ff0055; }
     .btn-start {
-      background: #00f3ff;
-      color: #000;
-      border: none;
-      padding: 20px 60px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 20px;
-      font-weight: 900;
+      background: #00f3ff; color: #000; border: none; padding: 20px 60px;
+      font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900;
       clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-      box-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
-      cursor: pointer;
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.5); cursor: pointer;
     }
-    
-    .btn-start:active { background: #fff; transform: scale(0.98); }
+    .btn-start:hover { background: #fff; }
 
     /* TOUCH ZONES */
     .touch-zone { position: absolute; top: 0; height: 100%; width: 50%; z-index: 5; }
     #zone-left { left: 0; }
     #zone-right { right: 0; }
-
+    
+    /* Detect PC to show hints */
+    @media (min-width: 600px) {
+      .pc-controls-hint { display: block; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="bg-gradient"></div>
+<div id="gameContainer">
   <canvas id="gameCanvas"></canvas>
-
+  
   <div id="zone-left" class="touch-zone"></div>
   <div id="zone-right" class="touch-zone"></div>
 
@@ -162,18 +117,21 @@
   <div class="dash-wrapper">
     <button class="dash-btn" id="btnDash">⚡ BOOST</button>
   </div>
+  
+  <div class="pc-controls-hint">PC CONTROLS: ⬅️ ARROW LEFT | ARROW RIGHT ➡️ | SPACEBAR (BOOST)</div>
 
   <div class="overlay" id="menuOverlay">
     <h1>NEON<br>DODGE</h1>
-    <div class="subtitle">Overdrive Edition</div>
-    <p style="color:#aaa; text-align:center; font-size:12px; margin-bottom:30px; line-height:1.5;">
-      TAP KIRI / KANAN UNTUK GERAK<br>
-      ELAK HALANGAN MERAH
+    <div class="subtitle">HYBRID EDITION</div>
+    <p id="instructText" style="color:#aaa; text-align:center; font-size:12px; margin-bottom:30px; line-height:1.5;">
+      MOBILE: TAP SIDES TO MOVE<br>PC: USE ARROW KEYS
     </p>
-    <button class="btn-start" id="startBtn">START MISSION</button>
+    <button class="btn-start" id="startBtn">ENGAGE</button>
   </div>
+</div>
 
 <script>
+  const container = document.getElementById('gameContainer');
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
   const scoreEl = document.getElementById('scoreEl');
@@ -182,54 +140,42 @@
   const startBtn = document.getElementById('startBtn');
   const btnDash = document.getElementById('btnDash');
 
-  // AUDIO SYSTEM
+  // AUDIO
   let actx = null;
   function initAudio() {
     if (!actx) { actx = new (window.AudioContext || window.webkitAudioContext)(); }
     if (actx.state === 'suspended') actx.resume();
   }
-
   function playSound(type) {
     if (!actx) return;
     const osc = actx.createOscillator();
     const gain = actx.createGain();
-    osc.connect(gain);
-    gain.connect(actx.destination);
+    osc.connect(gain); gain.connect(actx.destination);
     const now = actx.currentTime;
-
     if (type === 'hit') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, now);
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now);
       osc.frequency.exponentialRampToValueAtTime(10, now+0.4);
-      gain.gain.setValueAtTime(0.4, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now+0.3);
+      gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now+0.3);
     } else if (type === 'dash') {
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(200, now);
+      osc.type = 'square'; osc.frequency.setValueAtTime(200, now);
       osc.frequency.linearRampToValueAtTime(600, now+0.2);
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.linearRampToValueAtTime(0, now+0.2);
-    } else { // Coin/Score
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, now);
-      osc.frequency.exponentialRampToValueAtTime(1200, now+0.1);
-      gain.gain.setValueAtTime(0.05, now);
-      gain.gain.linearRampToValueAtTime(0, now+0.1);
+      gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now+0.2);
     }
     osc.start(now); osc.stop(now+0.4);
   }
 
+  // RESIZE LOGIC (CRITICAL FOR PC VS MOBILE)
   function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
   }
   window.addEventListener('resize', resize);
   resize();
 
-  // VARIABLES
-  let player = { x: 0, y: 0, w: 0, h: 0, trail: [] }; // Ada trail sekarang
+  // GAME VARIABLES
+  let player = { x: 0, y: 0, trail: [] };
   let rocks = [];
-  let gridOffset = 0; // Untuk animasi lantai
+  let gridOffset = 0;
   let score = 0;
   let highScore = localStorage.getItem('neonBest') || 0;
   let running = false;
@@ -241,10 +187,10 @@
 
   function startGame() {
     initAudio();
-    playSound('coin');
+    resize(); // Pastikan saiz betul sebelum mula
     player.x = canvas.width / 2;
     player.y = canvas.height - 120;
-    player.trail = []; // Reset trail
+    player.trail = [];
     rocks = [];
     score = 0;
     speed = 1;
@@ -258,32 +204,32 @@
     if (!running) return;
     frame++;
 
-    // 1. Grid Animation Speed
+    // Grid Animation
     gridOffset += (2 * speed) + (keys.dash ? 5 : 0);
     if (gridOffset > 40) gridOffset = 0;
 
-    // 2. Player Move
+    // Movement
     let moveSpeed = 6;
     if (keys.dash) moveSpeed = 12;
 
-    // Simpan posisi lama untuk Trail (Ekor)
+    // Simpan Trail
     if (frame % 2 === 0) {
       player.trail.push({x: player.x, y: player.y});
-      if (player.trail.length > 10) player.trail.shift(); // Limit panjang ekor
+      if (player.trail.length > 8) player.trail.shift();
     }
 
     if (keys.left) player.x -= moveSpeed;
     if (keys.right) player.x += moveSpeed;
 
-    // Dinding
-    if (player.x < 20) player.x = 20;
-    if (player.x > canvas.width - 20) player.x = canvas.width - 20;
+    // Clamp Boundaries
+    if (player.x < 15) player.x = 15;
+    if (player.x > canvas.width - 15) player.x = canvas.width - 15;
 
-    // 3. Spawn Rocks
+    // Spawn Rocks
     if (Math.random() < 0.02 * speed) {
       rocks.push({
         x: Math.random() * canvas.width,
-        y: -100, // Spawn dari jauh atas
+        y: -100,
         s: 30 + Math.random() * 20,
         vy: (4 + Math.random() * 2) * speed,
         rot: Math.random() * Math.PI,
@@ -291,20 +237,16 @@
       });
     }
 
-    // 4. Update Rocks
+    // Rocks Logic
     for (let i = rocks.length - 1; i >= 0; i--) {
       let r = rocks[i];
-      r.y += r.vy;
-      r.rot += r.rotSpeed;
-
-      // Collision (Jarak antara titik tengah)
+      r.y += r.vy; r.rot += r.rotSpeed;
+      
       let dx = player.x - r.x;
       let dy = player.y - r.y;
       let dist = Math.sqrt(dx*dx + dy*dy);
       
-      if (dist < (r.s/2 + 10)) { // Hitbox
-        gameOver();
-      }
+      if (dist < (r.s/2 + 10)) gameOver();
 
       if (r.y > canvas.height + 50) {
         rocks.splice(i, 1);
@@ -316,95 +258,57 @@
   }
 
   function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear supaya nampak background gradient CSS
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // --- DRAW 3D GRID (RETRO WAVE EFFECT) ---
+    // GRID
     ctx.save();
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgba(200, 0, 255, 0.2)'; // Ungu malap
+    ctx.strokeStyle = 'rgba(200, 0, 255, 0.2)';
     ctx.lineWidth = 1;
-    
-    // Garis Menegak (Perspective)
     let centerX = canvas.width / 2;
     for (let i = -10; i <= 10; i++) {
-        let x = centerX + (i * 80); // Jarak garis
-        ctx.moveTo(x, 0);
-        ctx.lineTo((x - centerX) * 4 + centerX, canvas.height); // Effect kembang bawah
+        let x = centerX + (i * 80);
+        ctx.beginPath(); ctx.moveTo(x, 0); 
+        ctx.lineTo((x - centerX) * 4 + centerX, canvas.height); ctx.stroke();
     }
-    
-    // Garis Melintang (Moving Down)
     for (let i = 0; i < canvas.height; i += 40) {
         let y = i + gridOffset;
         if(y > canvas.height) y -= canvas.height;
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
     }
-    ctx.stroke();
     ctx.restore();
 
     if (running) {
-      // --- DRAW PLAYER TRAIL (EKOR) ---
+      // TRAIL
       if (player.trail.length > 1) {
         ctx.save();
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(0, 243, 255, 0.5)`;
-        ctx.lineWidth = 10;
-        ctx.lineCap = 'round';
+        ctx.strokeStyle = `rgba(0, 243, 255, 0.4)`;
+        ctx.lineWidth = 8; ctx.lineCap = 'round';
         ctx.moveTo(player.trail[0].x, player.trail[0].y);
         for(let t of player.trail) ctx.lineTo(t.x, t.y);
         ctx.lineTo(player.x, player.y);
-        ctx.stroke();
-        ctx.restore();
+        ctx.stroke(); ctx.restore();
       }
 
-      // --- DRAW PLAYER (NEON SHIP) ---
-      ctx.save();
-      ctx.translate(player.x, player.y);
-      // Glow Effect
-      ctx.shadowBlur = keys.dash ? 40 : 20;
-      ctx.shadowColor = '#00f3ff';
-      ctx.fillStyle = '#fff'; // Core putih
+      // PLAYER
+      ctx.save(); ctx.translate(player.x, player.y);
+      ctx.shadowBlur = keys.dash ? 30 : 15; ctx.shadowColor = '#00f3ff';
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(15, 15); ctx.lineTo(0, 5); ctx.lineTo(-15, 15); ctx.fill();
       
-      // Bentuk Kapal Sci-Fi
-      ctx.beginPath();
-      ctx.moveTo(0, -25);
-      ctx.lineTo(15, 15);
-      ctx.lineTo(0, 5); // Ekor masuk dalam sikit
-      ctx.lineTo(-15, 15);
-      ctx.closePath();
-      ctx.fill();
-
-      // Engine Flame
       if (keys.dash) {
         ctx.fillStyle = '#ff0055';
-        ctx.beginPath();
-        ctx.moveTo(-5, 15); ctx.lineTo(0, 40); ctx.lineTo(5, 15);
-        ctx.fill();
+        ctx.beginPath(); ctx.moveTo(-5, 15); ctx.lineTo(0, 40); ctx.lineTo(5, 15); ctx.fill();
       }
       ctx.restore();
 
-      // --- DRAW ROCKS (ROTATING NEON SQUARES) ---
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = '#ff0055';
-      ctx.strokeStyle = '#ff0055';
-      ctx.lineWidth = 2;
-      
+      // ROCKS
+      ctx.shadowBlur = 15; ctx.shadowColor = '#ff0055';
+      ctx.strokeStyle = '#ff0055'; ctx.lineWidth = 2;
       rocks.forEach(r => {
-        ctx.save();
-        ctx.translate(r.x, r.y);
-        ctx.rotate(r.rot);
-        
-        // Kotak Luar
+        ctx.save(); ctx.translate(r.x, r.y); ctx.rotate(r.rot);
         ctx.strokeRect(-r.s/2, -r.s/2, r.s, r.s);
-        
-        // Isi Dalam (Transparent)
-        ctx.fillStyle = 'rgba(255, 0, 85, 0.15)';
-        ctx.fillRect(-r.s/2, -r.s/2, r.s, r.s);
-        
-        // Kotak Kecil di Tengah (Detail)
-        ctx.fillStyle = '#ff0055';
-        ctx.fillRect(-4, -4, 8, 8);
-        
+        ctx.fillStyle = 'rgba(255, 0, 85, 0.15)'; ctx.fillRect(-r.s/2, -r.s/2, r.s, r.s);
         ctx.restore();
       });
     }
@@ -412,46 +316,55 @@
   }
 
   function loop() {
-    update();
-    draw();
-    if(running) requestAnimationFrame(loop);
+    update(); draw(); if(running) requestAnimationFrame(loop);
   }
 
   function gameOver() {
-    running = false;
-    playSound('hit');
-    if (score > highScore) {
-      highScore = score;
-      localStorage.setItem('neonBest', highScore);
-      bestEl.innerText = highScore;
-    }
+    running = false; playSound('hit');
+    if (score > highScore) { highScore = score; localStorage.setItem('neonBest', highScore); bestEl.innerText = highScore; }
     overlay.classList.remove('hidden');
     document.querySelector('h1').innerHTML = "SYSTEM<br>FAILURE";
-    document.querySelector('.subtitle').innerHTML = "SCORE: " + score;
-    startBtn.innerText = "RETRY";
+    startBtn.innerText = "REBOOT SYSTEM";
   }
 
-  // --- CONTROLS ---
-  startBtn.addEventListener('click', (e) => { e.preventDefault(); startGame(); });
-  startBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startGame(); });
-
-  const zLeft = document.getElementById('zone-left');
-  const zRight = document.getElementById('zone-right');
-
+  // CONTROLS HANDLER (KEYBOARD + TOUCH)
+  
+  // 1. TOUCH
   const bindPress = (elem, key) => {
     elem.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; if(key==='dash') playSound('dash'); });
     elem.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
     elem.addEventListener('mousedown', () => { keys[key] = true; if(key==='dash') playSound('dash'); });
     elem.addEventListener('mouseup', () => keys[key] = false);
   };
-
-  bindPress(zLeft, 'left');
-  bindPress(zRight, 'right');
+  bindPress(document.getElementById('zone-left'), 'left');
+  bindPress(document.getElementById('zone-right'), 'right');
   bindPress(btnDash, 'dash');
 
-  // Start background loop
-  loop();
+  startBtn.addEventListener('click', startGame);
+  startBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startGame(); });
 
+  // 2. KEYBOARD (PC SUPPORT)
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+    if(e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+    if(e.code === 'Space' || e.key === 'Shift') {
+      if(!keys.dash) playSound('dash'); 
+      keys.dash = true;
+      btnDash.classList.add('active-key'); // Visual feedback kat button
+    }
+    if(!running && e.code === 'Space') startGame(); // Start guna Space
+  });
+  
+  window.addEventListener('keyup', (e) => {
+    if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+    if(e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+    if(e.code === 'Space' || e.key === 'Shift') {
+      keys.dash = false;
+      btnDash.classList.remove('active-key');
+    }
+  });
+
+  loop(); // Init background
 </script>
 </body>
 </html>
