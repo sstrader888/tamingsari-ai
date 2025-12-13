@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>GALACTIC WARFARE: ELITE</title>
+<title>GALACTIC WARFARE: STABLE</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap');
 
@@ -31,6 +31,7 @@
     position: absolute; top: 10px; left: 0; width: 100%;
     padding: 10px 15px; z-index: 10; pointer-events: none;
     display: flex; flex-direction: column; gap: 5px;
+    transition: opacity 0.3s;
   }
 
   .top-row { display: flex; justify-content: space-between; align-items: center; }
@@ -76,9 +77,9 @@
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(2, 2, 8, 0.95);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 100;
+    z-index: 100; transition: opacity 0.3s;
   }
-  .hidden { display: none !important; }
+  .hidden { opacity: 0; pointer-events: none; }
 
   h1 { 
     color: #fff; font-size: 42px; text-align: center; margin: 0; 
@@ -105,7 +106,6 @@
   .stat-box h3 { color: #888; font-size: 12px; margin: 0; }
   .stat-box p { color: #fff; font-size: 24px; margin: 5px 0 0 0; font-weight: bold; }
 
-  /* Touch Zones */
   .touch-zone { position: absolute; top: 0; height: 100%; width: 50%; z-index: 5; }
   #zone-left { left: 0; }
   #zone-right { right: 0; }
@@ -161,7 +161,6 @@
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d', { alpha: false });
   
-  // UI Elements
   const hud = document.getElementById('hud');
   const pilotNameDisp = document.getElementById('pilotNameDisp');
   const scoreDisp = document.getElementById('scoreDisp');
@@ -204,21 +203,16 @@
   let state = 'LOGIN'; // LOGIN, PLAYING, GAMEOVER
   let frame = 0;
   let score = 0;
-  
-  // Level System
   let level = 1;
   let xp = 0;
   let xpToNext = 100;
   
-  // Entities
-  let player = { x:0, y:0, hp:3, weaponLevel:1 };
+  let player = { x:0, y:0, weaponLevel:1 };
   let bullets = [];
   let enemies = [];
   let particles = [];
   let powerups = [];
   let stars = [];
-  
-  // Planet Parallax
   let planetY = -200;
 
   const keys = { left:false, right:false, dash:false };
@@ -228,36 +222,44 @@
     x:Math.random(), y:Math.random(), s:Math.random()*2, v:Math.random()*0.5+0.2, blink:Math.random()
   });
 
-  // --- LOGIC FUNCTIONS ---
+  // --- FUNCTIONS ---
   function login() {
     let name = nameInput.value.toUpperCase().trim() || "PILOT";
     pilotName = name;
     localStorage.setItem('gw_pilot', pilotName);
-    
     loginScreen.classList.add('hidden');
     startGame();
   }
 
   function startGame() {
-    initAudio(); resize();
+    initAudio(); 
+    resize();
     state = 'PLAYING';
     
-    // Reset Stats
+    // RESET SEMUA DATA (PENTING SUPAYA TAK BERTINDIH)
     score = 0;
     level = 1;
     xp = 0;
     xpToNext = 500;
-    player = { x: canvas.width/2, y: canvas.height-150, hp:100, weaponLevel:1 }; // Level 1 weapon
     
-    bullets = []; enemies = []; particles = []; powerups = [];
+    player.x = canvas.width/2;
+    player.y = canvas.height-150;
+    player.weaponLevel = 1;
     
-    // Update HUD
+    bullets = []; 
+    enemies = []; 
+    particles = []; 
+    powerups = [];
+    
+    // UI Update
     hud.style.opacity = 1;
     pilotNameDisp.innerText = pilotName;
     updateHUD();
     
     gameOverScreen.classList.add('hidden');
-    loop();
+    
+    // *** FIX UTAMA: KITA TAK PANGGIL loop() DI SINI LAGI ***
+    // Loop akan berjalan sendiri di bawah
   }
 
   function addXP(amount) {
@@ -266,11 +268,10 @@
     if(xp >= xpToNext) {
       xp = 0;
       level++;
-      xpToNext = Math.floor(xpToNext * 1.2); // Makin susah
-      // Visual Effect
+      xpToNext = Math.floor(xpToNext * 1.2);
       lvlNotif.innerText = "LEVEL " + level;
       lvlNotif.classList.remove('animate-lvl');
-      void lvlNotif.offsetWidth; // trigger reflow
+      void lvlNotif.offsetWidth; 
       lvlNotif.classList.add('animate-lvl');
       sfx('power');
     }
@@ -284,18 +285,12 @@
     xpBar.style.width = pct + "%";
   }
 
-  function spawnPowerup(x, y) {
-    if(Math.random() < 0.15) { // 15% chance
-      powerups.push({ x:x, y:y, type:'weapon' });
-    }
-  }
-
   function update() {
-    if(state !== 'PLAYING') return;
+    if(state !== 'PLAYING') return; // Kalau Game Over, jangan gerakkan objek
     frame++;
 
-    // 1. Difficulty Scaling
-    let spawnRate = Math.max(20, 60 - (level * 2)); // Level 1: 60 frame, Level 20: 20 frame
+    // 1. Difficulty Scaling (Ikut Level)
+    let spawnRate = Math.max(20, 60 - (level * 2)); 
     let enemySpeedMult = 1 + (level * 0.05);
 
     // 2. Player Move
@@ -312,7 +307,7 @@
       } else if(player.weaponLevel === 2) {
         bullets.push({x:player.x-10, y:player.y-30, vx:0, vy:-15});
         bullets.push({x:player.x+10, y:player.y-30, vx:0, vy:-15});
-      } else { // Level 3 Spread
+      } else { 
         bullets.push({x:player.x, y:player.y-30, vx:0, vy:-15});
         bullets.push({x:player.x, y:player.y-30, vx:-3, vy:-14});
         bullets.push({x:player.x, y:player.y-30, vx:3, vy:-14});
@@ -330,8 +325,8 @@
     // 5. Spawn Enemy
     if(frame % spawnRate === 0) {
       let tier = 1;
-      if(level > 5 && Math.random()>0.7) tier = 2; // Cruiser
-      if(level > 10 && Math.random()>0.9) tier = 3; // Destroyer
+      if(level > 5 && Math.random()>0.7) tier = 2;
+      if(level > 10 && Math.random()>0.9) tier = 3;
 
       enemies.push({
         x: Math.random()*(canvas.width-60)+30,
@@ -348,25 +343,22 @@
       let e = enemies[i];
       e.y += e.s;
 
-      // Hit Player?
       if(Math.abs(e.x - player.x) < (e.w/2 + 20) && Math.abs(e.y - player.y) < 40) {
         gameOver();
       }
 
-      // Hit by Bullet?
       for(let j=bullets.length-1; j>=0; j--) {
         let b = bullets[j];
         if(Math.abs(b.x - e.x) < e.w/2 && Math.abs(b.y - e.y) < 30) {
-          // Spark
           particles.push({x:b.x, y:b.y, vx:(Math.random()-0.5)*5, vy:(Math.random()-0.5)*5, life:10, c:'#fff'});
           bullets.splice(j,1);
           e.hp--;
           if(e.hp <= 0) {
-            // Die
-            spawnPowerup(e.x, e.y);
-            addXP(e.tier * 50); // XP based on tier
+            // Drop powerup?
+            if(Math.random() < 0.1) powerups.push({ x:e.x, y:e.y });
+            
+            addXP(e.tier * 50);
             sfx('boom');
-            // Explosion particles
             for(let p=0; p<10; p++) particles.push({x:e.x, y:e.y, vx:(Math.random()-0.5)*8, vy:(Math.random()-0.5)*8, life:20, c:'#f50'});
             enemies.splice(i,1);
           }
@@ -380,12 +372,10 @@
     for(let i=powerups.length-1; i>=0; i--) {
       let p = powerups[i];
       p.y += 3;
-      // Collect
       if(Math.abs(p.x - player.x) < 30 && Math.abs(p.y - player.y) < 30) {
         player.weaponLevel = Math.min(3, player.weaponLevel+1);
         sfx('power');
         powerups.splice(i,1);
-        // Text popup
         particles.push({x:player.x, y:player.y-40, vx:0, vy:-1, life:40, txt:"WEAPON UP!"});
       }
       if(p.y > canvas.height) powerups.splice(i,1);
@@ -398,17 +388,14 @@
       if(p.life <= 0) particles.splice(i,1);
     }
 
-    // Planet Move
     planetY += 0.2;
     if(planetY > canvas.height + 200) planetY = -200;
   }
 
-  // --- DRAWING (VISUAL STYLE) ---
   function draw() {
-    // 1. Space BG
     ctx.fillStyle = "#020205"; ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    // 2. Stars
+    // Stars & Planet (Sentiasa gerak walaupun menu)
     ctx.fillStyle = "#fff";
     stars.forEach(s => {
       s.y += s.v * (keys.dash?4:1); if(s.y>1) s.y=0;
@@ -418,43 +405,34 @@
     });
     ctx.globalAlpha = 1;
 
-    // 3. Planet (Parallax)
     ctx.save();
     let gradP = ctx.createRadialGradient(canvas.width*0.8, planetY, 10, canvas.width*0.8, planetY, 150);
-    gradP.addColorStop(0, "#4444ff");
-    gradP.addColorStop(0.5, "#000055");
-    gradP.addColorStop(1, "transparent");
-    ctx.fillStyle = gradP;
-    ctx.beginPath(); ctx.arc(canvas.width*0.8, planetY, 150, 0, Math.PI*2); ctx.fill();
+    gradP.addColorStop(0, "#4444ff"); gradP.addColorStop(0.5, "#000055"); gradP.addColorStop(1, "transparent");
+    ctx.fillStyle = gradP; ctx.beginPath(); ctx.arc(canvas.width*0.8, planetY, 150, 0, Math.PI*2); ctx.fill();
     ctx.restore();
 
     if(state === 'PLAYING') {
-      
-      // Powerups (Box Glowing)
+      // Powerups
       powerups.forEach(p => {
-        ctx.save(); ctx.translate(p.x, p.y);
-        ctx.rotate(frame * 0.05);
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(frame * 0.05);
         ctx.shadowBlur = 15; ctx.shadowColor = "#00ff00";
         ctx.fillStyle = "#00ff00"; ctx.fillRect(-10, -10, 20, 20);
         ctx.fillStyle = "#fff"; ctx.font="bold 12px Arial"; ctx.fillText("W", -5, 4);
         ctx.restore();
       });
 
-      // Player Ship (Metallic Gradient)
+      // Player
       ctx.save(); ctx.translate(player.x, player.y);
       let pGrad = ctx.createLinearGradient(-20, 0, 20, 0);
       pGrad.addColorStop(0, "#0055aa"); pGrad.addColorStop(0.5, "#88ccff"); pGrad.addColorStop(1, "#0055aa");
       
-      // Wings
       ctx.fillStyle = "#003366"; 
-      ctx.beginPath(); ctx.moveTo(0,-20); ctx.lineTo(-25,25); ctx.lineTo(-10,20); ctx.fill(); // Left
-      ctx.beginPath(); ctx.moveTo(0,-20); ctx.lineTo(25,25); ctx.lineTo(10,20); ctx.fill(); // Right
+      ctx.beginPath(); ctx.moveTo(0,-20); ctx.lineTo(-25,25); ctx.lineTo(-10,20); ctx.fill(); 
+      ctx.beginPath(); ctx.moveTo(0,-20); ctx.lineTo(25,25); ctx.lineTo(10,20); ctx.fill(); 
       
-      // Body
       ctx.fillStyle = pGrad;
       ctx.beginPath(); ctx.moveTo(0,-35); ctx.lineTo(10,20); ctx.lineTo(0,30); ctx.lineTo(-10,20); ctx.fill();
       
-      // Engine Glow
       if(keys.dash) {
         ctx.shadowBlur = 20; ctx.shadowColor = "#00ffff";
         ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.moveTo(-5,30); ctx.lineTo(0,50); ctx.lineTo(5,30); ctx.fill();
@@ -462,30 +440,24 @@
       ctx.restore();
 
       // Bullets
-      ctx.shadowBlur = 10; ctx.shadowColor = "#ffff00";
-      ctx.fillStyle = "#ffffaa";
+      ctx.shadowBlur = 10; ctx.shadowColor = "#ffff00"; ctx.fillStyle = "#ffffaa";
       bullets.forEach(b => ctx.fillRect(b.x-2, b.y-10, 4, 15));
       ctx.shadowBlur = 0;
 
       // Enemies
       enemies.forEach(e => {
         ctx.save(); ctx.translate(e.x, e.y);
-        
-        // Color based on Tier
         let c1 = e.tier===1 ? "#cc0000" : (e.tier===2 ? "#aa00aa" : "#ff8800");
-        let c2 = "#330000";
         let eGrad = ctx.createLinearGradient(0, -e.w/2, 0, e.w/2);
-        eGrad.addColorStop(0, c1); eGrad.addColorStop(1, c2);
-        
+        eGrad.addColorStop(0, c1); eGrad.addColorStop(1, "#330000");
         ctx.fillStyle = eGrad;
         
-        // Shape based on Tier
-        if(e.tier === 1) { // Drone
+        if(e.tier === 1) { 
            ctx.beginPath(); ctx.moveTo(0,15); ctx.lineTo(15,-15); ctx.lineTo(0,-5); ctx.lineTo(-15,-15); ctx.fill();
-        } else if(e.tier === 2) { // Cruiser
+        } else if(e.tier === 2) { 
            ctx.beginPath(); ctx.moveTo(0,25); ctx.lineTo(20,-20); ctx.lineTo(-20,-20); ctx.fill();
-           ctx.fillStyle="#fff"; ctx.fillRect(-5,-25,10,5); // engine
-        } else { // Destroyer
+           ctx.fillStyle="#fff"; ctx.fillRect(-5,-25,10,5); 
+        } else { 
            ctx.beginPath(); ctx.moveTo(0,35); ctx.lineTo(30,-10); ctx.lineTo(15,-30); ctx.lineTo(-15,-30); ctx.lineTo(-30,-10); ctx.fill();
         }
         ctx.restore();
@@ -493,17 +465,17 @@
 
       // Particles
       particles.forEach(p => {
-        if(p.txt) {
-          ctx.fillStyle = "#fff"; ctx.font = "bold 14px Arial"; ctx.fillText(p.txt, p.x-30, p.y);
-        } else {
-          ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 3, 3);
-        }
+        if(p.txt) { ctx.fillStyle = "#fff"; ctx.font = "bold 14px Arial"; ctx.fillText(p.txt, p.x-30, p.y); } 
+        else { ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 3, 3); }
       });
     }
   }
 
+  // GAME LOOP (THE FIX: Always running 1 loop)
   function loop() {
-    update(); draw(); requestAnimationFrame(loop);
+    update();
+    draw();
+    requestAnimationFrame(loop);
   }
 
   function gameOver() {
@@ -519,7 +491,6 @@
   btnLogin.addEventListener('click', login);
   btnRetry.addEventListener('click', startGame);
 
-  // Touch
   const bindT = (id,k) => {
     let el = document.getElementById(id);
     el.addEventListener('touchstart', (e)=>{e.preventDefault(); keys[k]=true;});
@@ -529,7 +500,6 @@
   }
   bindT('zone-left','left'); bindT('zone-right','right'); bindT('btnDash','dash');
 
-  // Keyboard
   window.addEventListener('keydown', e=>{
     if(e.key==='ArrowLeft') keys.left=true; if(e.key==='ArrowRight') keys.right=true; if(e.code==='Space') keys.dash=true;
   });
@@ -537,8 +507,8 @@
     if(e.key==='ArrowLeft') keys.left=false; if(e.key==='ArrowRight') keys.right=false; if(e.code==='Space') keys.dash=false;
   });
 
-  // Start Animation Loop (for Menu BG)
-  loop();
+  // START ENGINE
+  loop(); 
 
 </script>
 </body>
