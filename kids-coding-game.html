@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>GALACTIC WARFARE: STABLE</title>
+<title>GALACTIC WARFARE: FINAL FIX</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap');
 
@@ -200,7 +200,10 @@
   let pilotName = localStorage.getItem('gw_pilot') || "";
   if(pilotName) nameInput.value = pilotName;
 
-  let state = 'LOGIN'; // LOGIN, PLAYING, GAMEOVER
+  // IMPORTANT: Global Loop ID to kill duplicates
+  let animationId = null;
+
+  let state = 'LOGIN'; 
   let frame = 0;
   let score = 0;
   let level = 1;
@@ -234,9 +237,17 @@
   function startGame() {
     initAudio(); 
     resize();
+    
+    // STOP ENJIN LAMA (BREK KECEMASAN)
+    if(animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+
     state = 'PLAYING';
     
-    // RESET SEMUA DATA (PENTING SUPAYA TAK BERTINDIH)
+    // RESET TOTAL
+    frame = 0;
     score = 0;
     level = 1;
     xp = 0;
@@ -258,8 +269,8 @@
     
     gameOverScreen.classList.add('hidden');
     
-    // *** FIX UTAMA: KITA TAK PANGGIL loop() DI SINI LAGI ***
-    // Loop akan berjalan sendiri di bawah
+    // START ENJIN BARU
+    loop();
   }
 
   function addXP(amount) {
@@ -286,7 +297,7 @@
   }
 
   function update() {
-    if(state !== 'PLAYING') return; // Kalau Game Over, jangan gerakkan objek
+    if(state !== 'PLAYING') return;
     frame++;
 
     // 1. Difficulty Scaling (Ikut Level)
@@ -392,10 +403,10 @@
     if(planetY > canvas.height + 200) planetY = -200;
   }
 
+  // --- DRAWING ---
   function draw() {
     ctx.fillStyle = "#020205"; ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    // Stars & Planet (Sentiasa gerak walaupun menu)
     ctx.fillStyle = "#fff";
     stars.forEach(s => {
       s.y += s.v * (keys.dash?4:1); if(s.y>1) s.y=0;
@@ -412,7 +423,6 @@
     ctx.restore();
 
     if(state === 'PLAYING') {
-      // Powerups
       powerups.forEach(p => {
         ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(frame * 0.05);
         ctx.shadowBlur = 15; ctx.shadowColor = "#00ff00";
@@ -421,7 +431,6 @@
         ctx.restore();
       });
 
-      // Player
       ctx.save(); ctx.translate(player.x, player.y);
       let pGrad = ctx.createLinearGradient(-20, 0, 20, 0);
       pGrad.addColorStop(0, "#0055aa"); pGrad.addColorStop(0.5, "#88ccff"); pGrad.addColorStop(1, "#0055aa");
@@ -439,12 +448,10 @@
       }
       ctx.restore();
 
-      // Bullets
       ctx.shadowBlur = 10; ctx.shadowColor = "#ffff00"; ctx.fillStyle = "#ffffaa";
       bullets.forEach(b => ctx.fillRect(b.x-2, b.y-10, 4, 15));
       ctx.shadowBlur = 0;
 
-      // Enemies
       enemies.forEach(e => {
         ctx.save(); ctx.translate(e.x, e.y);
         let c1 = e.tier===1 ? "#cc0000" : (e.tier===2 ? "#aa00aa" : "#ff8800");
@@ -463,7 +470,6 @@
         ctx.restore();
       });
 
-      // Particles
       particles.forEach(p => {
         if(p.txt) { ctx.fillStyle = "#fff"; ctx.font = "bold 14px Arial"; ctx.fillText(p.txt, p.x-30, p.y); } 
         else { ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 3, 3); }
@@ -471,20 +477,30 @@
     }
   }
 
-  // GAME LOOP (THE FIX: Always running 1 loop)
+  // GAME LOOP (THE FIX IS HERE)
   function loop() {
     update();
     draw();
-    requestAnimationFrame(loop);
+    animationId = requestAnimationFrame(loop);
   }
 
   function gameOver() {
     state = 'GAMEOVER';
     sfx('boom');
     hud.style.opacity = 0;
+    
+    // Matikan Loop
+    if(animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    
     gameOverScreen.classList.remove('hidden');
     finalScore.innerText = score;
     finalLevel.innerText = level;
+    
+    // Draw last frame one more time so it doesn't vanish
+    draw();
   }
 
   // --- INPUT ---
@@ -507,8 +523,8 @@
     if(e.key==='ArrowLeft') keys.left=false; if(e.key==='ArrowRight') keys.right=false; if(e.code==='Space') keys.dash=false;
   });
 
-  // START ENGINE
-  loop(); 
+  // Render Background Awal (Tanpa Start Loop)
+  draw();
 
 </script>
 </body>
