@@ -1,20 +1,18 @@
+// ===== STABLE MOBILE PLATFORMER (RESIZE + MANUAL ZOOM) =====
+const WORLD_W = 3000;
+const WORLD_H = 540; // tinggi dunia (platform ground)
 
-const BASE_WIDTH = 960;
-const BASE_HEIGHT = 540;
-
-let player, cursors;
-let platforms;
+let player, cursors, platforms;
 
 const config = {
   type: Phaser.AUTO,
   parent: "game",
-  width: BASE_WIDTH,
-  height: BASE_HEIGHT,
   backgroundColor: "#1b1f2a",
   scale: {
-    mode: Phaser.Scale.ENVELOP,          // 🔥 FULL SCREEN MOBILE
+    mode: Phaser.Scale.RESIZE,              // ✅ paling stabil untuk mobile
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
+  render: { pixelArt: true, roundPixels: true },
   physics: {
     default: "arcade",
     arcade: { gravity: { y: 1200 }, debug: false }
@@ -27,13 +25,13 @@ new Phaser.Game(config);
 function preload() {
   const g = this.make.graphics({ x: 0, y: 0, add: false });
 
-  // PLAYER (Ayah)
+  // Player
   g.clear();
   g.fillStyle(0x3aa0ff, 1);
   g.fillRoundedRect(0, 0, 32, 44, 8);
   g.generateTexture("player", 32, 44);
 
-  // PLATFORM
+  // Platform
   g.clear();
   g.fillStyle(0x8b5a2b, 1);
   g.fillRect(0, 0, 64, 24);
@@ -41,50 +39,45 @@ function preload() {
 }
 
 function create() {
-  // World
-  this.physics.world.setBounds(0, 0, 3000, BASE_HEIGHT);
+  // World bounds
+  this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H);
 
   // Platforms
   platforms = this.physics.add.staticGroup();
-  for (let x = 0; x < 3000; x += 64) {
-    platforms.create(x + 32, BASE_HEIGHT - 20, "platform").refreshBody();
+  for (let x = 0; x < WORLD_W; x += 64) {
+    platforms.create(x + 32, WORLD_H - 20, "platform").refreshBody();
   }
 
   // Player
-  player = this.physics.add.sprite(120, BASE_HEIGHT - 120, "player");
+  player = this.physics.add.sprite(120, WORLD_H - 120, "player");
   player.setCollideWorldBounds(true);
-
   this.physics.add.collider(player, platforms);
 
   // Camera
   this.cameras.main.startFollow(player, true, 0.12, 0.12);
-  this.cameras.main.setBounds(0, 0, 3000, BASE_HEIGHT);
+  this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
 
   // Keyboard (PC)
   cursors = this.input.keyboard.createCursorKeys();
 
-  // Touch control (Mobile)
-  this.touch = { left: false, right: false, jump: false };
+  // Touch (Mobile)
+  this.touch = { left:false, right:false, jump:false };
   addTouchControls.call(this);
 
-  // Hint
-  this.add.text(20, 20, "◀ ▶ Gerak   ⤒ Lompat", {
-    fontFamily: "Arial",
-    fontSize: "18px",
-    color: "#ffffff"
-  }).setScrollFactor(0);
+  // Apply zoom based on screen size
+  applyZoom.call(this);
+
+  // Re-apply on resize (rotate / address bar changes)
+  this.scale.on("resize", () => applyZoom.call(this));
 }
 
 function update() {
   const speed = 260;
 
-  const left =
-    (cursors.left && cursors.left.isDown) || this.touch.left;
-  const right =
-    (cursors.right && cursors.right.isDown) || this.touch.right;
+  const left = (cursors.left && cursors.left.isDown) || this.touch.left;
+  const right = (cursors.right && cursors.right.isDown) || this.touch.right;
   const jumpPressed =
-    (cursors.up && Phaser.Input.Keyboard.JustDown(cursors.up)) ||
-    this.touch.jump;
+    (cursors.up && Phaser.Input.Keyboard.JustDown(cursors.up)) || this.touch.jump;
 
   if (left) player.setVelocityX(-speed);
   else if (right) player.setVelocityX(speed);
@@ -93,53 +86,44 @@ function update() {
   if (jumpPressed && player.body.blocked.down) {
     player.setVelocityY(-520);
   }
-
   this.touch.jump = false;
 }
 
+function applyZoom() {
+  const cam = this.cameras.main;
+  const w = this.scale.width;
+  const h = this.scale.height;
+
+  // Target: world height fit nicely (avoid too small/too huge)
+  // Clamp zoom for stability across devices.
+  const zoom = Phaser.Math.Clamp(h / WORLD_H, 0.9, 1.6);
+  cam.setZoom(zoom);
+}
+
 function addTouchControls() {
+  const cam = this.cameras.main;
+
   const btnStyle = {
     fontFamily: "Arial",
-    fontSize: "28px",
+    fontSize: "26px",
     color: "#fff",
     backgroundColor: "rgba(0,0,0,0.55)",
     padding: { x: 22, y: 16 }
   };
 
-  // LEFT
-  const leftBtn = this.add.text(
-    50,
-    BASE_HEIGHT - 150,
-    "◀",
-    btnStyle
-  )
-    .setScrollFactor(0)
-    .setScale(1.3)
-    .setInteractive();
+  // place buttons relative to WORLD_H, then pin with scrollFactor(0)
+  const leftBtn = this.add.text(40, WORLD_H - 140, "◀", btnStyle)
+    .setScrollFactor(0).setInteractive();
+  const rightBtn = this.add.text(140, WORLD_H - 140, "▶", btnStyle)
+    .setScrollFactor(0).setInteractive();
+  const jumpBtn = this.add.text(820, WORLD_H - 140, "⤒", btnStyle)
+    .setScrollFactor(0).setInteractive();
 
-  // RIGHT
-  const rightBtn = this.add.text(
-    160,
-    BASE_HEIGHT - 150,
-    "▶",
-    btnStyle
-  )
-    .setScrollFactor(0)
-    .setScale(1.3)
-    .setInteractive();
+  // Bigger hit area (stabil touch)
+  leftBtn.setPadding(26, 20, 26, 20);
+  rightBtn.setPadding(26, 20, 26, 20);
+  jumpBtn.setPadding(28, 22, 28, 22);
 
-  // JUMP
-  const jumpBtn = this.add.text(
-    BASE_WIDTH - 160,
-    BASE_HEIGHT - 150,
-    "⤒",
-    btnStyle
-  )
-    .setScrollFactor(0)
-    .setScale(1.4)
-    .setInteractive();
-
-  // Events
   leftBtn.on("pointerdown", () => (this.touch.left = true));
   leftBtn.on("pointerup", () => (this.touch.left = false));
   leftBtn.on("pointerout", () => (this.touch.left = false));
