@@ -5,13 +5,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Family Platformer</title>
   <style>
-    html, body { margin:0; padding:0; width:100%; height:100%; background:#111; overflow:hidden; }
-    #game { width:100vw; height:100vh; touch-action:none; }
+    html, body {
+      margin:0; padding:0; width:100%; height:100%;
+      background:#0b0f14; overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      touch-action:none;
+    }
+
+    /* Portrait "video frame" */
+    #frame {
+      width:min(92vw, 420px);               /* max lebar macam phone */
+      aspect-ratio: 9 / 16;                 /* portrait */
+      background:#111;
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    }
+
+    #game { width:100%; height:100%; }
     canvas { display:block; width:100% !important; height:100% !important; image-rendering: pixelated; }
   </style>
 </head>
 <body>
-  <div id="game"></div>
+  <div id="frame"><div id="game"></div></div>
 
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
   <script src="/game/main.js"></script>
