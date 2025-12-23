@@ -13,7 +13,7 @@ const config = {
   height: BASE_HEIGHT,
   backgroundColor: "#1b1f2a",
   scale: {
-    mode: Phaser.Scale.FIT,       // 🔑 auto fit
+    mode: Phaser.Scale.ENVELOP,          // 🔥 FULL SCREEN MOBILE
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
   physics: {
@@ -28,13 +28,13 @@ new Phaser.Game(config);
 function preload() {
   const g = this.make.graphics({ x: 0, y: 0, add: false });
 
-  // Player (Ayah)
+  // PLAYER (Ayah)
   g.clear();
   g.fillStyle(0x3aa0ff, 1);
   g.fillRoundedRect(0, 0, 32, 44, 8);
   g.generateTexture("player", 32, 44);
 
-  // Platform
+  // PLATFORM
   g.clear();
   g.fillStyle(0x8b5a2b, 1);
   g.fillRect(0, 0, 64, 24);
@@ -42,10 +42,6 @@ function preload() {
 }
 
 function create() {
-  // Resize handler (penting untuk mobile rotate)
-  this.scale.on("resize", resize, this);
-  resize({ width: window.innerWidth, height: window.innerHeight });
-
   // World
   this.physics.world.setBounds(0, 0, 3000, BASE_HEIGHT);
 
@@ -68,18 +64,28 @@ function create() {
   // Keyboard (PC)
   cursors = this.input.keyboard.createCursorKeys();
 
-  // Touch controls (Mobile)
-  this.touch = { left:false, right:false, jump:false };
+  // Touch control (Mobile)
+  this.touch = { left: false, right: false, jump: false };
   addTouchControls.call(this);
+
+  // Hint
+  this.add.text(20, 20, "◀ ▶ Gerak   ⤒ Lompat", {
+    fontFamily: "Arial",
+    fontSize: "18px",
+    color: "#ffffff"
+  }).setScrollFactor(0);
 }
 
 function update() {
   const speed = 260;
 
-  const left = (cursors.left && cursors.left.isDown) || this.touch.left;
-  const right = (cursors.right && cursors.right.isDown) || this.touch.right;
+  const left =
+    (cursors.left && cursors.left.isDown) || this.touch.left;
+  const right =
+    (cursors.right && cursors.right.isDown) || this.touch.right;
   const jumpPressed =
-    (cursors.up && Phaser.Input.Keyboard.JustDown(cursors.up)) || this.touch.jump;
+    (cursors.up && Phaser.Input.Keyboard.JustDown(cursors.up)) ||
+    this.touch.jump;
 
   if (left) player.setVelocityX(-speed);
   else if (right) player.setVelocityX(speed);
@@ -88,38 +94,60 @@ function update() {
   if (jumpPressed && player.body.blocked.down) {
     player.setVelocityY(-520);
   }
+
   this.touch.jump = false;
 }
 
 function addTouchControls() {
   const btnStyle = {
     fontFamily: "Arial",
-    fontSize: "24px",
+    fontSize: "28px",
     color: "#fff",
-    backgroundColor: "rgba(0,0,0,0.45)",
-    padding: { x: 18, y: 14 }
+    backgroundColor: "rgba(0,0,0,0.55)",
+    padding: { x: 22, y: 16 }
   };
 
-  const leftBtn = this.add.text(30, BASE_HEIGHT - 90, "◀", btnStyle)
-    .setScrollFactor(0).setInteractive();
-  const rightBtn = this.add.text(110, BASE_HEIGHT - 90, "▶", btnStyle)
-    .setScrollFactor(0).setInteractive();
-  const jumpBtn = this.add.text(BASE_WIDTH - 100, BASE_HEIGHT - 90, "⤒", btnStyle)
-    .setScrollFactor(0).setInteractive();
+  // LEFT
+  const leftBtn = this.add.text(
+    50,
+    BASE_HEIGHT - 150,
+    "◀",
+    btnStyle
+  )
+    .setScrollFactor(0)
+    .setScale(1.3)
+    .setInteractive();
 
-  leftBtn.on("pointerdown", () => this.touch.left = true);
-  leftBtn.on("pointerup", () => this.touch.left = false);
-  leftBtn.on("pointerout", () => this.touch.left = false);
+  // RIGHT
+  const rightBtn = this.add.text(
+    160,
+    BASE_HEIGHT - 150,
+    "▶",
+    btnStyle
+  )
+    .setScrollFactor(0)
+    .setScale(1.3)
+    .setInteractive();
 
-  rightBtn.on("pointerdown", () => this.touch.right = true);
-  rightBtn.on("pointerup", () => this.touch.right = false);
-  rightBtn.on("pointerout", () => this.touch.right = false);
+  // JUMP
+  const jumpBtn = this.add.text(
+    BASE_WIDTH - 160,
+    BASE_HEIGHT - 150,
+    "⤒",
+    btnStyle
+  )
+    .setScrollFactor(0)
+    .setScale(1.4)
+    .setInteractive();
 
-  jumpBtn.on("pointerdown", () => this.touch.jump = true);
-}
+  // Events
+  leftBtn.on("pointerdown", () => (this.touch.left = true));
+  leftBtn.on("pointerup", () => (this.touch.left = false));
+  leftBtn.on("pointerout", () => (this.touch.left = false));
 
-function resize(gameSize) {
-  const width = gameSize.width;
-  const height = gameSize.height;
-  this.cameras.resize(width, height);
+  rightBtn.on("pointerdown", () => (this.touch.right = true));
+  rightBtn.on("pointerup", () => (this.touch.right = false));
+  rightBtn.on("pointerout", () => (this.touch.right = false));
+
+  jumpBtn.on("pointerdown", () => (this.touch.jump = true));
 }
