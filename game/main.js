@@ -1,43 +1,35 @@
-// ===== FULLSCREEN MOBILE GAME (FAMILY SHEET + SAFE UI + STABLE TOUCH) =====
+// ===== TAIPING RUNNER (ENDLESS) - MOBILE FRIENDLY =====
+// Controls: Jump button + Space/Up (PC)
+// Auto-run to the right. Endless ground recycling + coins + obstacles + score + restart.
 
-// --- SPRITESHEET SETTINGS (ubah jika grid tak ngam) ---
-const SHEET_KEY = "family";
-const SHEET_URL = "assets/family_sheet.png";
-
-// ✅ Kalau sprite nampak “lari grid”, tukar 64 ke 48/72/80 ikut sebenar.
-const FRAME_W = 64;
-const FRAME_H = 64;
-
-// --- WORLD SETTINGS ---
-const WORLD_W = 3000;
 const WORLD_H = 540;
 
-// UI safe padding
-const SAFE_TOP = 64;
-
-// ✅ Bawah: kita kira “safe bottom” + pastikan butang TAK terkeluar screen
+// UI safe areas
+const SAFE_TOP = 70;
 function safeBottom(h) {
-  // jangan terlalu tinggi sampai makan screen, tapi cukup elak nav bar
-  return Math.max(120, Math.round(h * 0.18));
+  // lift UI away from Android nav bar
+  return Math.max(240, Math.round(h * 0.26));
 }
 
-let player, cursors, platforms;
-let touch = { left:false, right:false, jump:false };
-let camZoom = 1;
+let player, groundGroup, coinGroup, obstacleGroup;
+let touch = { jump:false };
 let ui = {};
+let gameState = {
+  speed: 260,
+  distance: 0,
+  coins: 0,
+  alive: true
+};
 
 const config = {
   type: Phaser.AUTO,
   parent: "game",
   backgroundColor: "#1b1f2a",
-  scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  },
-  render: { pixelArt:true, roundPixels:true },
+  scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH },
+  render: { pixelArt: true, roundPixels: true },
   physics: {
     default: "arcade",
-    arcade: { gravity:{ y:1200 }, debug:false }
+    arcade: { gravity: { y: 1300 }, debug: false }
   },
   scene: { preload, create, update }
 };
@@ -45,226 +37,328 @@ const config = {
 new Phaser.Game(config);
 
 function preload(){
-  // ✅ Load family spritesheet
-  this.load.spritesheet(SHEET_KEY, SHEET_URL, {
-    frameWidth: FRAME_W,
-    frameHeight: FRAME_H
-  });
-
-  // Fallback textures (platform)
+  // Generate placeholder textures (no external assets required)
   const g = this.make.graphics({ add:false });
 
-  g.clear();
-  g.fillStyle(0x8b5a2b, 1);
-  g.fillRect(0, 0, 64, 24);
-  g.generateTexture("platform", 64, 24);
+  // Player (simple rounded)
+  g.fillStyle(0x3aa0ff,1);
+  g.fillRoundedRect(0,0,32,44,8);
+  g.generateTexture("player",32,44);
 
-  // fallback player (kalau sheet gagal load)
+  // Ground tile
   g.clear();
-  g.fillStyle(0x3aa0ff, 1);
-  g.fillRoundedRect(0, 0, 32, 44, 8);
-  g.generateTexture("player_fallback", 32, 44);
+  g.fillStyle(0x2f6f3a,1); // grass
+  g.fillRect(0,0,128,12);
+  g.fillStyle(0x8b5a2b,1); // soil
+  g.fillRect(0,12,128,28);
+  // tiny stones
+  g.fillStyle(0x6e4421,1);
+  for(let i=0;i<14;i++) g.fillRect(4+i*9, 22 + (i%2)*4, 4, 3);
+  g.generateTexture("groundTile",128,40);
+
+  // Coin
+  g.clear();
+  g.fillStyle(0xf4c542,1);
+  g.fillCircle(12,12,11);
+  g.fillStyle(0xffe38a,1);
+  g.fillCircle(8,8,4);
+  g.generateTexture("coin",24,24);
+
+  // Obstacle (rock)
+  g.clear();
+  g.fillStyle(0x5b5b5b,1);
+  g.fillRoundedRect(0,0,36,26,6);
+  g.fillStyle(0x7a7a7a,1);
+  g.fillRoundedRect(6,6,10,6,3);
+  g.generateTexture("rock",36,26);
+
+  // Parallax layers (simple silhouettes)
+  // far hills
+  g.clear();
+  g.fillStyle(0x23304a,1);
+  g.fillRect(0,0,512,256);
+  g.fillStyle(0x1e2a3f,1);
+  for(let x=0;x<520;x+=70){
+    g.fillCircle(x, 210, 70);
+  }
+  g.generateTexture("hillFar",512,256);
+
+  // near trees
+  g.clear();
+  g.fillStyle(0x182339,1);
+  g.fillRect(0,0,512,256);
+  g.fillStyle(0x0f192c,1);
+  for(let x=0;x<520;x+=64){
+    g.fillRect(x+26, 80, 12, 150); // trunk
+    g.fillCircle(x+32, 80, 44);    // canopy
+  }
+  g.generateTexture("treeNear",512,256);
 }
 
 function create(){
-  // ✅ Stabilkan mobile: elak browser scroll / zoom gesture kacau input
-  try {
-    if (this.game?.canvas) this.game.canvas.style.touchAction = "none";
-  } catch(e) {}
+  // World bounds (wide enough; we recycle anyway)
+  this.physics.world.setBounds(0, 0, 999999, WORLD_H);
 
-  this.input.mouse?.disableContextMenu?.();
-  this.input.addPointer(2); // multi touch basic
+  // --- Parallax background (Taiping vibe placeholder) ---
+  this.bgFar = this.add.tileSprite(0, 0, 10, 10, "hillFar").setOrigin(0,0).setScrollFactor(0);
+  this.bgNear = this.add.tileSprite(0, 0, 10, 10, "treeNear").setOrigin(0,0).setScrollFactor(0);
 
-  this.physics.world.setBounds(0,0,WORLD_W,WORLD_H);
+  // --- Ground recycling ---
+  groundGroup = this.physics.add.staticGroup();
 
-  // Ground
-  platforms = this.physics.add.staticGroup();
-  for(let x=0;x<WORLD_W;x+=64){
-    platforms.create(x+32, WORLD_H-20, "platform").refreshBody();
-  }
+  // We place enough tiles to cover any screen width + buffer
+  this.groundY = WORLD_H - 60;  // ground top y
+  this.tileW = 128;
+  this.tileH = 40;
 
-  // ✅ Player from sheet (frame 0) - kalau sheet tak ada, guna fallback
-  const canUseSheet = this.textures.exists(SHEET_KEY);
-  player = canUseSheet
-    ? this.physics.add.sprite(140, WORLD_H-120, SHEET_KEY, 0)
-    : this.physics.add.sprite(140, WORLD_H-120, "player_fallback");
+  // Create initial belt of ground
+  buildInitialGround.call(this);
 
-  player.setCollideWorldBounds(true);
+  // --- Player ---
+  player = this.physics.add.sprite(120, this.groundY - 120, "player");
+  player.setCollideWorldBounds(false);
+  player.body.setSize(28, 42).setOffset(2, 2);
 
-  // Hitbox lebih kemas (untuk 64x64 sprite)
-  if (canUseSheet) {
-    player.setScale(1);
-    player.body.setSize(28, 44, true);
-    player.body.setOffset(
-      Math.max(0, Math.floor((FRAME_W - 28) / 2)),
-      Math.max(0, Math.floor((FRAME_H - 44) / 2))
-    );
-  }
+  this.physics.add.collider(player, groundGroup);
 
-  this.physics.add.collider(player,platforms);
+  // --- Coins & obstacles ---
+  coinGroup = this.physics.add.group({ allowGravity:false, immovable:true });
+  obstacleGroup = this.physics.add.staticGroup();
 
-  // Camera
-  this.cameras.main.startFollow(player,true,0.12,0.12);
-  this.cameras.main.setBounds(0,0,WORLD_W,WORLD_H);
+  spawnPackAhead.call(this, 1000);
 
-  cursors = this.input.keyboard.createCursorKeys();
-
-  // ✅ Animations (ambil 3 frame pertama sebagai walk, frame 0 idle)
-  // Kalau Cikgu nak set walk frame lain, tukar range ini.
-  if (canUseSheet && !this.anims.exists("idle")) {
-    this.anims.create({
-      key: "idle",
-      frames: [{ key: SHEET_KEY, frame: 0 }],
-      frameRate: 1,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: "walk",
-      frames: this.anims.generateFrameNumbers(SHEET_KEY, { start: 1, end: 3 }),
-      frameRate: 10,
-      repeat: -1
-    });
-  }
-
-  // Hint text (auto scale ikut screen)
-  ui.hint = this.add.text(16, SAFE_TOP, "◀ ▶ Gerak   ⤒ Lompat", {
-    fontFamily:"Arial",
-    fontSize: "16px",
-    color:"#ffffff"
-  }).setScrollFactor(0);
-
-  createTouchUI.call(this);
-
-  applyZoom.call(this);
-  positionUI.call(this);
-
-  this.scale.on("resize", () => {
-    applyZoom.call(this);
-    positionUI.call(this);
+  // Overlaps / hits
+  this.physics.add.overlap(player, coinGroup, (p, c) => {
+    c.destroy();
+    gameState.coins += 1;
+    ui.coinText.setText(String(gameState.coins));
   });
 
-  // PC zoom
-  this.input.keyboard.on("keydown-PLUS",()=>adjustZoom.call(this, 0.1));
-  this.input.keyboard.on("keydown-MINUS",()=>adjustZoom.call(this, -0.1));
+  this.physics.add.collider(player, obstacleGroup, () => {
+    if (!gameState.alive) return;
+    killPlayer.call(this);
+  });
+
+  // --- Camera ---
+  this.cameras.main.startFollow(player, true, 0.10, 0.10);
+  this.cameras.main.setBounds(0, 0, 999999, WORLD_H);
+
+  // --- Input ---
+  this.cursors = this.input.keyboard.createCursorKeys();
+  this.input.keyboard.on("keydown-SPACE", () => touch.jump = true);
+
+  // --- UI ---
+  ui.hint = this.add.text(16, SAFE_TOP, "Runner Taiping: tekan ⤒ untuk lompat", {
+    fontFamily: "Arial",
+    fontSize: "16px",
+    color: "#ffffff"
+  }).setScrollFactor(0);
+
+  // HUD (coin + distance)
+  ui.coinLabel = this.add.text(16, SAFE_TOP + 26, "Coin:", {
+    fontFamily:"Arial", fontSize:"16px", color:"#ffffff"
+  }).setScrollFactor(0);
+
+  ui.coinText = this.add.text(70, SAFE_TOP + 26, "0", {
+    fontFamily:"Arial", fontSize:"16px", color:"#ffe38a"
+  }).setScrollFactor(0);
+
+  ui.distText = this.add.text(16, SAFE_TOP + 48, "Jarak: 0 m", {
+    fontFamily:"Arial", fontSize:"16px", color:"#ffffff"
+  }).setScrollFactor(0);
+
+  // Big Jump button
+  createTouchUI.call(this);
+
+  // Responsive sizing & UI position
+  applyLayout.call(this);
+  this.scale.on("resize", () => applyLayout.call(this));
 }
 
-function update(){
-  const speed = 260;
+function update(time, delta){
+  const dt = Math.min(0.033, delta/1000);
 
-  const left = (cursors.left?.isDown) || touch.left;
-  const right = (cursors.right?.isDown) || touch.right;
+  // Background parallax movement based on camera scroll
+  const camX = this.cameras.main.scrollX;
+  this.bgFar.tilePositionX = camX * 0.15;
+  this.bgNear.tilePositionX = camX * 0.35;
 
-  // mobile jump (touch.jump) + keyboard up
-  const jumpPressed = Phaser.Input.Keyboard.JustDown(cursors.up) || touch.jump;
+  // Keep background filling screen
+  this.bgFar.setSize(this.scale.width, this.scale.height);
+  this.bgNear.setSize(this.scale.width, this.scale.height);
+  this.bgFar.setPosition(0, 0);
+  this.bgNear.setPosition(0, 0);
 
-  if(left){
-    player.setVelocityX(-speed);
-    if (player.anims) player.setFlipX(true);
-  } else if(right){
-    player.setVelocityX(speed);
-    if (player.anims) player.setFlipX(false);
-  } else {
-    player.setVelocityX(0);
+  if (!gameState.alive) {
+    // Let player fall/stop; allow restart tap
+    return;
   }
 
-  if(jumpPressed && player.body.blocked.down){
-    player.setVelocityY(-520);
+  // Auto-run
+  player.setVelocityX(gameState.speed);
+
+  // Jump input
+  const jumpPressed =
+    (Phaser.Input.Keyboard.JustDown(this.cursors.up)) ||
+    (Phaser.Input.Keyboard.JustDown(this.cursors.space)) ||
+    touch.jump;
+
+  if (jumpPressed && player.body.blocked.down) {
+    player.setVelocityY(-560);
   }
   touch.jump = false;
 
-  // Anim control
-  if (player.anims && this.textures.exists(SHEET_KEY)) {
-    if (!player.body.blocked.down) {
-      player.anims.play("idle", true);
-    } else if (left || right) {
-      player.anims.play("walk", true);
-    } else {
-      player.anims.play("idle", true);
+  // Distance counter
+  gameState.distance += (gameState.speed * dt);
+  ui.distText.setText("Jarak: " + Math.floor(gameState.distance/10) + " m");
+
+  // Recycle ground tiles as camera moves
+  recycleGround.call(this);
+
+  // Spawn more coins/obstacles ahead
+  const aheadX = camX + this.scale.width + 600;
+  spawnPackAhead.call(this, aheadX);
+
+  // Fail if player drops too low
+  if (player.y > WORLD_H + 200) {
+    killPlayer.call(this);
+  }
+}
+
+// ====== UI / Touch ======
+function createTouchUI(){
+  const style = {
+    fontFamily:"Arial",
+    fontSize:"28px",
+    color:"#fff",
+    backgroundColor:"rgba(0,0,0,0.60)",
+    padding:{x:26,y:18}
+  };
+
+  ui.jumpBtn = this.add.text(0,0,"⤒", style).setScrollFactor(0).setInteractive({ useHandCursor:true });
+
+  ui.jumpBtn.on("pointerdown", () => touch.jump = true);
+}
+
+function applyLayout(){
+  const w = this.scale.width;
+  const h = this.scale.height;
+
+  // Zoom to keep world height comfy in portrait/landscape
+  const usableH = h - SAFE_TOP - safeBottom(h);
+  const zoom = Phaser.Math.Clamp((usableH * 0.92) / WORLD_H, 1.0, 2.0);
+  this.cameras.main.setZoom(zoom);
+
+  // UI positions
+  ui.hint.setPosition(16, SAFE_TOP);
+  ui.coinLabel.setPosition(16, SAFE_TOP + 26);
+  ui.coinText.setPosition(70, SAFE_TOP + 26);
+  ui.distText.setPosition(16, SAFE_TOP + 48);
+
+  // Jump button safely above nav bar
+  const y = h - safeBottom(h);
+  ui.jumpBtn.setPosition(w - 110, y);
+}
+
+// ====== Ground build/recycle ======
+function buildInitialGround(){
+  const w = Math.max(this.scale.width, 800);
+  const tilesNeeded = Math.ceil((w + 600) / this.tileW);
+
+  this.groundTiles = [];
+
+  let startX = 0;
+  for (let i=0; i<tilesNeeded; i++){
+    const x = startX + i*this.tileW + this.tileW/2;
+    const t = groundGroup.create(x, this.groundY, "groundTile").refreshBody();
+    t.setOrigin(0.5, 0.5);
+    this.groundTiles.push(t);
+  }
+}
+
+function recycleGround(){
+  const camX = this.cameras.main.scrollX;
+  const leftEdge = camX - 200;
+
+  // find rightmost tile x
+  let rightMost = -Infinity;
+  for (const t of this.groundTiles) rightMost = Math.max(rightMost, t.x);
+
+  // move tiles that are far left to the right
+  for (const t of this.groundTiles){
+    if (t.x < leftEdge){
+      t.x = rightMost + this.tileW;
+      rightMost = t.x;
+      t.refreshBody();
     }
   }
 }
 
-// ===== UI =====
-function createTouchUI(){
-  // Auto scale UI ikut screen (lebih friendly mobile)
-  const w = this.scale.width;
-  const h = this.scale.height;
-  const base = Math.max(0.9, Math.min(1.25, Math.min(w, h) / 420));
+// ====== Spawning coins/obstacles ahead ======
+function spawnPackAhead(targetX){
+  // We only spawn if we haven't spawned near this region
+  if (!this.lastSpawnX) this.lastSpawnX = 0;
+  if (targetX < this.lastSpawnX + 500) return;
 
-  const style = {
-    fontFamily: "Arial",
-    fontSize: Math.round(26 * base) + "px",
-    color: "#fff",
-    backgroundColor: "rgba(0,0,0,0.60)",
-    padding: { x: Math.round(24 * base), y: Math.round(18 * base) }
-  };
+  // spawn in chunks
+  const chunkStart = this.lastSpawnX + 600;
+  const chunkEnd = targetX;
 
-  ui.leftBtn  = this.add.text(0,0,"◀",style).setScrollFactor(0).setInteractive({ useHandCursor:false });
-  ui.rightBtn = this.add.text(0,0,"▶",style).setScrollFactor(0).setInteractive({ useHandCursor:false });
-  ui.jumpBtn  = this.add.text(0,0,"⤒",style).setScrollFactor(0).setInteractive({ useHandCursor:false });
+  for (let x = chunkStart; x <= chunkEnd; x += Phaser.Math.Between(260, 420)) {
+    // 70% coins
+    if (Math.random() < 0.70) {
+      const y = this.groundY - Phaser.Math.Between(120, 220);
+      const c = coinGroup.create(x, y, "coin");
+      c.setCircle(10, 2, 2);
+    }
 
-  // ✅ Elak “stuck key” bila jari keluar kawasan
-  const bindHold = (btn, keyName) => {
-    btn.on("pointerdown", (p, lx, ly, e) => { touch[keyName] = true; e?.preventDefault?.(); });
-    btn.on("pointerup",   () => { touch[keyName] = false; });
-    btn.on("pointerout",  () => { touch[keyName] = false; });
-    btn.on("pointerupoutside", () => { touch[keyName] = false; });
-  };
+    // 35% obstacle (rock)
+    if (Math.random() < 0.35) {
+      const ox = x + Phaser.Math.Between(80, 160);
+      const o = obstacleGroup.create(ox, this.groundY - 10, "rock");
+      o.refreshBody();
+    }
+  }
 
-  bindHold(ui.leftBtn, "left");
-  bindHold(ui.rightBtn, "right");
-
-  // Jump: sekali tekan
-  ui.jumpBtn.on("pointerdown", (p, lx, ly, e) => { touch.jump = true; e?.preventDefault?.(); });
-
-  // Hint auto scale
-  ui.hint.setFontSize(Math.round(16 * base));
+  this.lastSpawnX = targetX;
 }
 
-function positionUI(){
-  const w = this.scale.width;
-  const h = this.scale.height;
+// ====== Death / Restart ======
+function killPlayer(){
+  gameState.alive = false;
+  player.setVelocityX(0);
+  player.setTint(0xff5555);
 
-  // Hint top
+  ui.hint.setText("Game Over — tap untuk restart");
   ui.hint.setPosition(16, SAFE_TOP);
 
-  // ✅ Pastikan butang sepenuhnya dalam screen
-  const bottomPad = safeBottom(h);
-  const btnH = ui.leftBtn.height || 60;
-
-  // y akhir = h - bottomPad - btnH (supaya tak terpotong bawah)
-  const y = Math.max(SAFE_TOP + 30, h - bottomPad - btnH);
-
-  const xLeft = 18;
-  const gap = Math.max(92, Math.round(w * 0.16)); // responsive gap
-
-  ui.leftBtn.setPosition(xLeft, y);
-  ui.rightBtn.setPosition(xLeft + gap, y);
-
-  // Jump kanan (pastikan tak keluar kanan)
-  const jumpW = ui.jumpBtn.width || 80;
-  ui.jumpBtn.setPosition(Math.max(10, w - jumpW - 18), y);
+  // Tap anywhere to restart
+  this.input.once("pointerdown", () => restart.call(this));
+  this.input.keyboard.once("keydown-R", () => restart.call(this));
 }
 
-// ===== Camera Zoom =====
-function applyZoom(){
-  const w = this.scale.width;
-  const h = this.scale.height;
+function restart(){
+  // Reset state
+  gameState.alive = true;
+  gameState.distance = 0;
+  gameState.coins = 0;
 
-  // ruang usable: buang top + safe bottom
-  const usableH = h - SAFE_TOP - safeBottom(h);
+  ui.coinText.setText("0");
+  ui.distText.setText("Jarak: 0 m");
+  ui.hint.setText("Runner Taiping: tekan ⤒ untuk lompat");
+  player.clearTint();
 
-  // zoom ikut ketinggian world (world height kecil)
-  camZoom = Phaser.Math.Clamp((usableH * 0.92) / WORLD_H, 1, 2.0);
+  // Clear spawned objects
+  coinGroup.clear(true, true);
+  obstacleGroup.clear(true, true);
 
-  // kalau screen terlalu sempit, clamp sedikit supaya tak “overscale”
-  if (w < 360) camZoom = Math.min(camZoom, 1.6);
+  // Reset spawn tracker
+  this.lastSpawnX = 0;
 
-  this.cameras.main.setZoom(camZoom);
-}
+  // Reset player
+  player.setPosition(120, this.groundY - 120);
+  player.setVelocity(0, 0);
 
-function adjustZoom(d){
-  camZoom = Phaser.Math.Clamp(camZoom + d, 0.8, 2.2);
-  this.cameras.main.setZoom(camZoom);
-}
+  // Spawn first packs
+  spawnPackAhead.call(this, this.cameras.main.scrollX + this.scale.width + 900);
+       }
