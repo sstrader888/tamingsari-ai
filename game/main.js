@@ -1,364 +1,301 @@
-// ===== TAIPING RUNNER (ENDLESS) - MOBILE FRIENDLY =====
-// Controls: Jump button + Space/Up (PC)
-// Auto-run to the right. Endless ground recycling + coins + obstacles + score + restart.
+// ===== TAIPING JUNGLE RUNNER (FINAL EDITION) =====
 
 const WORLD_H = 540;
-
-// UI safe areas
 const SAFE_TOP = 70;
+
 function safeBottom(h) {
-  // lift UI away from Android nav bar
-  return Math.max(240, Math.round(h * 0.26));
+    return Math.max(240, Math.round(h * 0.26));
 }
 
 let player, groundGroup, coinGroup, obstacleGroup;
-let touch = { jump:false };
+let touch = { jump: false };
 let ui = {};
+let bgFar, bgNear;
+
 let gameState = {
-  speed: 260,
-  distance: 0,
-  coins: 0,
-  alive: true
+    speed: 350, // Laju sikit
+    distance: 0,
+    coins: 0,
+    alive: true
 };
 
 const config = {
-  type: Phaser.AUTO,
-  parent: "game",
-  backgroundColor: "#1b1f2a",
-  scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH },
-  render: { pixelArt: true, roundPixels: true },
-  physics: {
-    default: "arcade",
-    arcade: { gravity: { y: 1300 }, debug: false }
-  },
-  scene: { preload, create, update }
+    type: Phaser.AUTO,
+    parent: "game",
+    backgroundColor: "#1b1f2a",
+    scale: {
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    // Sangat penting untuk kekalkan rupa pixel art yang tajam:
+    render: { pixelArt: true, roundPixels: true, antialias: false },
+    physics: {
+        default: "arcade",
+        arcade: {
+            gravity: { y: 1500 },
+            debug: false // Tukar ke 'true' jika nak tengok kotak hitbox
+        }
+    },
+    scene: { preload, create, update }
 };
 
 new Phaser.Game(config);
 
-function preload(){
-  // Generate placeholder textures (no external assets required)
-  const g = this.make.graphics({ add:false });
+function preload() {
+    // Tetapkan path ke folder assets
+    this.load.setPath('assets/'); 
 
-  // Player (simple rounded)
-  g.fillStyle(0x3aa0ff,1);
-  g.fillRoundedRect(0,0,32,44,8);
-  g.generateTexture("player",32,44);
-
-  // Ground tile
-  g.clear();
-  g.fillStyle(0x2f6f3a,1); // grass
-  g.fillRect(0,0,128,12);
-  g.fillStyle(0x8b5a2b,1); // soil
-  g.fillRect(0,12,128,28);
-  // tiny stones
-  g.fillStyle(0x6e4421,1);
-  for(let i=0;i<14;i++) g.fillRect(4+i*9, 22 + (i%2)*4, 4, 3);
-  g.generateTexture("groundTile",128,40);
-
-  // Coin
-  g.clear();
-  g.fillStyle(0xf4c542,1);
-  g.fillCircle(12,12,11);
-  g.fillStyle(0xffe38a,1);
-  g.fillCircle(8,8,4);
-  g.generateTexture("coin",24,24);
-
-  // Obstacle (rock)
-  g.clear();
-  g.fillStyle(0x5b5b5b,1);
-  g.fillRoundedRect(0,0,36,26,6);
-  g.fillStyle(0x7a7a7a,1);
-  g.fillRoundedRect(6,6,10,6,3);
-  g.generateTexture("rock",36,26);
-
-  // Parallax layers (simple silhouettes)
-  // far hills
-  g.clear();
-  g.fillStyle(0x23304a,1);
-  g.fillRect(0,0,512,256);
-  g.fillStyle(0x1e2a3f,1);
-  for(let x=0;x<520;x+=70){
-    g.fillCircle(x, 210, 70);
-  }
-  g.generateTexture("hillFar",512,256);
-
-  // near trees
-  g.clear();
-  g.fillStyle(0x182339,1);
-  g.fillRect(0,0,512,256);
-  g.fillStyle(0x0f192c,1);
-  for(let x=0;x<520;x+=64){
-    g.fillRect(x+26, 80, 12, 150); // trunk
-    g.fillCircle(x+32, 80, 44);    // canopy
-  }
-  g.generateTexture("treeNear",512,256);
+    // 1. MUAT NAIK KARAKTER (Spritesheet)
+    // PENTING: Pastikan frameWidth/frameHeight sepadan dengan gambar anda.
+    // Saya anggap spritesheet anda adalah 4 frame mendatar, saiz contoh 48x48px satu frame.
+    // Jika guna gambar wanita, tukar nama fail di sini.
+    this.load.spritesheet('playerRun', 'player_sheet.png', { 
+        frameWidth: 48,  // UBAH INI ikut saiz sebenar lebar satu frame gambar anda
+        frameHeight: 48  // UBAH INI ikut saiz sebenar tinggi satu frame gambar anda
+    });
+    
+    // 2. MUAT NAIK BACKGROUND & OBJEK
+    this.load.image('bgFar', 'jungle_far.png');
+    this.load.image('bgNear', 'jungle_near.png');
+    this.load.image('groundImg', 'ground.png');
+    
+    // Placeholder untuk coin/rock jika anda tiada gambarnya
+    createPlaceholderObjects.call(this);
 }
 
-function create(){
-  // World bounds (wide enough; we recycle anyway)
-  this.physics.world.setBounds(0, 0, 999999, WORLD_H);
+function create() {
+    this.physics.world.setBounds(0, 0, Number.MAX_SAFE_INTEGER, WORLD_H);
 
-  // --- Parallax background (Taiping vibe placeholder) ---
-  this.bgFar = this.add.tileSprite(0, 0, 10, 10, "hillFar").setOrigin(0,0).setScrollFactor(0);
-  this.bgNear = this.add.tileSprite(0, 0, 10, 10, "treeNear").setOrigin(0,0).setScrollFactor(0);
+    // --- SETUP PARALLAX BACKGROUND ---
+    // Kita guna tileSprite supaya ia boleh berulang
+    this.bgFar = this.add.tileSprite(0, 0, this.scale.width, WORLD_H, 'bgFar')
+        .setOrigin(0, 0)
+        .setScrollFactor(0); // Lekat pada kamera
 
-  // --- Ground recycling ---
-  groundGroup = this.physics.add.staticGroup();
+    this.bgNear = this.add.tileSprite(0, 0, this.scale.width, WORLD_H, 'bgNear')
+        .setOrigin(0, 0)
+        .setScrollFactor(0);
+    // Naikkan sedikit bgNear supaya nampak dasar pokok
+    this.bgNear.y = -50; 
 
-  // We place enough tiles to cover any screen width + buffer
-  this.groundY = WORLD_H - 60;  // ground top y
-  this.tileW = 128;
-  this.tileH = 40;
+    // --- SETUP GROUND ---
+    groundGroup = this.physics.add.staticGroup();
+    this.groundY = WORLD_H - 40; // Tinggikan sikit tanah
+    this.tileW = 128; // Lebar satu tile tanah (ikut gambar ground.png anda)
+    
+    buildInitialGround.call(this);
 
-  // Create initial belt of ground
-  buildInitialGround.call(this);
+    // --- SETUP PLAYER ---
+    // Mula di posisi kiri, atas tanah
+    player = this.physics.add.sprite(100, this.groundY - 150, 'playerRun');
+    
+    // Kecilkan hitbox supaya lari lebih tepat (ubah nilai jika perlu)
+    // setSize(lebar, tinggi), setOffset(jarakX, jarakY dari kiri atas)
+    player.body.setSize(20, 38).setOffset(14, 10); 
+    player.setCollideWorldBounds(false);
 
-  // --- Player ---
-  player = this.physics.add.sprite(120, this.groundY - 120, "player");
-  player.setCollideWorldBounds(false);
-  player.body.setSize(28, 42).setOffset(2, 2);
+    // Cipta Animasi Berlari dari spritesheet
+    this.anims.create({
+        key: 'run',
+        // Menggunakan frame 0 hingga 3 (total 4 frame)
+        frames: this.anims.generateFrameNumbers('playerRun', { start: 0, end: 3 }), 
+        frameRate: 12, // Kelajuan animasi
+        repeat: -1     // Ulang selamanya
+    });
+    player.play('run'); // Mula animasi
 
-  this.physics.add.collider(player, groundGroup);
+    this.physics.add.collider(player, groundGroup);
 
-  // --- Coins & obstacles ---
-  coinGroup = this.physics.add.group({ allowGravity:false, immovable:true });
-  obstacleGroup = this.physics.add.staticGroup();
+    // --- SETUP OBJEK LAIN & UI ---
+    coinGroup = this.physics.add.group({ allowGravity: false, immovable: true });
+    obstacleGroup = this.physics.add.staticGroup();
 
-  spawnPackAhead.call(this, 1000);
+    spawnPackAhead.call(this, 1000);
 
-  // Overlaps / hits
-  this.physics.add.overlap(player, coinGroup, (p, c) => {
-    c.destroy();
-    gameState.coins += 1;
-    ui.coinText.setText(String(gameState.coins));
-  });
+    // Collision Logic
+    this.physics.add.overlap(player, coinGroup, (p, c) => {
+        c.destroy();
+        gameState.coins += 1;
+        ui.coinText.setText(String(gameState.coins));
+    });
 
-  this.physics.add.collider(player, obstacleGroup, () => {
+    this.physics.add.collider(player, obstacleGroup, () => {
+        if (!gameState.alive) return;
+        killPlayer.call(this);
+    });
+
+    // Kamera ikut player
+    this.cameras.main.startFollow(player, true, 0.1, 0.1);
+    this.cameras.main.setBounds(0, 0, Number.MAX_SAFE_INTEGER, WORLD_H);
+
+    // Input
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.input.keyboard.on("keydown-SPACE", () => tryJump());
+    this.input.keyboard.on("keydown-UP", () => tryJump());
+
+    createUI.call(this);
+    applyLayout.call(this);
+    this.scale.on("resize", () => applyLayout.call(this));
+}
+
+function update(time, delta) {
+    const dt = Math.min(0.033, delta / 1000);
+
+    // --- PARALLAX MOVEMENT ---
+    // Gerakkan texture background berdasarkan posisi kamera
+    if (this.bgFar) {
+        this.bgFar.tilePositionX = this.cameras.main.scrollX * 0.2; // Bergerak perlahan
+        this.bgFar.setSize(this.scale.width, WORLD_H);
+    }
+    if (this.bgNear) {
+        this.bgNear.tilePositionX = this.cameras.main.scrollX * 0.5; // Bergerak sederhana laju
+        this.bgNear.setSize(this.scale.width, WORLD_H + 50);
+    }
+
     if (!gameState.alive) return;
-    killPlayer.call(this);
-  });
 
-  // --- Camera ---
-  this.cameras.main.startFollow(player, true, 0.10, 0.10);
-  this.cameras.main.setBounds(0, 0, 999999, WORLD_H);
+    // Player sentiasa bergerak ke depan
+    player.setVelocityX(gameState.speed);
 
-  // --- Input ---
-  this.cursors = this.input.keyboard.createCursorKeys();
-  this.input.keyboard.on("keydown-SPACE", () => touch.jump = true);
-
-  // --- UI ---
-  ui.hint = this.add.text(16, SAFE_TOP, "Runner Taiping: tekan ⤒ untuk lompat", {
-    fontFamily: "Arial",
-    fontSize: "16px",
-    color: "#ffffff"
-  }).setScrollFactor(0);
-
-  // HUD (coin + distance)
-  ui.coinLabel = this.add.text(16, SAFE_TOP + 26, "Coin:", {
-    fontFamily:"Arial", fontSize:"16px", color:"#ffffff"
-  }).setScrollFactor(0);
-
-  ui.coinText = this.add.text(70, SAFE_TOP + 26, "0", {
-    fontFamily:"Arial", fontSize:"16px", color:"#ffe38a"
-  }).setScrollFactor(0);
-
-  ui.distText = this.add.text(16, SAFE_TOP + 48, "Jarak: 0 m", {
-    fontFamily:"Arial", fontSize:"16px", color:"#ffffff"
-  }).setScrollFactor(0);
-
-  // Big Jump button
-  createTouchUI.call(this);
-
-  // Responsive sizing & UI position
-  applyLayout.call(this);
-  this.scale.on("resize", () => applyLayout.call(this));
-}
-
-function update(time, delta){
-  const dt = Math.min(0.033, delta/1000);
-
-  // Background parallax movement based on camera scroll
-  const camX = this.cameras.main.scrollX;
-  this.bgFar.tilePositionX = camX * 0.15;
-  this.bgNear.tilePositionX = camX * 0.35;
-
-  // Keep background filling screen
-  this.bgFar.setSize(this.scale.width, this.scale.height);
-  this.bgNear.setSize(this.scale.width, this.scale.height);
-  this.bgFar.setPosition(0, 0);
-  this.bgNear.setPosition(0, 0);
-
-  if (!gameState.alive) {
-    // Let player fall/stop; allow restart tap
-    return;
-  }
-
-  // Auto-run
-  player.setVelocityX(gameState.speed);
-
-  // Jump input
-  const jumpPressed =
-    (Phaser.Input.Keyboard.JustDown(this.cursors.up)) ||
-    (Phaser.Input.Keyboard.JustDown(this.cursors.space)) ||
-    touch.jump;
-
-  if (jumpPressed && player.body.blocked.down) {
-    player.setVelocityY(-560);
-  }
-  touch.jump = false;
-
-  // Distance counter
-  gameState.distance += (gameState.speed * dt);
-  ui.distText.setText("Jarak: " + Math.floor(gameState.distance/10) + " m");
-
-  // Recycle ground tiles as camera moves
-  recycleGround.call(this);
-
-  // Spawn more coins/obstacles ahead
-  const aheadX = camX + this.scale.width + 600;
-  spawnPackAhead.call(this, aheadX);
-
-  // Fail if player drops too low
-  if (player.y > WORLD_H + 200) {
-    killPlayer.call(this);
-  }
-}
-
-// ====== UI / Touch ======
-function createTouchUI(){
-  const style = {
-    fontFamily:"Arial",
-    fontSize:"28px",
-    color:"#fff",
-    backgroundColor:"rgba(0,0,0,0.60)",
-    padding:{x:26,y:18}
-  };
-
-  ui.jumpBtn = this.add.text(0,0,"⤒", style).setScrollFactor(0).setInteractive({ useHandCursor:true });
-
-  ui.jumpBtn.on("pointerdown", () => touch.jump = true);
-}
-
-function applyLayout(){
-  const w = this.scale.width;
-  const h = this.scale.height;
-
-  // Zoom to keep world height comfy in portrait/landscape
-  const usableH = h - SAFE_TOP - safeBottom(h);
-  const zoom = Phaser.Math.Clamp((usableH * 0.92) / WORLD_H, 1.0, 2.0);
-  this.cameras.main.setZoom(zoom);
-
-  // UI positions
-  ui.hint.setPosition(16, SAFE_TOP);
-  ui.coinLabel.setPosition(16, SAFE_TOP + 26);
-  ui.coinText.setPosition(70, SAFE_TOP + 26);
-  ui.distText.setPosition(16, SAFE_TOP + 48);
-
-  // Jump button safely above nav bar
-  const y = h - safeBottom(h);
-  ui.jumpBtn.setPosition(w - 110, y);
-}
-
-// ====== Ground build/recycle ======
-function buildInitialGround(){
-  const w = Math.max(this.scale.width, 800);
-  const tilesNeeded = Math.ceil((w + 600) / this.tileW);
-
-  this.groundTiles = [];
-
-  let startX = 0;
-  for (let i=0; i<tilesNeeded; i++){
-    const x = startX + i*this.tileW + this.tileW/2;
-    const t = groundGroup.create(x, this.groundY, "groundTile").refreshBody();
-    t.setOrigin(0.5, 0.5);
-    this.groundTiles.push(t);
-  }
-}
-
-function recycleGround(){
-  const camX = this.cameras.main.scrollX;
-  const leftEdge = camX - 200;
-
-  // find rightmost tile x
-  let rightMost = -Infinity;
-  for (const t of this.groundTiles) rightMost = Math.max(rightMost, t.x);
-
-  // move tiles that are far left to the right
-  for (const t of this.groundTiles){
-    if (t.x < leftEdge){
-      t.x = rightMost + this.tileW;
-      rightMost = t.x;
-      t.refreshBody();
-    }
-  }
-}
-
-// ====== Spawning coins/obstacles ahead ======
-function spawnPackAhead(targetX){
-  // We only spawn if we haven't spawned near this region
-  if (!this.lastSpawnX) this.lastSpawnX = 0;
-  if (targetX < this.lastSpawnX + 500) return;
-
-  // spawn in chunks
-  const chunkStart = this.lastSpawnX + 600;
-  const chunkEnd = targetX;
-
-  for (let x = chunkStart; x <= chunkEnd; x += Phaser.Math.Between(260, 420)) {
-    // 70% coins
-    if (Math.random() < 0.70) {
-      const y = this.groundY - Phaser.Math.Between(120, 220);
-      const c = coinGroup.create(x, y, "coin");
-      c.setCircle(10, 2, 2);
+    // Logik Lompat
+    if (touch.jump) {
+        // Hanya boleh lompat jika kaki cecah tanah
+        if (player.body.touching.down || player.body.blocked.down) {
+            player.setVelocityY(-650); // Kuasa lompat
+        }
+        touch.jump = false;
     }
 
-    // 35% obstacle (rock)
-    if (Math.random() < 0.35) {
-      const ox = x + Phaser.Math.Between(80, 160);
-      const o = obstacleGroup.create(ox, this.groundY - 10, "rock");
-      o.refreshBody();
+    // Update UI Jarak
+    gameState.distance += (gameState.speed * dt);
+    ui.distText.setText(Math.floor(gameState.distance / 10) + " m");
+
+    // Kitar Semula Tanah & Spawn Objek
+    recycleGround.call(this);
+    
+    const camX = this.cameras.main.scrollX;
+    const aheadX = camX + this.scale.width + 600;
+    spawnPackAhead.call(this, aheadX);
+
+    // Jatuh dalam lubang
+    if (player.y > WORLD_H + 200) {
+        killPlayer.call(this);
     }
-  }
-
-  this.lastSpawnX = targetX;
 }
 
-// ====== Death / Restart ======
-function killPlayer(){
-  gameState.alive = false;
-  player.setVelocityX(0);
-  player.setTint(0xff5555);
+// ================= FUNGSI-FUNGSI TAMBAHAN =================
 
-  ui.hint.setText("Game Over — tap untuk restart");
-  ui.hint.setPosition(16, SAFE_TOP);
-
-  // Tap anywhere to restart
-  this.input.once("pointerdown", () => restart.call(this));
-  this.input.keyboard.once("keydown-R", () => restart.call(this));
+function tryJump() {
+    if(!gameState.alive && ui.hint.text.includes("GameOver")) {
+        restartGame.call(this.scene);
+        return;
+    }
+    touch.jump = true;
 }
 
-function restart(){
-  // Reset state
-  gameState.alive = true;
-  gameState.distance = 0;
-  gameState.coins = 0;
+function createUI() {
+    // Gaya font retro sikit
+    const fontStyle = { fontFamily: "Courier", fontSize: "20px", color: "#ffffff", stroke: "#000", strokeThickness: 3 };
+    
+    ui.coinLabel = this.add.text(20, SAFE_TOP, "COINS:", fontStyle).setScrollFactor(0);
+    ui.coinText = this.add.text(100, SAFE_TOP, "0", { ...fontStyle, color: "#ffd700" }).setScrollFactor(0);
+    ui.distText = this.add.text(20, SAFE_TOP + 30, "0 m", fontStyle).setScrollFactor(0);
 
-  ui.coinText.setText("0");
-  ui.distText.setText("Jarak: 0 m");
-  ui.hint.setText("Runner Taiping: tekan ⤒ untuk lompat");
-  player.clearTint();
+    ui.hint = this.add.text(this.scale.width/2, this.scale.height - 50, "TAP / SPACE UNTUK LOMPAT", fontStyle)
+        .setOrigin(0.5).setScrollFactor(0);
 
-  // Clear spawned objects
-  coinGroup.clear(true, true);
-  obstacleGroup.clear(true, true);
+    // Zone sentuh seluruh skrin untuk mobile
+    let jumpZone = this.add.zone(0, 0, this.scale.width, this.scale.height)
+        .setOrigin(0).setScrollFactor(0).setInteractive();
+    jumpZone.on("pointerdown", () => tryJump.call(this));
+}
 
-  // Reset spawn tracker
-  this.lastSpawnX = 0;
+function applyLayout() {
+    const h = this.scale.height;
+    const usableH = h - SAFE_TOP - safeBottom(h);
+    const zoom = Phaser.Math.Clamp((usableH * 0.9) / WORLD_H, 0.8, 1.3);
+    this.cameras.main.setZoom(zoom);
+    
+    if(ui.hint) ui.hint.setPosition(this.scale.width/2, this.scale.height - safeBottom(h) - 30);
+}
 
-  // Reset player
-  player.setPosition(120, this.groundY - 120);
-  player.setVelocity(0, 0);
+function buildInitialGround() {
+    const w = Math.max(this.scale.width, 1000);
+    const tilesNeeded = Math.ceil((w + 800) / this.tileW);
+    this.groundTiles = [];
+    let startX = -200; // Mula sikit ke belakang skrin
+    for (let i = 0; i < tilesNeeded; i++) {
+        const x = startX + i * this.tileW;
+        // Guna gambar groundImg
+        const t = groundGroup.create(x, this.groundY, 'groundImg').refreshBody();
+        t.setOrigin(0, 0.5); // Origin kiri tengah supaya senang sambung
+        this.groundTiles.push(t);
+    }
+}
 
-  // Spawn first packs
-  spawnPackAhead.call(this, this.cameras.main.scrollX + this.scale.width + 900);
-       }
+function recycleGround() {
+    const camX = this.cameras.main.scrollX;
+    const leftEdge = camX - 300;
+    let rightMostX = -Infinity;
+    this.groundTiles.forEach(t => { rightMostX = Math.max(rightMostX, t.x); });
+
+    this.groundTiles.forEach(t => {
+        // Jika tile terkeluar jauh ke kiri skrin
+        if (t.x + this.tileW < leftEdge) {
+            // Pindahkan ke paling kanan
+            t.x = rightMostX + this.tileW;
+            t.refreshBody();
+            rightMostX = t.x; // Update posisi paling kanan baru
+        }
+    });
+}
+
+function spawnPackAhead(targetX) {
+    if (!this.lastSpawnX) this.lastSpawnX = 0;
+    if (targetX < this.lastSpawnX + 500) return;
+
+    const chunkStart = this.lastSpawnX + 600;
+    const chunkEnd = targetX;
+
+    // Jarak antara objek (300 hingga 600 pixel)
+    for (let x = chunkStart; x <= chunkEnd; x += Phaser.Math.Between(300, 600)) {
+        // Coin (70% chance)
+        if (Math.random() < 0.70) {
+            const y = this.groundY - Phaser.Math.Between(80, 250);
+            coinGroup.create(x, y, 'coin');
+        }
+        // Obstacle (40% chance) - Jarakkan sikit dari coin
+        if (Math.random() < 0.40) {
+            const ox = x + Phaser.Math.Between(100, 200);
+            const rock = obstacleGroup.create(ox, this.groundY - 30, 'rock');
+            rock.body.setSize(30,30).setOffset(0,0); // Kecilkan hitbox batu
+        }
+    }
+    this.lastSpawnX = targetX;
+}
+
+function killPlayer() {
+    gameState.alive = false;
+    player.setVelocityX(0);
+    player.setTint(0xff5555); // Jadi merah
+    player.anims.stop(); // Berhenti animasi lari
+
+    ui.hint.setText("GAME OVER! TAP UNTUK RESTART");
+}
+
+function restartGame() {
+    this.scene.restart();
+    gameState.alive = true;
+    gameState.distance = 0;
+    gameState.coins = 0;
+    this.lastSpawnX = 0;
+}
+
+// Guna ini jika tiada gambar coin/rock
+function createPlaceholderObjects() {
+    const g = this.make.graphics({ add: false });
+    // Coin Kuning
+    g.clear(); g.fillStyle(0xffd700); g.fillCircle(15,15,15); g.generateTexture('coin', 30,30);
+    // Batu Kelabu
+    g.clear(); g.fillStyle(0x555555); g.fillRoundedRect(0,0,40,40,5); g.generateTexture('rock', 40,40);
+            }
