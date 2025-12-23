@@ -1,11 +1,16 @@
-// ===== FULLSCREEN MOBILE GAME (SAFE AREA DYNAMIC) =====
+// ===== FULLSCREEN MOBILE GAME (BUTTONS SAFE - GUARANTEED VISIBLE) =====
 
 const WORLD_W = 3000;
 const WORLD_H = 540;
 
-// min safe padding (akan tambah dinamik ikut device)
-const SAFE_TOP_MIN = 56;
-const SAFE_BOTTOM_MIN = 120;
+// UI padding (top)
+const SAFE_TOP = 70;
+
+// ✅ Kita letak butang jauh dari bawah untuk elak nav bar menindih
+// Minimum 260px dari bawah, atau 28% dari tinggi skrin (mana lebih besar)
+function safeBottom(h) {
+  return Math.max(260, Math.round(h * 0.28));
+}
 
 let player, cursors, platforms;
 let touch = { left:false, right:false, jump:false };
@@ -33,10 +38,12 @@ new Phaser.Game(config);
 function preload(){
   const g = this.make.graphics({ add:false });
 
+  // Player
   g.fillStyle(0x3aa0ff,1);
   g.fillRoundedRect(0,0,32,44,8);
   g.generateTexture("player",32,44);
 
+  // Platform
   g.clear();
   g.fillStyle(0x8b5a2b,1);
   g.fillRect(0,0,64,24);
@@ -60,8 +67,8 @@ function create(){
 
   cursors = this.input.keyboard.createCursorKeys();
 
-  // UI hint (letak bawah sedikit dari top)
-  ui.hint = this.add.text(16, SAFE_TOP_MIN, "◀ ▶ Gerak   ⤒ Lompat", {
+  // Hint text
+  ui.hint = this.add.text(16, SAFE_TOP, "◀ ▶ Gerak   ⤒ Lompat", {
     fontFamily:"Arial",
     fontSize:"16px",
     color:"#ffffff"
@@ -70,10 +77,12 @@ function create(){
   createTouchUI.call(this);
 
   applyZoom.call(this);
-  this.scale.on("resize",()=> {
+  positionUI.call(this);
+
+  // Resize handler
+  this.scale.on("resize", () => {
     applyZoom.call(this);
-    positionButtons.call(this);
-    positionHint.call(this);
+    positionUI.call(this);
   });
 
   // PC zoom
@@ -83,18 +92,19 @@ function create(){
 
 function update(){
   const speed=260;
-  const left=(cursors.left?.isDown)||touch.left;
-  const right=(cursors.right?.isDown)||touch.right;
-  const jump=(Phaser.Input.Keyboard.JustDown(cursors.up)||touch.jump);
+
+  const left = (cursors.left?.isDown) || touch.left;
+  const right = (cursors.right?.isDown) || touch.right;
+  const jumpPressed = (Phaser.Input.Keyboard.JustDown(cursors.up)) || touch.jump;
 
   if(left) player.setVelocityX(-speed);
   else if(right) player.setVelocityX(speed);
   else player.setVelocityX(0);
 
-  if(jump && player.body.blocked.down){
+  if(jumpPressed && player.body.blocked.down){
     player.setVelocityY(-520);
   }
-  touch.jump=false;
+  touch.jump = false;
 }
 
 // ===== UI =====
@@ -103,13 +113,13 @@ function createTouchUI(){
     fontFamily:"Arial",
     fontSize:"26px",
     color:"#fff",
-    backgroundColor:"rgba(0,0,0,0.55)",
+    backgroundColor:"rgba(0,0,0,0.60)",
     padding:{x:24,y:18}
   };
 
-  ui.leftBtn=this.add.text(0,0,"◀",style).setScrollFactor(0).setInteractive();
-  ui.rightBtn=this.add.text(0,0,"▶",style).setScrollFactor(0).setInteractive();
-  ui.jumpBtn=this.add.text(0,0,"⤒",style).setScrollFactor(0).setInteractive();
+  ui.leftBtn  = this.add.text(0,0,"◀",style).setScrollFactor(0).setInteractive();
+  ui.rightBtn = this.add.text(0,0,"▶",style).setScrollFactor(0).setInteractive();
+  ui.jumpBtn  = this.add.text(0,0,"⤒",style).setScrollFactor(0).setInteractive();
 
   ui.leftBtn.on("pointerdown",()=>touch.left=true);
   ui.leftBtn.on("pointerup",()=>touch.left=false);
@@ -120,36 +130,19 @@ function createTouchUI(){
   ui.rightBtn.on("pointerout",()=>touch.right=false);
 
   ui.jumpBtn.on("pointerdown",()=>touch.jump=true);
-
-  positionButtons.call(this);
 }
 
-function getSafeTop(){
-  // top safe: minimum + sikit margin
-  return Math.max(SAFE_TOP_MIN, Math.round(this.scale.height * 0.05));
-}
+function positionUI(){
+  const w = this.scale.width;
+  const h = this.scale.height;
 
-function getSafeBottom(){
-  // bottom safe: minimum + ikut tinggi device (phone yg ada nav bar tebal)
-  // + extra margin supaya tak pernah potong
-  const dyn = Math.round(this.scale.height * 0.16);
-  return Math.max(SAFE_BOTTOM_MIN, dyn) + 20;
-}
+  // Hint safe top
+  ui.hint.setPosition(16, SAFE_TOP);
 
-function positionHint(){
-  ui.hint.setY(getSafeTop.call(this));
-}
+  // Buttons lifted away from bottom navigation bar
+  const y = h - safeBottom(h);
 
-function positionButtons(){
-  const w=this.scale.width;
-  const h=this.scale.height;
-
-  const safeB = getSafeBottom.call(this);
-
-  // letak button naik dari nav bar
-  const y = h - safeB;
-
-  const xLeft = 22;
+  const xLeft = 20;
   const gap = 110;
 
   ui.leftBtn.setPosition(xLeft, y);
@@ -159,17 +152,16 @@ function positionButtons(){
 
 // ===== Camera Zoom =====
 function applyZoom(){
-  const safeT = getSafeTop.call(this);
-  const safeB = getSafeBottom.call(this);
+  const h = this.scale.height;
 
-  const usableH = this.scale.height - safeT - safeB;
+  // ruang usable: buang top + “safe bottom” besar
+  const usableH = h - SAFE_TOP - safeBottom(h);
 
-  // zoom ikut ruang boleh nampak (tak ganggu UI bawah)
-  camZoom = Phaser.Math.Clamp((usableH * 0.82) / WORLD_H, 1, 1.9);
+  camZoom = Phaser.Math.Clamp((usableH * 0.90) / WORLD_H, 1, 1.9);
   this.cameras.main.setZoom(camZoom);
 }
 
 function adjustZoom(d){
-  camZoom=Phaser.Math.Clamp(camZoom+d,0.8,2.2);
+  camZoom = Phaser.Math.Clamp(camZoom + d, 0.8, 2.2);
   this.cameras.main.setZoom(camZoom);
 }
