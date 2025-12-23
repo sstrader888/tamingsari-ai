@@ -1,4 +1,3 @@
-// ===== FAMILY PLATFORMER (STABLE VERSION) =====
 
 const BASE_WIDTH = 960;
 const BASE_HEIGHT = 540;
